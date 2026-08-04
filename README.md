@@ -1,35 +1,46 @@
+<div align="center">
+
 # dead-deps
 
-Find abandoned and unmaintained npm dependencies in your lockfile — and the maintained fork or replacement that succeeded them. Evidence-backed CLI + MCP server.
+**Find abandoned and unmaintained npm dependencies in your lockfile — and the maintained fork or replacement that succeeded them.**
+
+Evidence-backed. Zero config. No account. Works as a CLI, a library, and an MCP server for AI agents.
 
 [![CI](https://github.com/mekkadev/dead-deps/actions/workflows/ci.yml/badge.svg)](https://github.com/mekkadev/dead-deps/actions/workflows/ci.yml)
-[![npm version](https://img.shields.io/npm/v/dead-deps.svg)](https://www.npmjs.com/package/dead-deps)
-[![license: MIT](https://img.shields.io/npm/l/dead-deps.svg)](./LICENSE)
-[![node: >=20.10](https://img.shields.io/node/v/dead-deps.svg)](https://nodejs.org/)
+[![npm version](https://img.shields.io/npm/v/dead-deps.svg?color=cb3837&logo=npm)](https://www.npmjs.com/package/dead-deps)
+[![node](https://img.shields.io/node/v/dead-deps.svg?color=5fa04e&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![license](https://img.shields.io/npm/l/dead-deps.svg?color=blue)](./LICENSE)
+[![false positives](https://img.shields.io/badge/false%20positives-0%25-brightgreen)](#calibration-measured-not-claimed)
+[![dataset](https://img.shields.io/badge/succession%20dataset-81%20verified%20rows-8957e5)](./data/successors.yaml)
+
+[**Website**](https://mekkadev.github.io/dead-deps/) · [Methodology](https://mekkadev.github.io/dead-deps/methodology/) · [Dataset](./data/successors.yaml) · [Architecture](./docs/ARCHITECTURE.md) · [Contributing](./CONTRIBUTING.md)
+
+</div>
 
 ```console
 $ npx dead-deps
 ```
 
 ```
-  dead-deps  ·  /home/you/projects/checkout-api
+  dead-deps  ·  ~/projects/checkout-api
   ──────────────────────────────────────────────────────────────────────────────
-  package-lock.json (npm lockfile v3) · 41 of 604 dependencies examined ·
-  3 flagged · 563 skipped · 4.3s
+  package-lock.json (npm lockfile v3) · 41 dependencies examined ·
+  3 flagged · 2.4s
 
-  ABANDONED request 2.88.2                                          score 96/100
-    No longer maintained, and nothing further is coming — deprecated on npm, no
-    release in 6.5 years.
+  HIJACK RISK request 2.88.2                                       score 100/100
+    Unattended, still widely installed, and carrying open advisories —
+    deprecated on npm, no release in 6.5 years. This is the profile supply-chain
+    attackers look for.
 
     ├─ Deprecated on npm: "request has been deprecated, see
     │  https://github.com/request/request/issues/3142"
     │  ↳ https://www.npmjs.com/package/request
-    ├─ 18 issues opened in the past year, 1 closed (6%), averaging 0.3 comments
-    │  each — people are asking and nobody is answering.
-    │  ↳ https://github.com/request/request
-    └─ No release in 6.5 years — 113x longer than this package has ever gone
-       quiet before (its own median gap between releases is 21 days).
-       ↳ https://www.npmjs.com/package/request
+    ├─ No release in 6.5 years — 169x longer than this package has ever gone
+    │  quiet before (its own median gap between releases is 8 days).
+    │  ↳ https://www.npmjs.com/package/request
+    └─ 26 issues opened in the past year, 3 closed (12%), averaging 0.3 comments
+       each — people are asking and nobody is answering.
+       ↳ https://github.com/request/request
 
     → undici
       what the ecosystem moved to · needs code changes · dead since 2020-02
@@ -41,72 +52,103 @@ $ npx dead-deps
     confidence ●●● high
 
 
-  UNMAINTAINED bluebird 3.7.2                                       score 69/100
-    Nobody is maintaining this any more — no release in 6.7 years. Bugs you hit
-    are yours to work around.
+  DEPRECATED tslint 6.1.3 (dev)                                     score 89/100
+    The maintainers deprecated this themselves — deprecated on npm, its
+    repository is archived. It still installs, but it receives no fixes.
 
-    ├─ 12 issues opened in the past year, 1 closed (8%), averaging 0.4 comments
-    │  each — people are asking and nobody is answering.
-    │  ↳ https://github.com/petkaantonov/bluebird
-    ├─ No release in 6.7 years — 174x longer than this package has ever gone
-    │  quiet before (its own median gap between releases is 9 days).
-    │  ↳ https://www.npmjs.com/package/bluebird
-    └─ No maintainer has commented, closed an issue or merged a pull request in
-       the past year.
-       ↳ https://github.com/petkaantonov/bluebird
+    ├─ Deprecated on npm, and the notice names "eslint" as the replacement:
+    │  "TSLint has been deprecated in favor of ESLint."
+    │  ↳ https://www.npmjs.com/package/tslint
+    ├─ The source repository is archived: it is read-only, so no fix can be
+    │  merged there.
+    │  ↳ https://github.com/palantir/tslint
+    └─ No release in 6.0 years — 157x longer than this package has ever gone
+       quiet before (its own median gap between releases is 10 days).
+       ↳ https://www.npmjs.com/package/tslint
 
-    → Promise (native)
-      absorbed into the platform · needs code changes · dead since 2019-11
-      Delete the `require('bluebird')` and rely on the global Promise; for the
-      concurrency helpers Bluebird provided, `Promise.map` maps onto p-map and
-      `Promise.promisify` onto `util.promisify`.
-      alternatives: p-limit · p-map · p-retry
+    → typescript-eslint
+      what the ecosystem moved to · needs code changes · dead since 2019-02
+      typescript-eslint documents the TSLint story and a rule-by-rule
+      comparison; `tslint-to-eslint-config` can convert an existing tslint.json
+      into an ESLint config as a starting point.
+      alternatives: @typescript-eslint/eslint-plugin · eslint · oxlint
 
-    confidence ●●○ medium
+    confidence ●●● high
 
   ──────────────────────────────────────────────────────────────────────────────
   3 dependencies need attention. Start with request → undici (needs code
-  changes). 1 other flagged package has a curated successor too.
+  changes). 2 other flagged packages have a curated successor too.
   38 other dependencies were examined and deliberately not flagged — quiet is
   not the same as dead.
 ```
 
-No install, no config, no account. It reads your lockfile, asks two public indexes about each direct dependency, and prints what it can prove.
+No install, no config, no account, no API key. It reads your lockfile, asks two public indexes about each direct dependency, and prints only what it can prove.
+
+---
+
+## Contents
+
+- [What it does](#what-it-does)
+- [Why this is hard: quiet is not dead](#why-this-is-hard-quiet-is-not-dead)
+- [Calibration: measured, not claimed](#calibration-measured-not-claimed)
+- [Install](#install)
+- [Usage](#usage)
+- [Use it in CI](#use-it-in-ci)
+- [MCP server for AI agents](#mcp-server-for-ai-agents)
+- [Use it as a library](#use-it-as-a-library)
+- [The succession dataset](#the-succession-dataset)
+- [How it compares](#how-it-compares)
+- [FAQ](#faq)
+- [What this does not do](#what-this-does-not-do)
+- [Contributing](#contributing)
+- [Prior art and acknowledgements](#prior-art-and-acknowledgements)
+
+---
 
 ## What it does
 
-- **Finds unmaintained direct dependencies.** It reads `pnpm-lock.yaml`, `package-lock.json`, `npm-shrinkwrap.json`, `yarn.lock` (classic and Berry), or plain `package.json`, and judges the packages you actually chose — not the thousand transitive ones you cannot act on.
-- **Explains why, with clickable evidence.** Every verdict is a list of human-checkable facts with URLs: the npm deprecation notice, the archived repository, the release that never came, the issues nobody closed. If a claim has no source behind it, that is a bug, not a feature.
-- **Points at the curated successor.** When a package is genuinely dead, the report names what the ecosystem moved to — a maintained fork, a rename, a replacement, or the platform feature that absorbed it — from a hand-verified dataset, never from a guess.
+**Finds unmaintained direct dependencies.** It reads `pnpm-lock.yaml`, `package-lock.json`, `npm-shrinkwrap.json`, `yarn.lock` (classic and Berry), or a plain `package.json`, and judges the packages you actually chose — not the thousand transitive ones you cannot act on. Pass `--all` when you want the whole tree.
+
+**Explains why, with clickable evidence.** Every verdict is a list of human-checkable facts with URLs: the npm deprecation notice, the archived repository, the release that never came, the issues nobody closed. A claim with no source behind it is a bug, not a feature.
+
+**Points at the successor.** When a package is genuinely dead, the report names what the ecosystem actually moved to — a maintained fork, a rename, a replacement, or the platform feature that absorbed it — from a hand-verified dataset, never from a guess.
+
+---
 
 ## Why this is hard: quiet is not dead
 
-The obvious way to detect an abandoned npm dependency is to read the date of its last release and call anything old dead. That heuristic looks great on a demo and is worthless in a real project, because the npm dependency graph rests on a layer of tiny packages that were *finished* years ago.
+Most "abandoned dependency" checkers are a date comparison: no release in N months, therefore dead. That produces a wall of false positives, because **a small finished package looks exactly like a dead one if all you read is the last-release date.**
 
-`ms` last shipped in 2020. `inherits` in 2019. `once` in 2016. `wrappy` in 2016. None of them are abandoned. The millisecond format has not changed, `Object.setPrototypeOf` has not changed, and wrapping a function so it runs once is a solved problem. They are downloaded hundreds of millions of times a week and there is nothing left to add. A tool that tells you to migrate off `inherits` has not found a problem — it has become one.
+`ms` has not shipped since 2020. `inherits`, `once`, `wrappy`, `isarray` are older still. They are downloaded billions of times a month and are perfectly fine — there is simply nothing left to add. Telling somebody to migrate off `inherits` is not a finding, it is the tool becoming the problem. A report with forty entries gets closed and never run again.
 
-So dead-deps does not answer a boolean. It answers with a **state**:
+So dead-deps is tuned for **precision over recall**, and the verdict is a state rather than a boolean:
 
 | State | Meaning |
 | --- | --- |
-| `active` | Shipping releases and taking commits. |
-| `stable-complete` | Finished, not abandoned. Small scope, nothing broken, nobody waiting. **This is a pass.** |
-| `low-activity` | Really maintained, just slowly. Worth watching, not worth an emergency migration. |
-| `unmaintained` | No meaningful maintenance for years, but nothing formally declared. |
-| `deprecated` | Formally retired by the registry or the maintainers. |
-| `abandoned` | Maintenance has stopped and the evidence says it is not coming back. |
-| `hijack-risk` | Abandoned *and* attractive to an attacker: open advisories, still widely depended on, nobody attending. |
-| `unknown` | Not enough public data to judge. Said out loud rather than guessed. |
+| `active` | Releases, commits or issue responses within the recent window. |
+| `stable-complete` | Quiet because it is **finished**. Never reported as a problem. |
+| `unknown` | Not enough coverage to judge. Reported as ignorance, not as a verdict. |
+| `low-activity` | Slower than its own history predicts, but alive. Worth watching. |
+| `unmaintained` | Releases stopped, issues go unanswered, no maintainer visibly active. |
+| `deprecated` | The registry or the maintainers say so explicitly. A stated fact, not an inference. |
+| `abandoned` | Unmaintained, plus a hard signal: archived or missing repository. |
+| `hijack-risk` | Abandoned while still widely depended on, with an unpatched advisory or no one at the wheel. |
 
-Reaching `stable-complete` requires clearing a deliberately hard set of vetoes: no deprecation notice, no archived repository, no open advisories, nobody waiting on an unanswered issue, no contributor's pull request left unmerged, real adoption downstream, and a version history showing the API converged years ago. Silence is only ever measured against the package's *own* median release gap, so a library that shipped every three weeks for a decade and then stopped reads very differently from one that has shipped twice, on purpose, since 2016.
+A few of the design decisions that fall out of that:
 
-The whole thing is tuned for **precision over recall**. Missing one dead dependency costs you one dead dependency. Wrongly flagging `inherits` costs you the tool — you stop believing any of the output and you uninstall it. Given the choice, dead-deps stays quiet.
+- **Silence is measured against each package's own rhythm**, not a fixed threshold. A package that always shipped once every three years is not accused of dying because it did so again.
+- **Advisories only count when the newest release is still exposed to them.** A fixed advisory is evidence the maintainer showed up. (This is not theoretical — an early build flagged `ms@2.1.3` as a hijack risk over a ReDoS that was patched in `2.0.0`.)
+- **Popularity is context, not a vital sign.** Download counts do not maintain a package; they only decide how many people are hurt when nobody does.
+- **Stale upstream data is disclosed, never hidden.** Public indexes lag by months. A verdict resting on two-year-old issue data says so and drops its confidence.
+- **The report states how many dependencies were examined and deliberately *not* flagged.** Showing restraint is what earns trust on the first run.
 
-### Calibration
+---
 
-Claims like the ones above are only worth anything if they are measured, so the detector is scored against [`data/calibration.yaml`](./data/calibration.yaml) — a hand-labelled, deliberately adversarial corpus of real npm packages. Its most important bucket is `stable-complete`: the finished-but-quiet packages that a naive detector flags. The headline metric is the false-positive rate over that bucket, not overall accuracy, because overall accuracy can be bought by flagging everything old and a low false-positive rate cannot.
+## Calibration: measured, not claimed
 
-The corpus also contains the trap inverted — `code-point-at` and `path-is-absolute` are tiny, ancient micro-libraries that look exactly like `once` but carry real deprecation notices and archived repositories — so a detector cannot pass by learning "small and old means fine" either.
+A precision claim is worthless unless it is measured, so the detector is scored against [`data/calibration.yaml`](./data/calibration.yaml) — 49 hand-labelled real packages, deliberately adversarial.
+
+Thirteen of them are the finished-but-quiet trap. The corpus also contains **the trap inverted**: `code-point-at` and `path-is-absolute` are tiny, ancient micro-libraries that look exactly like `once`, but carry real deprecation notices and archived repositories. A detector cannot pass by learning "small and old means fine" either.
 
 <!--CALIBRATION-TABLE-->
 
@@ -114,213 +156,308 @@ The corpus also contains the trap inverted — `code-point-at` and `path-is-abso
 | --- | --- | --- |
 | **False positives on finished packages** | **0.0%** | 0 / 13 `stable-complete` |
 | False alarms on anything healthy | 0.0% | 0 / 25 `active` + `stable-complete` |
-| Missed dead packages | 37.5% | 9 / 24 rows at or above `low-activity` |
-| Strict accuracy (exact state) | 71.4% | 35 / 49 |
-| Lenient accuracy (near misses forgiven) | 75.5% | 37 / 49 |
+| Missed dead packages | 33.3% | 8 / 24 rows at or above `low-activity` |
+| Strict accuracy (exact state) | 75.5% | 37 / 49 |
+| Lenient accuracy (near misses forgiven) | 79.6% | 37 / 49 |
 
-_Corpus: 49 hand-labelled packages. Generated by `npm run calibrate` on 2026-08-04._
+*Corpus: 49 hand-labelled packages. Generated by `npm run calibrate`; numbers here are never hand-written.*
 
-Run it yourself with `npm run calibrate`. It performs real lookups against the live indexes, prints a full report — headline false-positive rate, strict and lenient accuracy, a confusion matrix, per-label precision and recall, and every single disagreement with the evidence that drove it — and writes `docs/calibration-results.json`. Methodology and known limits live in [`docs/CALIBRATION.md`](./docs/CALIBRATION.md) and on the [methodology page](https://mekkadev.github.io/dead-deps/methodology/).
+**The misses are the honest cost of the precision bias, and they are the real number to judge this on.** Five of the eight are the fuzzy `low-activity` boundary — packages like `grunt` and `morgan` that still ship occasionally, where "slow" and "alive" are both defensible readings. Three are genuine: `colors`, `browserify` and `underscore.string` read as healthy through upstream signals alone. Two of those three are caught anyway, because the curated dataset overrides the inference (see below).
+
+The detector is scored **without** the succession dataset, which is applied as a floor later in the pipeline. Grading it on answers it was handed would make the numbers meaningless. Methodology and the full list of limits: [`docs/CALIBRATION.md`](./docs/CALIBRATION.md).
+
+Run it yourself — it performs real lookups and prints a confusion matrix, per-label precision and recall, and every disagreement with the evidence that drove it:
+
+```console
+$ npm run calibrate
+```
+
+---
 
 ## Install
 
 Run it without installing anything:
 
 ```console
-npx dead-deps
+$ npx dead-deps
 ```
 
-Or install it globally, which is worth it if you check dependency health often:
+Or install it:
 
 ```console
-npm install -g dead-deps
-dead-deps ./services/api
+$ npm install -g dead-deps        # global CLI
+$ npm install -D dead-deps        # project dev dependency
 ```
 
-Requires **Node.js >= 20.10**. The only runtime dependencies are `yaml` and the MCP SDK.
+Requires **Node.js 20.10 or newer**. Two runtime dependencies (`yaml`, `@modelcontextprotocol/sdk`) and nothing else.
+
+---
 
 ## Usage
 
 ```console
-dead-deps [path] [options]
+$ dead-deps [path] [options]
 ```
 
 `path` may be a directory, a lockfile, or a `package.json`. It defaults to the current directory, where dead-deps picks `pnpm-lock.yaml`, `package-lock.json`, `npm-shrinkwrap.json` or `yarn.lock`, in that order, and falls back to `package.json`.
 
-**Scope**
+### Scope
 
-| Flag | Default | What it does |
+| Flag | Default | Description |
 | --- | --- | --- |
-| `--all` | off | Include transitive dependencies. Off by default because they are not yours to fix. |
-| `--limit <n>` | `5` | Maximum findings to show. 1–10000. Anything withheld is counted in the warnings, never dropped silently. |
-| `--min-state <state>` | `low-activity` | Minimum severity to report. One of `active`, `stable-complete`, `unknown`, `low-activity`, `unmaintained`, `deprecated`, `abandoned`, `hijack-risk`. |
+| `--all` | off | Include transitive dependencies, not just your direct ones. |
+| `--limit <n>` | `5` | Maximum findings to show. |
+| `--min-state <state>` | `low-activity` | Minimum severity to report. Any state from the table above. |
 
-**Output**
+### Output
 
-| Flag | What it does |
+| Flag | Description |
 | --- | --- |
-| `--json` | Machine-readable report on stdout; never coloured. |
+| `--json` | Machine-readable report on stdout. Never coloured. |
 | `--quiet`, `-q` | Suppress progress on stderr; the report still prints. |
 | `--no-color` | Disable ANSI colour even on a terminal. |
 | `--version`, `-v` | Print the version and exit. |
-| `--help`, `-h` | Print the full help and exit. |
+| `--help`, `-h` | Print help and exit. |
 
-**Network**
+### Network
 
-| Flag | Default | What it does |
+| Flag | Default | Description |
 | --- | --- | --- |
 | `--contact <email>` | `$DEAD_DEPS_CONTACT` | Sent upstream so ecosyste.ms can reach you, which puts your requests in their polite pool. |
-| `--concurrency <n>` | `8` | Maximum parallel upstream requests. 1–64. |
+| `--concurrency <n>` | `8` | Maximum parallel upstream requests. |
 | `--no-cache` | off | Bypass the on-disk cache and re-fetch everything. |
-| `--cache-ttl <hours>` | `24` | How long cached responses stay usable. 0–8760. |
+| `--cache-ttl <hours>` | `24` | How long cached responses stay usable. |
 
-**Environment**
+### Environment
 
-| Variable | What it does |
+| Variable | Description |
 | --- | --- |
 | `DEAD_DEPS_CONTACT` | Default for `--contact`. |
-| `DEAD_DEPS_CACHE_DIR` | Where responses are cached. Otherwise `$XDG_CACHE_HOME/dead-deps`, otherwise `~/.cache/dead-deps`. |
+| `DEAD_DEPS_CACHE_DIR` | Override the cache location (default: `$XDG_CACHE_HOME/dead-deps` or `~/.cache/dead-deps`). |
 | `DEAD_DEPS_DEBUG` | Print stack traces instead of one-line errors. |
 | `NO_COLOR` | Disable colour (any non-empty value). |
 
-stdout carries the report and nothing else. Progress, warnings and errors go to stderr, so `dead-deps --json > out.json` is always valid JSON and `dead-deps | less` is always the report.
+### Exit codes
 
-### As a library
-
-`scan()` is the whole tool in one call, and the pieces underneath it are exported too:
-
-```ts
-import { scan, renderJson } from 'dead-deps';
-
-const result = await scan('./', { all: false, minState: 'unmaintained' });
-console.log(renderJson(result));
-```
-
-`assess()`, `gatherSignals()`, `parseLockfile()`, `loadSuccessors()` and `lookupSuccessor()` are all public, along with every type in `src/types.ts`.
-
-## CI usage
-
-Exit codes are a stable contract:
+A stable contract — gate CI on these.
 
 | Code | Meaning |
 | --- | --- |
-| `0` | Clean — nothing was flagged. |
-| `1` | At least one dependency was flagged. **Gate CI on this.** |
-| `2` | Usage error — unknown flag, bad value, or unreadable path. |
-| `3` | Runtime error — no lockfile found, upstream unreachable. |
+| `0` | Clean. Nothing was flagged. |
+| `1` | At least one dependency was flagged. |
+| `2` | Usage error: unknown flag, bad value, or unreadable path. |
+| `3` | Runtime error: no lockfile found, upstream unreachable. |
 
-A step that fails the build the moment a deprecated dependency appears:
-
-```yaml
-- name: Check for abandoned dependencies
-  run: npx --yes dead-deps --min-state deprecated --limit 50 --quiet
-  env:
-    # Optional. Puts the job in ecosyste.ms' polite pool.
-    DEAD_DEPS_CONTACT: dev@example.com
-```
-
-One caveat worth knowing before you gate on this: a package whose upstream lookups fail does not fail the scan. It is assessed as `unknown` and the run reports how many sources it could not read, in the warnings on stderr and in the JSON. A totally offline job can therefore still exit `0` — so if a green build must mean "we really checked", read `warnings` from the JSON rather than the exit code alone.
-
-If you would rather report than block, keep the JSON and let the job pass:
-
-```yaml
-- name: Dependency health report
-  run: npx --yes dead-deps --all --min-state unmaintained --limit 200 --json > dead-deps.json
-  continue-on-error: true
-
-- uses: actions/upload-artifact@v4
-  with:
-    name: dead-deps
-    path: dead-deps.json
-```
-
-The JSON is versioned (`schemaVersion: 1`) and deterministic apart from its `generatedAt` timestamp: same scan, same bytes. Adding a field is not a breaking change, so ignore keys you do not recognise.
-
-## MCP server
-
-Coding agents are confidently wrong about package names. Ask one what replaced a dead library and it will answer from training data with a cutoff, in a registry where anyone can publish — and a plausible-sounding package name that does not exist is not a harmless mistake. It is the entry point for a **slopsquatting** supply-chain attack, where attackers watch for the names models invent and publish them for real.
-
-The MCP server exists so an agent can look the answer up instead of remembering it. Every response carries evidence URLs, and when there is no curated record the server says so and names nothing — which is the correct answer, and the reason to trust the ones it does give.
-
-| Tool | What it does |
-| --- | --- |
-| `scan_lockfile` | Reads a real lockfile from disk and returns a sourced maintenance verdict per dependency, worst first. Same JSON contract as `--json`. |
-| `check_package` | Assesses one npm package by name: state, 0–100 score, confidence, full evidence, curated successor. Doubles as an existence check, which catches hallucinated and typosquatted names. |
-| `find_successor` | Looks a package up in the curated succession dataset. Runs entirely offline against local data. Returns nothing rather than guessing. |
-
-Add it to Claude Code with one command:
+### Examples
 
 ```console
-claude mcp add dead-deps -- npx -y -p dead-deps dead-deps-mcp
+# Scan this project's direct dependencies and show the worst few
+$ dead-deps
+
+# Sweep the whole tree and report only what is clearly no longer maintained
+$ dead-deps --all --min-state unmaintained --limit 20
+
+# Scan one workspace and keep the machine-readable report
+$ dead-deps ./services/api --json > dead-deps.json
+
+# A CI gate: exits 1 the moment anything deprecated or worse turns up
+$ dead-deps --min-state deprecated --quiet
 ```
 
-Or by hand. Claude Code (`.mcp.json` in a project, `~/.claude.json` for a user) and Cursor (`.cursor/mcp.json` or `~/.cursor/mcp.json`) share the same shape:
+---
 
-```json
+## Use it in CI
+
+```yaml
+name: dependency health
+
+on:
+  pull_request:
+  schedule:
+    - cron: '0 6 * * 1' # Mondays — abandonment is a slow-moving problem
+
+jobs:
+  dead-deps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check for abandoned dependencies
+        run: npx dead-deps --min-state deprecated --limit 20
+        env:
+          DEAD_DEPS_CONTACT: you@example.com
+```
+
+The step fails when anything `deprecated` or worse is found. Start with `--min-state deprecated` — it only fires on facts stated by the registry or the maintainers, so it is the setting least likely to argue with you. Tighten to `unmaintained` once the obvious ones are cleared.
+
+---
+
+## MCP server for AI agents
+
+Ask a coding agent "what replaced `request`?" and it will answer from memory — confidently, and sometimes with a package name that does not exist. That failure mode has a name, **slopsquatting**, and attackers register the hallucinated names.
+
+This MCP server exists so an agent can look the answer up instead of recalling it, and get evidence URLs back.
+
+```jsonc
+// Claude Code — .mcp.json
 {
   "mcpServers": {
     "dead-deps": {
       "command": "npx",
-      "args": ["-y", "-p", "dead-deps", "dead-deps-mcp"],
-      "env": {
-        "DEAD_DEPS_CONTACT": "you@example.com"
-      }
+      "args": ["-y", "dead-deps-mcp"]
     }
   }
 }
 ```
 
-`-p dead-deps` is required: the binary is `dead-deps-mcp` but the package it lives in is `dead-deps`. With a global install (`npm i -g dead-deps`) the command is simply `"command": "dead-deps-mcp", "args": []`.
+```jsonc
+// Cursor — .cursor/mcp.json
+{
+  "mcpServers": {
+    "dead-deps": {
+      "command": "npx",
+      "args": ["-y", "dead-deps-mcp"]
+    }
+  }
+}
+```
 
-`DEAD_DEPS_CONTACT` is optional. It is sent as a `User-Agent` contact to ecosyste.ms, which puts requests in their polite pool. Nothing else is transmitted, and the server writes only to a local HTTP cache.
+| Tool | What it does |
+| --- | --- |
+| `scan_lockfile` | Reads a real lockfile and returns verified maintenance verdicts for its dependencies. |
+| `check_package` | Assesses one npm package: state, score, confidence, and evidence with URLs. |
+| `find_successor` | Looks up what replaced a package in the curated dataset. |
 
-## The dataset
+`find_successor` is the point of it. When there is no curated record it **says so** rather than inventing a plausible package name. The restraint is the feature: an agent that gets "no verified successor on record" writes better code than one that gets a confident hallucination.
 
-[`data/successors.yaml`](./data/successors.yaml) is a curated map from packages that stopped being maintained to whatever actually succeeded them. Every row is checked by a human against primary sources — a deprecation notice, a maintainer statement, an archived repository, a release note, an official migration guide. Machine-generated guesses do not belong in it, and neither do rows about small finished packages: being quiet is not being abandoned.
+---
 
-The dataset is small on purpose. It is browsable at [mekkadev.github.io/dead-deps](https://mekkadev.github.io/dead-deps/), one page per package, so "what replaced `request`" has an answer you can read and check without installing anything.
+## Use it as a library
 
-A maintained fork is only one of six ways a package gets succeeded, and not the most common:
+```ts
+import { scan, renderJson, assess, gatherSignals, HttpClient } from 'dead-deps';
 
-| `type` | Meaning | Example |
-| --- | --- | --- |
-| `fork` | The community forked the original and carried it on. | `faker` → `@faker-js/faker` |
-| `rename` | Same project, published under a new name or scope. | `istanbul` → `nyc` |
-| `replacement` | An unrelated project the ecosystem migrated to. | `request` → `undici` |
-| `absorbed` | The capability moved into the platform or stdlib. | `left-pad` → `String.prototype.padStart` |
-| `self-declared` | The original maintainers named the successor themselves. | `moment` → `luxon` |
-| `reimplementation` | The same idea rebuilt from scratch. | `node-sass` → `sass` |
+const result = await scan('./', { all: false, limit: 10, contact: 'you@example.com' });
 
-Roughly a fifth of real successions do not point at a package at all, so every row also carries a `toKind` of `package`, `platform` or `none`. "Delete the dependency, the language does this now" is a better answer than any package name, and forcing `String.prototype.padStart` into a package field would make the tool recommend installing something that does not exist.
+for (const finding of result.findings) {
+  console.log(finding.dependency.name, finding.assessment.state);
+  for (const evidence of finding.assessment.evidence) {
+    console.log('  ', evidence.label, evidence.url ?? '');
+  }
+  if (finding.successor) {
+    console.log('  →', finding.successor.to, `(${finding.successor.type})`);
+  }
+}
+```
 
-**Contributing a row.** Open a [successor report](https://github.com/mekkadev/dead-deps/issues/new?template=successor-report.md) with the primary sources, or send a pull request adding the row yourself. The field-by-field schema is [`data/SCHEMA.md`](./data/SCHEMA.md) and the evidence bar is in [CONTRIBUTING.md](./CONTRIBUTING.md). One rule above all others: at least one evidence URL must be a primary source. Blog posts and Stack Overflow answers are supporting evidence, never the only evidence.
+Assess a single package without a lockfile:
 
-## What this does NOT do
+```ts
+const http = new HttpClient({ contact: 'you@example.com', cacheTtlHours: 24, noCache: false, concurrency: 8 });
+const assessment = assess(await gatherSignals(http, 'request'));
+```
 
-Stating the limits plainly is cheaper than having you discover them.
+Every type is exported and documented in [`src/types.ts`](./src/types.ts).
 
-- **npm only.** No PyPI, no crates.io, no Go modules, no private or self-hosted registries. A package your registry serves but npm has never heard of comes back `unknown`.
-- **Direct dependencies by default.** `--all` will sweep the whole tree, but the default is deliberate: a verdict on a transitive package you cannot upgrade is noise, not information.
-- **It does not know whether you actually import anything.** It reads the lockfile, not your source. A dependency you stopped using two years ago still gets judged.
-- **Curated coverage is finite.** The succession dataset covers the packages that were worth verifying by hand. No record for a package means no verified successor is known — it does *not* mean the package is fine, and it does not mean one exists that we forgot. Most healthy packages have no row at all.
-- **Upstream indexes lag.** Verdicts rest on the npm registry and ecosyste.ms; repository and issue data can be months behind reality. When it is, the report lowers its confidence and says the data may be stale rather than presenting it as current.
-- **It is not a vulnerability scanner.** Open advisories are one input among many, and only ever in service of the maintenance question. Keep running `npm audit`, Dependabot, or whatever you already trust for CVEs — dead-deps answers "is anyone still home", not "is this exploitable".
-- **It judges maintenance, nothing else.** Not code quality, not licences, not whether the package suits your use case.
+---
 
-## Links
+## The succession dataset
 
-- **Site and package index** — <https://mekkadev.github.io/dead-deps/>
-- **Methodology** — <https://mekkadev.github.io/dead-deps/methodology/>
-- **Calibration** — [`docs/CALIBRATION.md`](./docs/CALIBRATION.md)
-- **Dataset schema** — [`data/SCHEMA.md`](./data/SCHEMA.md)
-- **Contributing** — [CONTRIBUTING.md](./CONTRIBUTING.md)
+[`data/successors.yaml`](./data/successors.yaml) maps packages that stopped being maintained to whatever actually succeeded them. **81 rows, 178 primary-source evidence links**, every one hand-checked. Each row is published as its own page — for example [what replaced `request`](https://mekkadev.github.io/dead-deps/p/request/).
+
+The distribution is the interesting part, because it refutes the assumption the project started from — that finding the **maintained fork** is the job:
+
+| Succession type | Rows | Example |
+| --- | ---: | --- |
+| `rename` | 23 | `koa-router` → `@koa/router` |
+| `self-declared` | 19 | `moment` → `luxon` (named by its own maintainers) |
+| `absorbed` | 15 | `left-pad` → `String.prototype.padStart` |
+| `replacement` | 15 | `request` → `undici` |
+| `fork` | 5 | `faker` → `@faker-js/faker` |
+| `reimplementation` | 4 | `node-sass` → `sass` |
+
+**Forks are the rarest case.** A tool that only looked for the maintained fork would cover 6% of real successions. Six rows point at a platform feature rather than a package at all, where the correct advice is to delete the dependency entirely.
+
+Rows about small, finished, still-working packages are refused outright. The dataset is a map of successions, not a list of packages someone finds unfashionable. The bar for adding one is in [`data/SCHEMA.md`](./data/SCHEMA.md), and [contributions are very welcome](./CONTRIBUTING.md) — a package you personally know is dead is exactly the knowledge this file needs.
+
+---
+
+## How it compares
+
+| | dead-deps | `npm outdated` | depcheck | Renovate / Dependabot | Snyk / Socket |
+| --- | --- | --- | --- | --- | --- |
+| Finds **abandoned** packages | ✅ | ❌ (only behind-latest) | ❌ (only unused) | Partly | ✅ |
+| Distinguishes **finished** from dead | ✅ | — | — | ❌ | ❌ |
+| Names the **successor** | ✅ curated | ❌ | ❌ | ❌ | ❌ |
+| Evidence you can click | ✅ | ❌ | ❌ | Partly | Partly |
+| Runs with no account | ✅ | ✅ | ✅ | ❌ | ❌ |
+| MCP server for agents | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Open source | ✅ MIT | ✅ | ✅ | Partly | ❌ |
+
+These are complements, not competitors. Renovate keeps current dependencies current; dead-deps tells you which ones will never have a newer version to move to.
+
+---
+
+## FAQ
+
+**Is `request` still maintained?** No — it was deprecated in February 2020 and has had no release since. The ecosystem moved to `undici`, which now backs Node's global `fetch()`. [Full evidence →](https://mekkadev.github.io/dead-deps/p/request/)
+
+**What replaced `moment`?** Its own maintainers put it in maintenance mode and named `luxon` as the successor; `date-fns` and `dayjs` are the other common choices, and `Intl.DateTimeFormat` may remove the dependency entirely. [Full evidence →](https://mekkadev.github.io/dead-deps/p/moment/)
+
+**Is there a maintained fork of `faker.js`?** Yes — `@faker-js/faker`, created by the community after the original was withdrawn in January 2022. [Full evidence →](https://mekkadev.github.io/dead-deps/p/faker/)
+
+**Why does it not flag `ms` / `inherits` / `once`?** Because they are finished, not abandoned. See [quiet is not dead](#why-this-is-hard-quiet-is-not-dead) — keeping them out of the report is the tool's main design goal, and it is measured.
+
+**Why did it flag something I know is fine?** That is a bug worth reporting, and the [false-positive issue template](https://github.com/mekkadev/dead-deps/issues/new?template=false-positive.md) feeds straight into the calibration corpus. Please file it.
+
+**Does it upload my code?** No. It reads lockfile entries — package names and versions — and queries two public indexes about those names. Nothing else leaves your machine, and dependency code is never executed. See [`SECURITY.md`](./SECURITY.md).
+
+**Does it need an API key?** No. Both upstreams are public and unauthenticated. Setting `--contact` is optional politeness that gets you better rate limits.
+
+**Does it support Python, Go, Rust?** Not yet — npm only, deliberately. Each ecosystem multiplies the metadata work, and one ecosystem done properly beats four done shallowly.
+
+---
+
+## What this does not do
+
+- **It is not a vulnerability scanner.** Advisories are read as evidence of abandonment, not as a CVE report. Use `npm audit`, Snyk or Socket for that.
+- **It does not decide for you.** An unmaintained dependency that is pinned, vendored and working may be perfectly rational to keep. The tool reports state; the judgement is yours.
+- **Coverage of the dataset is finite.** 81 successions is a start, not the long tail. A package with no curated row still gets a verdict, just no successor.
+- **Upstream indexes lag.** Issue and repository data can be months old. When it is, the report says so and lowers its confidence rather than pretending.
+- **npm only.** See the FAQ.
+
+---
+
+## Contributing
+
+The most valuable contribution is **a succession row you know to be true** — see [`CONTRIBUTING.md`](./CONTRIBUTING.md) and [`data/SCHEMA.md`](./data/SCHEMA.md). Second most valuable is a false-positive report.
+
+```console
+$ git clone https://github.com/mekkadev/dead-deps && cd dead-deps
+$ npm install
+$ npm test          # 163 tests, no network
+$ npm run typecheck
+$ npm run build
+$ npm run site      # build the static site into site/dist
+$ npm run calibrate # score the detector against the labelled corpus
+```
+
+The codebase is mapped in [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md).
+
+---
 
 ## Prior art and acknowledgements
 
-dead-deps is built on [**ecosyste.ms**](https://ecosyste.ms/), Andrew Nesbitt's open dataset and API for open-source package ecosystems. The release history, repository metadata, issue and pull-request responsiveness, maintainer activity, dependent counts and advisories behind every verdict here come from their public indexes, offered freely and without an API key. If you find this tool useful, [support them](https://opencollective.com/ecosystems) — this project would be a pile of scraping code without their work. The [npm registry](https://registry.npmjs.org/) supplies deprecation notices and release timestamps.
+Built on **[ecosyste.ms](https://ecosyste.ms/)** — an open, free, no-key API covering packages, repositories, commits, issues and advisories across ecosystems. This project would be a web scraper without it. It is run by Andrew Nesbitt, who also built Libraries.io, and it deserves your [sponsorship](https://github.com/sponsors/andrew) more than this repo deserves your star.
 
-Thanks also to the maintainers of every package named in the dataset. Abandoning a project is normal, usually unpaid, and no criticism is intended by a row here. "No longer maintained" is a fact about a package, not a judgement of a person.
+Also standing on **[the npm registry](https://registry.npmjs.org/)** for authoritative deprecation data, and on the maintainers of the 81 packages in the dataset — most of whom did years of unpaid work and then said so plainly when they stopped. Abandonment is normal. This tool exists to route around it, not to shame anyone for it.
+
+Related tools worth knowing: [`depcheck`](https://github.com/depcheck/depcheck) for unused dependencies, [Renovate](https://github.com/renovatebot/renovate) for keeping current ones current, [OSV](https://osv.dev/) and [deps.dev](https://deps.dev/) for vulnerability and dependency-graph data.
+
+---
 
 ## License
 
-[MIT](./LICENSE)
+[MIT](./LICENSE) © mekkadev
