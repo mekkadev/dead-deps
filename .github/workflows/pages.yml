@@ -1,0 +1,76 @@
+name: Pages
+
+# Builds the static site from data/successors.yaml and publishes it to
+# GitHub Pages. The build is dependency-free beyond the project's own runtime
+# deps, so this is just: install, generate, upload the directory.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - 'data/successors.yaml'
+      - 'src/types.ts'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+# GITHUB_TOKEN needs to read the repo, write the Pages artifact, and mint the
+# OIDC token deploy-pages exchanges for a deployment.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time. Queued runs are not cancelled: a half-published
+# site is worse than a slightly stale one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build site
+        # base_url carries the real deployment origin and sub-path, so canonical
+        # URLs, the sitemap and every internal link stay correct even on a
+        # custom domain or a renamed repository.
+        env:
+          DEAD_DEPS_SITE_URL: ${{ steps.pages.outputs.base_url }}
+        run: npm run site
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/dist
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
