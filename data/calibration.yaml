@@ -1,0 +1,668 @@
+# Calibration corpus — hand-labelled ground truth for the detector.
+#
+# WHAT THIS IS
+# ------------
+# A deliberately adversarial set of real npm packages, each with a ground-truth
+# `label` drawn from `MaintenanceState` in `src/types.ts`. It is the yardstick
+# the detector is scored against: run the scorer over these names, compare its
+# verdict to `label`, and the resulting precision/recall numbers are what the
+# README publishes. Because those numbers are published, every label here has
+# to survive an outside reader checking it, so every row carries a one-sentence
+# `rationale` and at least one primary source under `evidence`.
+#
+# WHY THE `stable-complete` BUCKET EXISTS
+# ---------------------------------------
+# This is the most important bucket in the file, and it exists specifically to
+# catch false positives.
+#
+# The naive way to detect an abandoned package is to read the date of its last
+# release and call anything old "dead". That heuristic scores well on obviously
+# dead projects and is still worthless, because the npm dependency graph rests
+# on a layer of tiny packages that were *finished* years ago: `once`, `wrappy`,
+# `util-deprecate`, `imurmurhash`. They do one small thing, they do it
+# correctly, there is nothing left to add, and so nobody commits to them. They
+# are indistinguishable from abandoned packages on release date alone, and they
+# are downloaded hundreds of millions of times a week. A tool that tells its
+# user to migrate off `inherits` has not found a problem; it has become one.
+#
+# So the `stable-complete` rows are not filler. They are the trap. A detector
+# that flags them fails calibration no matter how well it does elsewhere, and
+# the false-positive rate over this bucket is reported separately.
+#
+# The `deprecated` bucket contains two rows — `code-point-at` and
+# `path-is-absolute` — that are the same trap inverted: micro-libraries that
+# look exactly like the `stable-complete` set (tiny, ancient, sindresorhus,
+# millions of downloads) but that carry a real npm deprecation notice and an
+# archived repository. A detector cannot pass this corpus by learning "small
+# and old means fine" either.
+#
+# LABEL DEFINITIONS
+# -----------------
+#   active           Shipping releases and taking commits now.
+#   stable-complete  Finished. Quiet because it is done, not because it is
+#                    dead. No deprecation, no archived repo, still correct.
+#   low-activity     Really maintained, just slowly: a trickle of commits, long
+#                    gaps between releases, often a bus factor of one.
+#   unmaintained     Genuinely dead — no releases and effectively no commits for
+#                    years — but never formally deprecated, so nothing in the
+#                    registry warns you.
+#   deprecated       Formally retired: an npm deprecation notice on the latest
+#                    version, or an archived source repository, or both.
+#
+# METHOD
+# ------
+# Every row was checked on 2026-08-04 against two sources: the npm registry
+# document (`dist-tags.latest`, that version's `deprecated` field, and its
+# publish time from `time`) and the ecosyste.ms package/repository/commits APIs
+# (archived flag, last push, commits in the trailing year). Release dates and
+# commit counts quoted in the rationales come from those two reads. Where the
+# two disagreed — ecosyste.ms mirrors lag by months — the npm registry was
+# treated as authoritative for release facts and the repository host for commit
+# facts.
+#
+# MAINTENANCE
+# -----------
+# Labels drift. `low-activity` becomes `unmaintained`; `unmaintained` acquires a
+# deprecation notice and becomes `deprecated`. Re-verify before quoting the
+# precision numbers in a release, and never edit a label without also editing
+# the rationale and the evidence that justify it.
+#
+# Style: state facts, not judgements. "No releases since 2019" is a fact.
+# "Neglected" is an insult, and maintaining any of these for free was a gift.
+
+# ---------------------------------------------------------------------------
+# active — obviously healthy, should never be flagged
+# ---------------------------------------------------------------------------
+
+- name: express
+  label: active
+  rationale: >-
+    Released 5.2.1 in December 2025 under active OpenJS/Express TC governance,
+    with the repository still taking commits through mid-2026.
+  evidence:
+    - label: "npm registry: express@5.2.1 published 2025-12-01, no deprecation"
+      url: https://registry.npmjs.org/express
+    - label: "expressjs/express repository, actively committed"
+      url: https://github.com/expressjs/express
+
+- name: vite
+  label: active
+  rationale: >-
+    Shipped 8.2.0 in July 2026 on a fast major-release cadence with a large
+    contributor base.
+  evidence:
+    - label: "npm registry: vite@8.2.0 published 2026-07-30, no deprecation"
+      url: https://registry.npmjs.org/vite
+    - label: "vitejs/vite repository and release history"
+      url: https://github.com/vitejs/vite/releases
+
+- name: zod
+  label: active
+  rationale: >-
+    Released 4.4.3 in May 2026 with continuous commit activity on the v4 line.
+  evidence:
+    - label: "npm registry: zod@4.4.3 published 2026-05-04, no deprecation"
+      url: https://registry.npmjs.org/zod
+    - label: "colinhacks/zod repository"
+      url: https://github.com/colinhacks/zod
+
+- name: react
+  label: active
+  rationale: >-
+    Released 19.2.8 in July 2026 and is developed full-time by a funded team at
+    Meta plus outside contributors.
+  evidence:
+    - label: "npm registry: react@19.2.8 published 2026-07-21, no deprecation"
+      url: https://registry.npmjs.org/react
+    - label: "facebook/react repository"
+      url: https://github.com/facebook/react
+
+- name: typescript
+  label: active
+  rationale: >-
+    Released 7.0.2 in July 2026 on Microsoft's published quarterly release
+    schedule.
+  evidence:
+    - label: "npm registry: typescript@7.0.2 published 2026-07-08, no deprecation"
+      url: https://registry.npmjs.org/typescript
+    - label: "microsoft/TypeScript repository"
+      url: https://github.com/microsoft/TypeScript
+
+- name: eslint
+  label: active
+  rationale: >-
+    Released 10.8.0 in July 2026 and continues to publish on its long-running
+    fortnightly cadence under OpenJS governance.
+  evidence:
+    - label: "npm registry: eslint@10.8.0 published 2026-07-24, no deprecation"
+      url: https://registry.npmjs.org/eslint
+    - label: "eslint/eslint repository and releases"
+      url: https://github.com/eslint/eslint/releases
+
+- name: vitest
+  label: active
+  rationale: >-
+    Released 4.1.10 in July 2026 with frequent patch releases tracking Vite
+    itself.
+  evidence:
+    - label: "npm registry: vitest@4.1.10 published 2026-07-06, no deprecation"
+      url: https://registry.npmjs.org/vitest
+    - label: "vitest-dev/vitest repository"
+      url: https://github.com/vitest-dev/vitest
+
+- name: fastify
+  label: active
+  rationale: >-
+    Released 5.11.2 on 3 August 2026 — the day before this corpus was
+    verified — with an active maintainer team.
+  evidence:
+    - label: "npm registry: fastify@5.11.2 published 2026-08-03, no deprecation"
+      url: https://registry.npmjs.org/fastify
+    - label: "fastify/fastify repository"
+      url: https://github.com/fastify/fastify
+
+- name: axios
+  label: active
+  rationale: >-
+    Released 1.19.0 in July 2026 with commits landing in the repository the same
+    week.
+  evidence:
+    - label: "npm registry: axios@1.19.0 published 2026-07-29, no deprecation"
+      url: https://registry.npmjs.org/axios
+    - label: "axios/axios repository, last push 2026-07-29"
+      url: https://github.com/axios/axios
+
+- name: tailwindcss
+  label: active
+  rationale: >-
+    Released 4.3.3 in July 2026 and is maintained commercially by Tailwind Labs.
+  evidence:
+    - label: "npm registry: tailwindcss@4.3.3 published 2026-07-16, no deprecation"
+      url: https://registry.npmjs.org/tailwindcss
+    - label: "tailwindlabs/tailwindcss repository"
+      url: https://github.com/tailwindlabs/tailwindcss
+
+- name: esbuild
+  label: active
+  rationale: >-
+    Released 0.28.1 in June 2026 and remains under steady single-vendor
+    development despite the pre-1.0 version number.
+  evidence:
+    - label: "npm registry: esbuild@0.28.1 published 2026-06-11, no deprecation"
+      url: https://registry.npmjs.org/esbuild
+    - label: "evanw/esbuild changelog"
+      url: https://github.com/evanw/esbuild/blob/main/CHANGELOG.md
+
+- name: prettier
+  label: active
+  rationale: >-
+    Released 3.9.6 in July 2026 with the repository pushed within the last week.
+  evidence:
+    - label: "npm registry: prettier@3.9.6 published 2026-07-21, no deprecation"
+      url: https://registry.npmjs.org/prettier
+    - label: "prettier/prettier repository"
+      url: https://github.com/prettier/prettier
+
+# ---------------------------------------------------------------------------
+# stable-complete — the false-positive traps. Flagging any of these is a bug.
+# ---------------------------------------------------------------------------
+
+- name: ms
+  label: stable-complete
+  rationale: >-
+    A millisecond-string parser whose last release was 2.1.3 in December 2020,
+    with no deprecation and a live repository — the format it parses has not
+    changed, so there is nothing to release.
+  evidence:
+    - label: "npm registry: ms@2.1.3 published 2020-12-08, no deprecation on any of 32 versions"
+      url: https://registry.npmjs.org/ms
+    - label: "vercel/ms repository, not archived, still receiving commits"
+      url: https://github.com/vercel/ms
+    - label: "ecosyste.ms: ~2.1B downloads, 5,545 dependent packages"
+      url: https://packages.ecosyste.ms/api/v1/registries/npmjs.org/packages/ms
+
+- name: inherits
+  label: stable-complete
+  rationale: >-
+    Twenty lines wrapping `Object.setPrototypeOf` for old Node, last released
+    2.0.4 in June 2019 with no deprecation and a repository that is still
+    touched — quiet because the API it shims is frozen.
+  evidence:
+    - label: "npm registry: inherits@2.0.4 published 2019-06-19, no deprecation"
+      url: https://registry.npmjs.org/inherits
+    - label: "isaacs/inherits repository, not archived"
+      url: https://github.com/isaacs/inherits
+
+- name: once
+  label: stable-complete
+  rationale: >-
+    Last released 1.4.0 in September 2016 and still correct: wrapping a function
+    so it runs once is a finished problem, and the repository is neither
+    archived nor deprecated.
+  evidence:
+    - label: "npm registry: once@1.4.0 published 2016-09-06, no deprecation"
+      url: https://registry.npmjs.org/once
+    - label: "isaacs/once repository, not archived, pushed 2025-10-25"
+      url: https://github.com/isaacs/once
+
+- name: wrappy
+  label: stable-complete
+  rationale: >-
+    A single function-wrapping helper last released 1.0.2 in May 2016; ten years
+    without a release reflects completeness, not abandonment, and there is no
+    deprecation notice.
+  evidence:
+    - label: "npm registry: wrappy@1.0.2 published 2016-05-17, no deprecation"
+      url: https://registry.npmjs.org/wrappy
+    - label: "isaacs/wrappy repository, not archived"
+      url: https://github.com/isaacs/wrappy
+
+- name: isarray
+  label: stable-complete
+  rationale: >-
+    An `Array.isArray` shim last released 2.0.5 in July 2019, with no
+    deprecation and a repository that still saw commits in the past year.
+  evidence:
+    - label: "npm registry: isarray@2.0.5 published 2019-07-08, no deprecation"
+      url: https://registry.npmjs.org/isarray
+    - label: "juliangruber/isarray repository, not archived, pushed 2026-07-21"
+      url: https://github.com/juliangruber/isarray
+
+- name: concat-map
+  label: stable-complete
+  rationale: >-
+    A one-line flat-map helper whose only release since 2013 was a 0.0.2
+    housekeeping publish in October 2022 after ljharb adopted it; no deprecation
+    and the repository is live.
+  evidence:
+    - label: "npm registry: concat-map@0.0.2 published 2022-10-12, no deprecation"
+      url: https://registry.npmjs.org/concat-map
+    - label: "ljharb/concat-map repository, not archived"
+      url: https://github.com/ljharb/concat-map
+
+- name: safe-buffer
+  label: stable-complete
+  rationale: >-
+    A Buffer-constructor shim last released 5.2.1 in May 2020 with no
+    deprecation; the Node API it wraps is stable, so the package is finished.
+  evidence:
+    - label: "npm registry: safe-buffer@5.2.1 published 2020-05-10, no deprecation"
+      url: https://registry.npmjs.org/safe-buffer
+    - label: "feross/safe-buffer repository, not archived"
+      url: https://github.com/feross/safe-buffer
+
+- name: util-deprecate
+  label: stable-complete
+  rationale: >-
+    Last released 1.0.2 in October 2015 and last committed in 2018, yet carries
+    no deprecation notice and still does its one job in both Node and browsers.
+  evidence:
+    - label: "npm registry: util-deprecate@1.0.2 published 2015-10-07, no deprecation"
+      url: https://registry.npmjs.org/util-deprecate
+    - label: "TooTallNate/util-deprecate repository, not archived"
+      url: https://github.com/TooTallNate/util-deprecate
+
+- name: escape-string-regexp
+  label: stable-complete
+  rationale: >-
+    Last released 5.0.0 in April 2021; the regex metacharacter set it escapes is
+    fixed by the language spec, and the package is neither deprecated nor
+    archived.
+  evidence:
+    - label: "npm registry: escape-string-regexp@5.0.0 published 2021-04-17, no deprecation"
+      url: https://registry.npmjs.org/escape-string-regexp
+    - label: "sindresorhus/escape-string-regexp repository, not archived"
+      url: https://github.com/sindresorhus/escape-string-regexp
+
+- name: fs.realpath
+  label: stable-complete
+  rationale: >-
+    A frozen copy of an old Node `fs.realpath` implementation, released 1.0.0 in
+    June 2016 and deliberately never changed since; not deprecated, repository
+    still touched.
+  evidence:
+    - label: "npm registry: fs.realpath@1.0.0 published 2016-06-15, no deprecation"
+      url: https://registry.npmjs.org/fs.realpath
+    - label: "isaacs/fs.realpath repository, not archived"
+      url: https://github.com/isaacs/fs.realpath
+
+- name: object-assign
+  label: stable-complete
+  rationale: >-
+    An `Object.assign` ponyfill last released 4.1.1 in January 2017 with no
+    deprecation and an unarchived repository, still depended on by over twelve
+    thousand packages.
+  evidence:
+    - label: "npm registry: object-assign@4.1.1 published 2017-01-16, no deprecation"
+      url: https://registry.npmjs.org/object-assign
+    - label: "sindresorhus/object-assign repository, not archived"
+      url: https://github.com/sindresorhus/object-assign
+    - label: "ecosyste.ms: 12,624 dependent packages"
+      url: https://packages.ecosyste.ms/api/v1/registries/npmjs.org/packages/object-assign
+
+- name: escape-html
+  label: stable-complete
+  rationale: >-
+    Escapes five HTML characters; last released 1.0.3 in September 2015, carries
+    no deprecation, and the set of characters requiring escaping has not
+    changed.
+  evidence:
+    - label: "npm registry: escape-html@1.0.3 published 2015-09-01, no deprecation"
+      url: https://registry.npmjs.org/escape-html
+    - label: "component/escape-html repository, not archived"
+      url: https://github.com/component/escape-html
+
+- name: imurmurhash
+  label: stable-complete
+  rationale: >-
+    An incremental MurmurHash3 implementation last released 0.1.4 in August 2013
+    with no commits since — the algorithm is a fixed published specification, and
+    the package remains undeprecated with hundreds of millions of downloads.
+  evidence:
+    - label: "npm registry: imurmurhash@0.1.4 published 2013-08-24, no deprecation"
+      url: https://registry.npmjs.org/imurmurhash
+    - label: "jensyt/imurmurhash-js repository, not archived, last push 2013-08-24"
+      url: https://github.com/jensyt/imurmurhash-js
+    - label: "ecosyste.ms: ~625M downloads, 1,815 dependent packages"
+      url: https://packages.ecosyste.ms/api/v1/registries/npmjs.org/packages/imurmurhash
+
+# ---------------------------------------------------------------------------
+# low-activity — really maintained, just slowly
+# ---------------------------------------------------------------------------
+
+- name: moment
+  label: low-activity
+  rationale: >-
+    The maintainers declared moment a legacy project in maintenance mode and its
+    last release was 2.30.1 in December 2023, but the repository still took
+    seven commits from five people in the past year, so it is slow rather than
+    dead.
+  evidence:
+    - label: "npm registry: moment@2.30.1 published 2023-12-27, no deprecation"
+      url: https://registry.npmjs.org/moment
+    - label: "Maintainers' project status: 'Moment.js is a legacy project, now in maintenance mode'"
+      url: https://momentjs.com/docs/#/-project-status/
+    - label: "ecosyste.ms commits: 7 commits in the trailing year, repository not archived"
+      url: https://commits.ecosyste.ms/api/v1/hosts/GitHub/repositories/moment/moment
+
+- name: grunt
+  label: low-activity
+  rationale: >-
+    Released 1.6.3 in July 2026 but only took nine commits in the past year —
+    still shipping, at a fraction of its former pace.
+  evidence:
+    - label: "npm registry: grunt@1.6.3 published 2026-07-28, no deprecation"
+      url: https://registry.npmjs.org/grunt
+    - label: "ecosyste.ms commits: 9 commits in the trailing year"
+      url: https://commits.ecosyste.ms/api/v1/hosts/GitHub/repositories/gruntjs/grunt
+
+- name: handlebars
+  label: low-activity
+  rationale: >-
+    Released 4.7.9 in March 2026 on the back of 33 commits in the past year,
+    which is real maintenance at a low volume for a package with 15k dependents.
+  evidence:
+    - label: "npm registry: handlebars@4.7.9 published 2026-03-26, no deprecation"
+      url: https://registry.npmjs.org/handlebars
+    - label: "ecosyste.ms commits: 33 commits in the trailing year"
+      url: https://commits.ecosyste.ms/api/v1/hosts/GitHub/repositories/handlebars-lang/handlebars.js
+
+- name: underscore
+  label: low-activity
+  rationale: >-
+    Released 1.13.8 in February 2026 with 23 commits from three people in the
+    trailing year — maintained, but essentially in upkeep mode now that its API
+    is in the language.
+  evidence:
+    - label: "npm registry: underscore@1.13.8 published 2026-02-19, no deprecation"
+      url: https://registry.npmjs.org/underscore
+    - label: "ecosyste.ms commits: 23 commits, 3 committers in the trailing year"
+      url: https://commits.ecosyste.ms/api/v1/hosts/GitHub/repositories/jashkenas/underscore
+
+- name: morgan
+  label: low-activity
+  rationale: >-
+    Released 1.11.0 in June 2026 with 15 commits in the past year, typical of
+    the Express middleware packages that get security and compatibility fixes
+    but no new features.
+  evidence:
+    - label: "npm registry: morgan@1.11.0 published 2026-06-02, no deprecation"
+      url: https://registry.npmjs.org/morgan
+    - label: "ecosyste.ms commits: 15 commits in the trailing year"
+      url: https://commits.ecosyste.ms/api/v1/hosts/GitHub/repositories/expressjs/morgan
+
+- name: ejs
+  label: low-activity
+  rationale: >-
+    Released 6.0.1 in May 2026, but all 26 commits in the past year came from a
+    single committer, making it a maintained project with a bus factor of one.
+  evidence:
+    - label: "npm registry: ejs@6.0.1 published 2026-05-26, no deprecation"
+      url: https://registry.npmjs.org/ejs
+    - label: "ecosyste.ms commits: 26 commits from 1 committer in the trailing year"
+      url: https://commits.ecosyste.ms/api/v1/hosts/GitHub/repositories/mde/ejs
+
+# ---------------------------------------------------------------------------
+# unmaintained — genuinely dead, but nothing in the registry says so
+# ---------------------------------------------------------------------------
+
+- name: bluebird
+  label: unmaintained
+  rationale: >-
+    Last released 3.7.2 in November 2019 with zero commits in the trailing year
+    and a single remaining maintainer, yet no deprecation notice warns the
+    thirty thousand packages that depend on it.
+  evidence:
+    - label: "npm registry: bluebird@3.7.2 published 2019-11-28, no deprecation field"
+      url: https://registry.npmjs.org/bluebird
+    - label: "ecosyste.ms commits: 0 commits, 0 committers in the trailing year"
+      url: https://commits.ecosyste.ms/api/v1/hosts/GitHub/repositories/petkaantonov/bluebird
+    - label: "petkaantonov/bluebird repository, not archived, last push 2024-11"
+      url: https://github.com/petkaantonov/bluebird
+
+- name: colors
+  label: unmaintained
+  rationale: >-
+    The `latest` tag still points at 1.4.0 from September 2019; the only later
+    publishes were the January 2022 1.4.44-liberty-2 / 1.4.1 / 1.4.2 sequence
+    around the author's intentional sabotage of the package, and the repository
+    has taken no commits since.
+  evidence:
+    - label: "npm registry: colors@1.4.0 is latest (2019-09-22); 1.4.44-liberty-2 published 2022-01-08; no deprecation field"
+      url: https://registry.npmjs.org/colors
+    - label: "ecosyste.ms commits: 0 commits in the trailing year"
+      url: https://commits.ecosyste.ms/api/v1/hosts/GitHub/repositories/Marak/colors.js
+    - label: "Marak/colors.js repository, not archived"
+      url: https://github.com/Marak/colors.js
+
+- name: enzyme
+  label: unmaintained
+  rationale: >-
+    Last released 3.11.0 in December 2019 and never shipped an adapter for React
+    18 or later, so it cannot be used with supported React versions, but it
+    carries no npm deprecation.
+  evidence:
+    - label: "npm registry: enzyme@3.11.0 published 2019-12-20, no deprecation field"
+      url: https://registry.npmjs.org/enzyme
+    - label: "enzymejs/enzyme repository, not archived, 12 commits in the trailing year and no release in six years"
+      url: https://github.com/enzymejs/enzyme
+
+- name: jshint
+  label: unmaintained
+  rationale: >-
+    Last released 2.13.6 in November 2022 with zero commits in the trailing year
+    and 465 open issues; nothing in the registry marks it as retired.
+  evidence:
+    - label: "npm registry: jshint@2.13.6 published 2022-11-11, no deprecation field"
+      url: https://registry.npmjs.org/jshint
+    - label: "ecosyste.ms commits: 0 commits, 0 committers in the trailing year"
+      url: https://commits.ecosyste.ms/api/v1/hosts/GitHub/repositories/jshint/jshint
+
+- name: browserify
+  label: unmaintained
+  rationale: >-
+    Released 17.0.1 in October 2024 as a one-off after four years of silence,
+    and has taken zero commits in the trailing year despite thirty thousand
+    dependent packages.
+  evidence:
+    - label: "npm registry: browserify@17.0.1 published 2024-10-03 (previous release 17.0.0, 2020-10-10); no deprecation field"
+      url: https://registry.npmjs.org/browserify
+    - label: "ecosyste.ms commits: 0 commits in the trailing year"
+      url: https://commits.ecosyste.ms/api/v1/hosts/GitHub/repositories/browserify/browserify
+
+- name: coffeescript
+  label: unmaintained
+  rationale: >-
+    Last released 2.7.0 in April 2022 with zero commits in the trailing year;
+    the compiler still works, but nobody is fixing it and no deprecation notice
+    says so.
+  evidence:
+    - label: "npm registry: coffeescript@2.7.0 published 2022-04-24, no deprecation field"
+      url: https://registry.npmjs.org/coffeescript
+    - label: "ecosyste.ms commits: 0 commits in the trailing year"
+      url: https://commits.ecosyste.ms/api/v1/hosts/GitHub/repositories/jashkenas/coffeescript
+
+- name: nightmare
+  label: unmaintained
+  rationale: >-
+    Last released 3.0.2 in April 2019, zero commits in the trailing year, and
+    the repository now lives in Segment's `segment-boneyard` organisation — an
+    explicit signal of retirement that never reached npm.
+  evidence:
+    - label: "npm registry: nightmare@3.0.2 published 2019-04-27, no deprecation field"
+      url: https://registry.npmjs.org/nightmare
+    - label: "Repository moved to segment-boneyard, 0 commits in the trailing year"
+      url: https://github.com/segment-boneyard/nightmare
+
+- name: underscore.string
+  label: unmaintained
+  rationale: >-
+    Last released 3.3.6 in January 2022 with one commit in the trailing year and
+    121 open issues; effectively stopped, but not deprecated.
+  evidence:
+    - label: "npm registry: underscore.string@3.3.6 published 2022-01-23, no deprecation field"
+      url: https://registry.npmjs.org/underscore.string
+    - label: "ecosyste.ms commits: 1 commit in the trailing year"
+      url: https://commits.ecosyste.ms/api/v1/hosts/GitHub/repositories/esamattis/underscore.string
+
+# ---------------------------------------------------------------------------
+# deprecated — formally retired on npm, or the repository is archived
+# ---------------------------------------------------------------------------
+
+- name: request
+  label: deprecated
+  rationale: >-
+    Carries an explicit npm deprecation notice on 2.88.2 pointing at the
+    maintainers' announcement issue, and has had no release since February 2020.
+  evidence:
+    - label: "npm deprecation on request@2.88.2: 'request has been deprecated, see https://github.com/request/request/issues/3142'"
+      url: https://registry.npmjs.org/request
+    - label: "Maintainer announcement: request is deprecated"
+      url: https://github.com/request/request/issues/3142
+
+- name: node-sass
+  label: deprecated
+  rationale: >-
+    npm deprecation on 9.0.0 reads 'Node Sass is no longer supported. Please use
+    `sass` or `sass-embedded` instead.'
+  evidence:
+    - label: "npm deprecation on node-sass@9.0.0"
+      url: https://registry.npmjs.org/node-sass
+    - label: "sass/node-sass repository"
+      url: https://github.com/sass/node-sass
+
+- name: tslint
+  label: deprecated
+  rationale: >-
+    Both signals fire: 6.1.3 carries an npm deprecation in favour of ESLint, and
+    the palantir/tslint repository is archived.
+  evidence:
+    - label: "npm deprecation on tslint@6.1.3: 'TSLint has been deprecated in favor of ESLint'"
+      url: https://registry.npmjs.org/tslint
+    - label: "Deprecation announcement issue"
+      url: https://github.com/palantir/tslint/issues/4534
+    - label: "palantir/tslint repository, archived"
+      url: https://github.com/palantir/tslint
+
+- name: protractor
+  label: deprecated
+  rationale: >-
+    The Angular team deprecated Protractor with an end-of-life date of summer
+    2023; the npm deprecation notice is on 7.0.0 and the repository is archived.
+  evidence:
+    - label: "npm deprecation on protractor@7.0.0: 'Protractor is deprecated and will reach end-of-life by Summer 2023'"
+      url: https://registry.npmjs.org/protractor
+    - label: "angular/protractor repository, archived"
+      url: https://github.com/angular/protractor
+
+- name: istanbul
+  label: deprecated
+  rationale: >-
+    npm deprecation on 0.4.5 states the module is no longer maintained and
+    directs users to nyc; last released August 2016.
+  evidence:
+    - label: "npm deprecation on istanbul@0.4.5: 'This module is no longer maintained, try this instead: npm i nyc'"
+      url: https://registry.npmjs.org/istanbul
+    - label: "Istanbul integrations / successor documentation"
+      url: https://istanbul.js.org/integrations
+
+- name: babel-eslint
+  label: deprecated
+  rationale: >-
+    Renamed to @babel/eslint-parser; 10.1.0 carries an npm deprecation saying it
+    will receive no further updates, and the repository is archived.
+  evidence:
+    - label: "npm deprecation on babel-eslint@10.1.0: 'babel-eslint is now @babel/eslint-parser. This package will no longer receive updates.'"
+      url: https://registry.npmjs.org/babel-eslint
+    - label: "babel/babel-eslint repository, archived"
+      url: https://github.com/babel/babel-eslint
+
+- name: q
+  label: deprecated
+  rationale: >-
+    Adversarial case for the deprecation reader: 1.5.1 carries a formal npm
+    deprecation, but the message is the author's graceful retirement note
+    telling users native promises are now sufficient, not a defect warning.
+  evidence:
+    - label: "npm deprecation on q@1.5.1: 'They can almost certainly migrate to the native JavaScript promise now.'"
+      url: https://registry.npmjs.org/q
+    - label: "kriskowal/q repository"
+      url: https://github.com/kriskowal/q
+
+- name: code-point-at
+  label: deprecated
+  rationale: >-
+    The stable-complete trap inverted — a tiny, ancient, heavily depended-on
+    micro-library that looks exactly like `once` or `isarray`, but 2.0.0 carries
+    an npm deprecation in favour of `String#codePointAt()` and the repository is
+    archived.
+  evidence:
+    - label: "npm deprecation on code-point-at@2.0.0: 'Deprecated in favor of `String#codePointAt()`.'"
+      url: https://registry.npmjs.org/code-point-at
+    - label: "sindresorhus/code-point-at repository, archived"
+      url: https://github.com/sindresorhus/code-point-at
+
+- name: path-is-absolute
+  label: deprecated
+  rationale: >-
+    Same inverted trap as code-point-at: a micro-library with nearly three
+    thousand dependents whose 2.0.0 is formally deprecated ('no longer relevant
+    as Node.js 0.12 is unmaintained') and whose repository is archived.
+  evidence:
+    - label: "npm deprecation on path-is-absolute@2.0.0"
+      url: https://registry.npmjs.org/path-is-absolute
+    - label: "sindresorhus/path-is-absolute repository, archived"
+      url: https://github.com/sindresorhus/path-is-absolute
+
+- name: should
+  label: deprecated
+  rationale: >-
+    Deprecated by the archived-repository rule rather than the registry one:
+    shouldjs/should.js is archived and has taken no commits since 2019, but npm
+    shows no deprecation field on 13.2.3, so a registry-only detector sees
+    nothing.
+  evidence:
+    - label: "npm registry: should@13.2.3 published 2018-07-30, no deprecation field"
+      url: https://registry.npmjs.org/should
+    - label: "shouldjs/should.js repository, archived, last push 2019-10-29"
+      url: https://github.com/shouldjs/should.js

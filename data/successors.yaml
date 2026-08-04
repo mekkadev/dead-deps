@@ -1,0 +1,2238 @@
+# successors.yaml — the curated succession dataset behind dead-deps.
+#
+# Each row maps an npm package that is dead, deprecated or superseded to the
+# successor the ecosystem actually moved to, with primary-source evidence.
+# Every row is hand-verified against those sources by a human; machine-generated
+# guesses do not belong in this file.
+#
+# Rows are unique by `from` and sorted alphabetically by `from`.
+#
+# Contributors: read data/SCHEMA.md before adding or editing a row. It defines the
+# inclusion rules, every field, the `type` enum and the house style.
+
+- from: "@angular/http"
+  to: "@angular/common"
+  toKind: package
+  type: absorbed
+  confidence: high
+  since: "2019-05"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Angular's original HTTP client was folded into @angular/common as
+    HttpClientModule in Angular 4.3, and the standalone @angular/http package
+    was removed in Angular 8. The npm package carries a deprecation notice
+    pointing at @angular/common, and the v8 deprecations guide states that the
+    entire @angular/http package has been removed. Its final release, 7.2.16,
+    shipped in January 2020.
+  migration: >-
+    Import HttpClientModule from @angular/common/http and inject HttpClient.
+    Drop the manual .json() call on responses, since HttpClient parses JSON by
+    default.
+  evidence:
+    - label: npm deprecation notice on @angular/http
+      url: https://www.npmjs.com/package/@angular/http
+    - label: "Angular v8 deprecations guide: \"The entire @angular/http package has
+        been removed. Use @angular/common/http instead.\""
+      url: https://github.com/angular/angular/blob/8.0.x/aio/content/guide/deprecations.md
+
+- from: "@hapi/joi"
+  to: joi
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2020-03"
+  dropIn: true
+  alternatives:
+    - zod
+    - yup
+    - ajv
+  notes: >-
+    Joi spent a period inside the @hapi scope and then moved back to the plain
+    joi name when it became a standalone project again. @hapi/joi stopped at
+    17.1.1 in March 2020 with the npm notice "Switch to 'npm install joi'", and
+    joi 17.1.1 was published under the unscoped name a few months later.
+    Development continues there.
+  migration: >-
+    Replace the dependency with `joi` at version 17 or later and change
+    `require('@hapi/joi')` to `require('joi')`; joi 17 is the same codebase, so
+    schemas carry over unchanged.
+  evidence:
+    - label: npm deprecation notice for @hapi/joi ("Switch to 'npm install joi'")
+      url: https://www.npmjs.com/package/@hapi/joi
+    - label: joi repository, documenting `npm install joi`
+      url: https://github.com/hapijs/joi
+
+- from: "@material-ui/core"
+  to: "@mui/material"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2021-09"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Material-UI was renamed MUI in 2021 and its packages moved from the
+    @material-ui/* scope to @mui/*. The npm deprecation notice on
+    @material-ui/core states that v4 has not received active development since
+    September 2021 and links to the official v4 to v5 migration guide. The last
+    v4 release was 4.12.4 in April 2022.
+  migration: >-
+    MUI ships codemods: npx @mui/codemod v5.0.0/preset-safe src handles most
+    import paths and prop renames, then work through the remaining manual steps
+    in the migration guide.
+  evidence:
+    - label: npm deprecation notice on @material-ui/core
+      url: https://www.npmjs.com/package/@material-ui/core
+    - label: Official MUI v4 to v5 migration guide
+      url: https://mui.com/material-ui/migration/migration-v4/
+
+- from: "@zeit/next-sass"
+  to: next
+  toKind: package
+  type: absorbed
+  confidence: high
+  since: "2020-03"
+  dropIn: false
+  alternatives:
+    - sass
+  notes: >-
+    Next.js added built-in CSS support in 9.2 and built-in Sass support in 9.3
+    (March 2020), which made the next-css and next-sass plugins unnecessary; the
+    9.3 release post explicitly recommends removing @zeit/next-sass from
+    next.config.js and package.json. The package carries an npm deprecation
+    notice pointing at the built-in support, its last release was in September
+    2018, and the @zeit scope itself was retired when the company became Vercel.
+  migration: >-
+    Remove the plugin from next.config.js, add `sass` as a devDependency, and
+    import .scss files directly from components; put global styles in
+    pages/_app.
+  evidence:
+    - label: npm deprecation notice for @zeit/next-sass (points at Next.js built-in
+        Sass support)
+      url: https://www.npmjs.com/package/@zeit/next-sass
+    - label: "Next.js 9.3 release notes: built-in Sass support, \"we recommend
+        removing the plugin\""
+      url: https://nextjs.org/blog/next-9-3
+    - label: Next.js CSS documentation
+      url: https://nextjs.org/docs/app/getting-started/css
+
+- from: angular
+  to: "@angular/core"
+  toKind: package
+  type: reimplementation
+  confidence: high
+  since: "2022-01"
+  dropIn: false
+  alternatives:
+    - vue
+    - react
+    - svelte
+  notes: >-
+    AngularJS, published as the unscoped angular package, reached end of support
+    in January 2022; the official version support page states this and the npm
+    deprecation notice points at @angular/core. The final release, 1.8.3,
+    shipped in April 2022. Modern Angular is a ground-up rebuild by the same
+    team, published under the @angular/* scope rather than as a new major of the
+    same library.
+  migration: >-
+    There is no automatic upgrade. The documented route is incremental: run both
+    frameworks together via ngUpgrade and move component by component, or
+    rewrite the application.
+  evidence:
+    - label: npm deprecation notice on angular pointing at @angular/core
+      url: https://www.npmjs.com/package/angular
+    - label: AngularJS version support status (official docs)
+      url: https://docs.angularjs.org/misc/version-support-status
+
+- from: apollo-server
+  to: "@apollo/server"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2023-11"
+  dropIn: false
+  alternatives:
+    - graphql-yoga
+    - graphql-http
+  notes: >-
+    apollo-server was the batteries-included entry point for Apollo Server v2
+    and v3, both of which Apollo has declared end-of-life. The npm notice
+    directs users to the @apollo/server package, the same project published
+    under the Apollo scope. The final release under the old name was 3.13.0 in
+    November 2023, and Apollo Server 5 is the currently supported line.
+  migration: >-
+    Replace it with @apollo/server plus `startStandaloneServer(server, {listen:
+    {port: 4000}})` from `@apollo/server/standalone`, which is the equivalent of
+    the old `server.listen()` convenience API.
+  evidence:
+    - label: npm deprecation notice for apollo-server
+      url: https://www.npmjs.com/package/apollo-server
+    - label: Apollo Server previous-versions and end-of-life documentation
+      url: https://www.apollographql.com/docs/apollo-server/previous-versions
+
+- from: apollo-server-express
+  to: "@apollo/server"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2023-11"
+  dropIn: false
+  alternatives:
+    - graphql-yoga
+    - graphql-http
+  notes: >-
+    apollo-server-express is the Express integration from Apollo Server v2 and
+    v3. Apollo declared v2 end-of-life in October 2023 and v3 end-of-life in
+    October 2024, and the npm notice states that this functionality now lives in
+    the @apollo/server package. The final release was 3.13.0 in November 2023.
+    Note that Apollo Server 4 has also since reached end-of-life (January 2026),
+    so v5 is the current target.
+  migration: >-
+    Install @apollo/server v5 together with the separate
+    `@as-integrations/express4` package (or `@as-integrations/express5` on
+    Express 5), then `await server.start()` before `app.use('/graphql',
+    express.json(), expressMiddleware(server))` — the old `applyMiddleware`
+    started the server implicitly.
+  evidence:
+    - label: npm deprecation notice for apollo-server-express
+      url: https://www.npmjs.com/package/apollo-server-express
+    - label: Apollo Server previous-versions and end-of-life documentation
+      url: https://www.apollographql.com/docs/apollo-server/previous-versions
+    - label: Official "Migrating from Apollo Server 3" guide
+      url: https://www.apollographql.com/docs/apollo-server/migration-from-v3
+
+- from: babel-eslint
+  to: "@babel/eslint-parser"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2020-02"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    babel-eslint was moved into the main Babel monorepo and republished as
+    @babel/eslint-parser. The old package's last release was 10.1.0 in February
+    2020 and its npm deprecation notice states it will no longer receive
+    updates. The scoped parser is the same project under the new name.
+  migration: >-
+    Install @babel/eslint-parser, set `parser: "@babel/eslint-parser"` in your
+    ESLint config, and make sure a Babel config file is resolvable — the new
+    parser reads your real Babel config instead of inferring one.
+  evidence:
+    - label: npm deprecation notice for babel-eslint ("babel-eslint is now
+        @babel/eslint-parser. This package will no longer receive updates.")
+      url: https://www.npmjs.com/package/babel-eslint
+    - label: "@babel/eslint-parser documentation"
+      url: https://babeljs.io/docs/babel-eslint-parser
+
+- from: babel-preset-es2015
+  to: "@babel/preset-env"
+  toKind: package
+  type: self-declared
+  confidence: high
+  since: "2017-04"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Babel replaced its year-based presets with a single preset that compiles
+    according to the browsers and Node versions you actually target.
+    babel-preset-es2015's last release was 6.24.1 in April 2017 and it is
+    deprecated on npm with a notice from the Babel team recommending preset-env;
+    it was not carried forward into Babel 7, where the package is
+    @babel/preset-env. Targeting real environments usually produces smaller
+    output than compiling everything down to ES5.
+  migration: >-
+    Replace the preset with @babel/preset-env and declare targets through a
+    browserslist config or the preset's `targets` option; with no targets set it
+    behaves roughly like the old es2015 preset.
+  evidence:
+    - label: npm deprecation notice for babel-preset-es2015 ("we recommend using
+        babel-preset-env now")
+      url: https://www.npmjs.com/package/babel-preset-es2015
+    - label: "@babel/preset-env documentation"
+      url: https://babeljs.io/docs/babel-preset-env
+
+- from: bluebird
+  to: Promise (native)
+  toKind: platform
+  type: absorbed
+  confidence: high
+  since: "2019-11"
+  dropIn: false
+  alternatives:
+    - p-limit
+    - p-map
+    - p-retry
+  notes: >-
+    Bluebird's README now tells readers to "use native promises instead if at
+    all possible", noting that native promises have been stable and fast for
+    about a decade and that most of Bluebird's useful features were absorbed
+    into the language. The last release was 3.7.2 in November 2019; the package
+    is not formally deprecated on npm and still works. The maintainer suggests
+    keeping Bluebird only for very old browsers, end-of-life Node.js, or
+    temporarily for its warnings and monitoring.
+  migration: >-
+    Delete the `require('bluebird')` and rely on the global Promise; for the
+    concurrency helpers Bluebird provided, `Promise.map` maps onto p-map and
+    `Promise.promisify` onto `util.promisify`.
+  evidence:
+    - label: Bluebird README recommending native promises
+      url: https://github.com/petkaantonov/bluebird
+    - label: npm package page showing the last release in 2019
+      url: https://www.npmjs.com/package/bluebird
+
+- from: boom
+  to: "@hapi/boom"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2018-11"
+  dropIn: false
+  alternatives:
+    - http-errors
+  notes: >-
+    boom builds HTTP-friendly error objects and moved into the @hapi scope in
+    late 2018. The unscoped package stopped at 7.3.0 and its npm notice says the
+    module has moved to @hapi/boom. Outside the hapi ecosystem, http-errors
+    covers the same ground for Express and Connect apps.
+  migration: >-
+    Install @hapi/boom and update the require path; the error factory functions
+    such as `Boom.badRequest()` keep the same names across the rename, though
+    the major-version jump from 7 to 10 has its own breaking changes.
+  evidence:
+    - label: npm deprecation notice for boom
+      url: https://www.npmjs.com/package/boom
+    - label: Maintained scoped package
+      url: https://www.npmjs.com/package/@hapi/boom
+
+- from: casperjs
+  to: playwright
+  toKind: package
+  type: replacement
+  confidence: medium
+  since: "2018-03"
+  dropIn: false
+  alternatives:
+    - puppeteer
+    - "@playwright/test"
+    - cypress
+  notes: >-
+    CasperJS is a scripting layer on top of PhantomJS, and PhantomJS development
+    was suspended in March 2018. The CasperJS repository is archived and its own
+    description begins "CasperJS is no longer actively maintained"; the last
+    release was 1.1.4 in May 2017. Headless Chrome and headless Firefox now
+    cover the same use cases with maintained drivers.
+  migration: >-
+    CasperJS step chains map onto plain async/await scripts;
+    `casper.start().then(...)` becomes `await page.goto(...)` followed by
+    ordinary awaited actions.
+  evidence:
+    - label: casperjs/casperjs repository (archived, "no longer actively maintained")
+      url: https://github.com/casperjs/casperjs
+    - label: "PhantomJS README: development is suspended until further notice"
+      url: https://github.com/ariya/phantomjs#readme
+    - label: "PhantomJS issue 15344: archiving the project, suspending development
+        (March 2018)"
+      url: https://github.com/ariya/phantomjs/issues/15344
+
+- from: codecov
+  to: null
+  toKind: none
+  type: self-declared
+  confidence: medium
+  since: "2021-07"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Codecov retired its language-specific and bash-based uploaders in favour of
+    a standalone uploader binary, later the Codecov CLI, and the npm package's
+    deprecation notice links to the official deprecation plan published in
+    September 2021. The last release of the npm package was 3.8.3 in July 2021.
+    There is no npm-published successor, so the row has no `to`.
+  migration: >-
+    Drop the devDependency and replace `codecov` in your CI script with the
+    codecov/codecov-action step on GitHub Actions, or download and run the
+    Codecov CLI as documented in the deprecation plan.
+  evidence:
+    - label: npm deprecation notice on codecov, linking to the deprecation plan
+      url: https://www.npmjs.com/package/codecov
+    - label: Codecov uploader deprecation plan (September 2021)
+      url: https://about.codecov.io/blog/codecov-uploader-deprecation-plan/
+
+- from: colors
+  to: "@colors/colors"
+  toKind: package
+  type: fork
+  confidence: medium
+  since: "2022-01"
+  dropIn: true
+  alternatives:
+    - chalk
+    - picocolors
+    - ansi-colors
+    - kleur
+  notes: >-
+    In January 2022 the 1.4.44-liberty-2 release of colors.js printed an endless
+    stream of garbage characters, which broke builds across the ecosystem; 1.4.1
+    and 1.4.2 followed with the same behaviour, and npm pointed the latest tag
+    back at 1.4.0, where it still sits. Nothing has been published since.
+    @colors/colors is the same codebase republished under a scope by a colors.js
+    maintainer and is what several downstream projects, including Winston, now
+    depend on; its own last release was 1.6.0 in July 2023, so treat it as
+    stable rather than actively developed. Many other projects took the
+    opportunity to drop prototype patching entirely for chalk or picocolors.
+  migration: >-
+    @colors/colors is API-identical, so require('colors') becomes
+    require('@colors/colors'). Moving to picocolors or chalk means rewriting
+    'text'.red as red('text').
+  evidence:
+    - label: "Marak/colors.js issue #285, opened by the author about the
+        v1.4.44-liberty-2 release"
+      url: https://github.com/Marak/colors.js/issues/285
+    - label: "@colors/colors on npm (maintained scoped build)"
+      url: https://www.npmjs.com/package/@colors/colors
+
+- from: connect-multiparty
+  to: multer
+  toKind: package
+  type: replacement
+  confidence: medium
+  since: "2018-09"
+  dropIn: false
+  alternatives:
+    - busboy
+    - multiparty
+    - formidable
+  notes: >-
+    connect-multiparty wrapped the multiparty parser as Connect middleware; its
+    last release was 2.2.0 in September 2018 and the Express team archived the
+    repository on 14 May 2025 with an npm notice saying the package is archived
+    and no longer maintained. The README already advised against it, saying "I
+    actually recommend against using this module. It's cleaner to use the
+    multiparty API directly", and warning that its temporary files are never
+    cleaned up automatically. Most Express projects have settled on multer for
+    multipart uploads.
+  migration: >-
+    Replace the middleware with `multer({dest})`; uploaded files move from
+    `req.files` keyed by field name to multer's `req.file` / `req.files` shape,
+    so file-handling code needs adjusting.
+  evidence:
+    - label: Archived repository with the README recommendation
+      url: https://github.com/expressjs/connect-multiparty
+    - label: npm deprecation notice for connect-multiparty
+      url: https://www.npmjs.com/package/connect-multiparty
+
+- from: create-react-app
+  to: vite
+  toKind: package
+  type: self-declared
+  confidence: medium
+  since: "2025-02"
+  dropIn: false
+  alternatives:
+    - next
+    - react-router
+    - expo
+    - "@rsbuild/core"
+    - parcel
+  notes: >-
+    The React team deprecated Create React App for new apps in February 2025;
+    the post states CRA has no active maintainers, and the 5.1.0 release
+    published at the same time prints a deprecation warning on install. React's
+    own guidance points new projects at a framework such as Next.js, React
+    Router or Expo first, and names Vite, Parcel and Rsbuild for people who want
+    to roll their own setup. Vite is the usual destination for a plain
+    single-page app, but a framework is the team's primary recommendation, so
+    treat `to` as situational.
+  migration: >-
+    For a plain SPA: move public/index.html to the project root and rewrite its
+    %PUBLIC_URL% placeholders, replace react-scripts with vite and
+    @vitejs/plugin-react, and rename REACT_APP_ environment variables to VITE_.
+  evidence:
+    - label: "React blog: Sunsetting Create React App (14 Feb 2025)"
+      url: https://react.dev/blog/2025/02/14/sunsetting-create-react-app
+    - label: "Create React App README: the project is in long-term stasis and
+        migration is recommended"
+      url: https://github.com/facebook/create-react-app
+
+- from: csurf
+  to: csrf-csrf
+  toKind: package
+  type: replacement
+  confidence: medium
+  since: "2020-01"
+  dropIn: false
+  alternatives:
+    - "@dr.pogodin/csurf"
+    - lusca
+    - tiny-csrf
+  notes: >-
+    csurf was the standard Express CSRF middleware; its last release was 1.11.0
+    in January 2020, and the Express team archived the repository on 14 May 2025
+    with an npm notice saying the package is archived and no longer maintained.
+    No official replacement was named. csrf-csrf, which implements the
+    double-submit cookie pattern, is the most widely installed of the actively
+    maintained options, and @dr.pogodin/csurf is a maintained fork if you need
+    the original API.
+  migration: >-
+    csrf-csrf is configured through `doubleCsrf({getSecret, cookieName})`, which
+    returns the middleware and a token generator; the template-side call changes
+    from `req.csrfToken()` to the generator returned by that factory.
+  evidence:
+    - label: Archived expressjs/csurf repository (archived 14 May 2025)
+      url: https://github.com/expressjs/csurf
+    - label: npm deprecation notice for csurf
+      url: https://www.npmjs.com/package/csurf
+
+- from: cucumber
+  to: "@cucumber/cucumber"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2020-12"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    The Cucumber project moved its JavaScript implementation to the @cucumber
+    scope, publishing @cucumber/cucumber 7.0.0 in December 2020; the unscoped
+    line's last substantive release was 6.0.5 in November 2019. The unscoped
+    cucumber package now carries an npm deprecation notice saying new releases
+    are published under @cucumber/cucumber, added with the marker releases 6.0.6
+    and 6.0.7 in April 2022. It is the same codebase and the same maintainers.
+  migration: >-
+    Swap the dependency and update imports from `cucumber` to
+    `@cucumber/cucumber`; step definition and world APIs are unchanged across
+    the rename itself, though moving from 6.x to 7.x has its own breaking
+    changes.
+  evidence:
+    - label: npm deprecation notice on cucumber ("publishing new releases under
+        @cucumber/cucumber")
+      url: https://www.npmjs.com/package/cucumber
+    - label: cucumber-js installation docs (scoped package)
+      url: https://github.com/cucumber/cucumber-js/blob/main/docs/installation.md
+
+- from: cuid
+  to: "@paralleldrive/cuid2"
+  toKind: package
+  type: reimplementation
+  confidence: high
+  since: "2023-01"
+  dropIn: false
+  alternatives:
+    - nanoid
+    - uuid
+  notes: >-
+    cuid carries an npm deprecation notice from its author stating that cuid and
+    similar k-sortable, non-cryptographic identifiers are insecure, and pointing
+    at @paralleldrive/cuid2. Cuid2 is a ground-up rewrite by the same author
+    built on a cryptographically secure hash. Identifiers produced by the two
+    are not interchangeable.
+  migration: >-
+    cuid() becomes createId() from @paralleldrive/cuid2. Cuid2 ids are
+    deliberately not sortable, so anything that relied on cuid's rough ordering
+    needs its own timestamp column.
+  evidence:
+    - label: npm deprecation notice on cuid
+      url: https://www.npmjs.com/package/cuid
+    - label: paralleldrive/cuid2 repository
+      url: https://github.com/paralleldrive/cuid2
+
+- from: enzyme
+  to: "@testing-library/react"
+  toKind: package
+  type: replacement
+  confidence: high
+  since: "2019-12"
+  dropIn: false
+  alternatives:
+    - cypress
+    - vitest
+  notes: >-
+    Enzyme's last release was 3.11.0 in December 2019, and its README states
+    that the officially provided adapters cover React 16.x, 15.x, 0.14.x and
+    0.13.x only. The request for an official React 18 adapter (issue 2556) was
+    closed without one being published, so projects on React 17 or newer have no
+    supported adapter. The ecosystem, including the React documentation's
+    testing guidance, moved to React Testing Library.
+  migration: >-
+    There is no mechanical conversion: shallow rendering and `wrapper.find(...)`
+    have no direct equivalent, so tests are rewritten around `render()` and
+    queries such as `screen.getByRole()`.
+  evidence:
+    - label: "enzyme README: officially provided adapters listed for React 16.x and
+        older"
+      url: https://github.com/enzymejs/enzyme#installation
+    - label: "enzymejs/enzyme issue 2556: enzyme-adapter-react-18 request, closed
+        without an adapter"
+      url: https://github.com/enzymejs/enzyme/issues/2556
+    - label: "npm: enzyme, last published December 2019"
+      url: https://www.npmjs.com/package/enzyme
+
+- from: eslint-loader
+  to: eslint-webpack-plugin
+  toKind: package
+  type: self-declared
+  confidence: high
+  since: "2020-04"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    webpack-contrib deprecated eslint-loader in favour of eslint-webpack-plugin,
+    and the npm notice says so directly. Running the linter as a plugin instead
+    of a loader lets it check files webpack never resolves and avoids re-linting
+    on every module build. The loader's last release was 4.0.2 in April 2020.
+  migration: >-
+    Delete the loader rule and add `new ESLintPlugin({ extensions:
+    ['js','jsx','ts','tsx'] })` to plugins. Loader options such as `fix` and
+    `failOnError` map onto plugin options of the same name.
+  evidence:
+    - label: npm deprecation notice for eslint-loader ("This loader has been
+        deprecated. Please use eslint-webpack-plugin")
+      url: https://www.npmjs.com/package/eslint-loader
+    - label: "webpack docs: ESLintPlugin"
+      url: https://webpack.js.org/plugins/eslint-webpack-plugin/
+
+- from: eslint-plugin-node
+  to: eslint-plugin-n
+  toKind: package
+  type: fork
+  confidence: high
+  since: "2020-03"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    eslint-plugin-node's README states that the project is no longer maintained
+    and points readers at eslint-plugin-n; its last release was 11.1.0 in March
+    2020. eslint-plugin-n is the ESLint Community fork of that exact version,
+    and it supports current ESLint releases and flat config. Rule names are
+    identical apart from the plugin prefix.
+  migration: >-
+    Swap the dependency, then change `plugin:node/recommended` to
+    `plugin:n/recommended` and any `node/` rule prefixes to `n/`.
+  evidence:
+    - label: "eslint-plugin-node README: no longer maintained, use eslint-plugin-n"
+      url: https://github.com/mysticatea/eslint-plugin-node
+    - label: "eslint-plugin-n README: \"forked from eslint-plugin-node v11.1.0\""
+      url: https://github.com/eslint-community/eslint-plugin-n
+
+- from: event-stream
+  to: null
+  toKind: none
+  type: replacement
+  confidence: medium
+  since: "2018-11"
+  dropIn: false
+  alternatives:
+    - through2
+    - split2
+    - merge-stream
+  notes: >-
+    The event-stream repository was archived on 28 November 2018, after a
+    handover to a new maintainer resulted in a malicious dependency,
+    flatmap-stream, being pulled into the 3.3.6 release. The current 4.0.1
+    release, published in September 2018, does not depend on it, but the project
+    has had no activity since. No single package replaced it; the pieces it
+    bundled now live in small focused modules and in Node's own stream helpers.
+  migration: >-
+    es.split() maps to split2, es.map and es.through map to through2, es.merge
+    maps to merge-stream, and es.pipeline maps to
+    require('node:stream').pipeline.
+  evidence:
+    - label: "event-stream issue #116 documenting the incident (November 2018)"
+      url: https://github.com/dominictarr/event-stream/issues/116
+    - label: Archived dominictarr/event-stream repository
+      url: https://github.com/dominictarr/event-stream
+
+- from: express-graphql
+  to: graphql-http
+  toKind: package
+  type: reimplementation
+  confidence: high
+  since: "2020-11"
+  dropIn: false
+  alternatives:
+    - graphql-yoga
+    - "@apollo/server"
+  notes: >-
+    express-graphql was the GraphQL reference HTTP handler for Express. Its last
+    release was 0.12.0 in November 2020, and the repository was archived on 20
+    March 2023 with a README section headed "Say hello to graphql-http", the new
+    reference implementation of the GraphQL over HTTP specification. The npm
+    notice repeats the recommendation and links to a migration document.
+  migration: >-
+    Swap `graphqlHTTP({schema})` for `createHandler({schema})` imported from
+    `graphql-http/lib/use/express`; GraphiQL is no longer bundled, so run a
+    separate IDE such as ruru (`npx ruru -SP -p 4001 -e
+    http://localhost:4000/graphql`) if you relied on the built-in one.
+  evidence:
+    - label: Archived repository recommending graphql-http
+      url: https://github.com/graphql/express-graphql
+    - label: npm deprecation notice with migration link
+      url: https://www.npmjs.com/package/express-graphql
+    - label: graphql-http, the successor project and its "Migrating express-graphql"
+        guide
+      url: https://github.com/graphql/graphql-http
+
+- from: extract-text-webpack-plugin
+  to: mini-css-extract-plugin
+  toKind: package
+  type: self-declared
+  confidence: high
+  since: "2018-02"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    extract-text-webpack-plugin never reached a stable webpack 4 release — it
+    stopped at 4.0.0-beta.0 in February 2018, after the last stable 3.0.2 in
+    October 2017 — and webpack-contrib deprecated it on npm in favour of
+    mini-css-extract-plugin. The newer plugin extracts per module rather than
+    per chunk, which is what makes hot reloading and on-demand CSS loading work.
+  migration: >-
+    Replace `ExtractTextPlugin.extract({ ... })` rules with
+    `MiniCssExtractPlugin.loader` at the head of the CSS loader chain and add
+    `new MiniCssExtractPlugin({ filename: '[name].css' })`.
+  evidence:
+    - label: npm deprecation notice for extract-text-webpack-plugin (points at
+        mini-css-extract-plugin)
+      url: https://www.npmjs.com/package/extract-text-webpack-plugin
+    - label: "webpack docs: MiniCssExtractPlugin"
+      url: https://webpack.js.org/plugins/mini-css-extract-plugin/
+
+- from: faker
+  to: "@faker-js/faker"
+  toKind: package
+  type: fork
+  confidence: high
+  since: "2022-01"
+  dropIn: true
+  alternatives:
+    - chance
+    - "@ngneat/falso"
+  notes: >-
+    In January 2022 the original author removed the faker source from GitHub and
+    published a 6.6.6 release that no longer worked, which broke builds across
+    the ecosystem. Eight contributors formed the faker-js organisation, restored
+    the code from the last good release and now publish it as @faker-js/faker.
+    The unscoped faker package has received no releases since 6.6.6 on 5 January
+    2022.
+  migration: >-
+    Replace the dependency with @faker-js/faker and change `require('faker')` to
+    `const { faker } = require('@faker-js/faker')`; the generator API is
+    otherwise the same as faker 5.5.3.
+  evidence:
+    - label: "faker-js announcement: what happened to faker and who maintains it now"
+      url: https://fakerjs.dev/about/announcements/2022-01-14.html
+    - label: faker-js/faker repository (the maintained fork)
+      url: https://github.com/faker-js/faker
+    - label: "npm: faker, last published 5 January 2022 at 6.6.6"
+      url: https://www.npmjs.com/package/faker
+
+- from: feathers
+  to: "@feathersjs/feathers"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2018-01"
+  dropIn: false
+  alternatives:
+    - "@nestjs/core"
+    - express
+  notes: >-
+    Feathers split into scoped packages with version 3 (Buzzard), and the
+    unscoped feathers package stopped at 2.2.4 in January 2018. Its npm notice
+    says Feathers v3 has moved to @feathersjs/feathers and links to the
+    project's migration guide. The scoped packages are actively released;
+    Feathers is now on v5.
+  migration: >-
+    Follow the Buzzard migration guide: the core moves to @feathersjs/feathers,
+    and the transport and client pieces become separate @feathersjs/* packages
+    such as @feathersjs/express and @feathersjs/socketio. If you are jumping
+    straight to v5, the v5 guide covers the later named-export change.
+  evidence:
+    - label: npm deprecation notice for feathers
+      url: https://www.npmjs.com/package/feathers
+    - label: Feathers v3 (Buzzard) migration guide documenting the move to the
+        @feathersjs scope
+      url: https://buzzard.docs.feathersjs.com/migrating.html
+
+- from: gemini
+  to: testplane
+  toKind: package
+  type: self-declared
+  confidence: medium
+  since: "2019-11"
+  dropIn: false
+  alternatives:
+    - "@playwright/test"
+    - backstopjs
+  notes: >-
+    Gemini was a visual regression tool from the gemini-testing team; its
+    repository is archived, its description reads "[DEPRECATED] Use hermione"
+    and its homepage points at the Hermione repository. Hermione took over the
+    screenshot-comparison role and was itself later renamed to Testplane by the
+    same team, so Testplane is where that lineage now lives. Gemini's last
+    release was 7.5.2 in November 2019.
+  migration: >-
+    Gemini's `.gemini.yml` suites and `setCaptureElements` API have no direct
+    equivalent; tests are rewritten as Testplane specs using `assertView()` for
+    screenshot assertions.
+  evidence:
+    - label: gemini-testing/gemini repository (archived, "[DEPRECATED] Use hermione")
+      url: https://github.com/gemini-testing/gemini
+    - label: "Testplane README: rename from Hermione, by the same gemini-testing team"
+      url: https://github.com/gemini-testing/testplane#rename-from-hermione
+
+- from: glamorous
+  to: "@emotion/react"
+  toKind: package
+  type: self-declared
+  confidence: high
+  since: "2018-12"
+  dropIn: false
+  alternatives:
+    - styled-components
+    - "@emotion/styled"
+  notes: >-
+    glamorous carries an npm deprecation notice from its maintainer naming
+    emotion as the successor and linking to issue #419, where the reasoning was
+    set out in May 2018. The final release, 5.0.0, shipped in December 2018 and
+    the repository was archived that same month. Emotion covers the same
+    CSS-in-JS ground and is actively maintained.
+  migration: >-
+    @emotion/styled is the closest match: glamorous.div({ color: 'red' })
+    becomes styled.div({ color: 'red' }), and glamorous's css prop maps to
+    emotion's css prop from @emotion/react.
+  evidence:
+    - label: npm deprecation notice on glamorous naming emotion
+      url: https://www.npmjs.com/package/glamorous
+    - label: "paypal/glamorous issue #419: \"Deprecate glamorous in favor of
+        emotion\""
+      url: https://github.com/paypal/glamorous/issues/419
+
+- from: gulp-util
+  to: null
+  toKind: none
+  type: self-declared
+  confidence: high
+  since: "2016-12"
+  dropIn: false
+  alternatives:
+    - plugin-error
+    - fancy-log
+    - vinyl
+    - replace-ext
+    - ansi-colors
+    - through2
+  notes: >-
+    gulp-util was a grab bag of helpers whose last release, 3.0.8, shipped in
+    December 2016; the gulp team then deprecated it and split it into focused
+    single-purpose modules. There is no single successor — each helper you used
+    maps to its own small package, and the team's write-up lists the mapping.
+    The npm deprecation notice links to that post directly.
+  migration: >-
+    Map usages individually: gutil.log to fancy-log, gutil.PluginError to
+    plugin-error, gutil.File to vinyl, gutil.replaceExtension to replace-ext,
+    gutil.colors to ansi-colors.
+  evidence:
+    - label: npm deprecation notice for gulp-util (links to the gulp team's
+        replacement guide)
+      url: https://www.npmjs.com/package/gulp-util
+    - label: "gulp team post: \"The Problem with gulp-util\" (Dec 2017), with the full
+        replacement-module mapping"
+      url: https://medium.com/gulpjs/gulp-util-ca3b1f9f9ac5
+
+- from: hapi
+  to: "@hapi/hapi"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2019-02"
+  dropIn: false
+  alternatives:
+    - fastify
+    - express
+    - koa
+  notes: >-
+    The hapi framework moved to the @hapi npm scope, and the unscoped hapi
+    package stopped at 18.1.0 in February 2019. Its npm notice warns that the
+    version has known security issues and defects and asks users to upgrade to
+    @hapi/hapi or take a commercial license, which the maintainers offered for
+    v16 through v19. Only @hapi/hapi v20 and later receive open source security
+    fixes.
+  migration: >-
+    Change the dependency to @hapi/hapi and update every `require('hapi')` to
+    `require('@hapi/hapi')`; plugins moved to the same scope, so `inert`,
+    `vision` and `bell` become `@hapi/inert`, `@hapi/vision` and `@hapi/bell`.
+    Expect breaking changes between v18 and v21 beyond the rename.
+  evidence:
+    - label: npm deprecation notice for hapi
+      url: https://www.npmjs.com/package/hapi
+    - label: Maintainer statement on support and commercial licensing for hapi v16-v19
+      url: https://github.com/hapijs/hapi/issues/4114
+
+- from: har-validator
+  to: null
+  toKind: none
+  type: replacement
+  confidence: low
+  since: "2020-07"
+  dropIn: false
+  alternatives:
+    - "@har-sdk/validator"
+    - ajv
+  notes: >-
+    har-validator validates HTTP Archive objects and reached most dependency
+    trees indirectly through request. Its final release, 5.1.5 in July 2020,
+    carries the npm notice "this library is no longer supported", and no
+    successor was named. Most projects only have it because of request, so
+    removing request usually removes it too.
+  migration: >-
+    Check whether anything actually calls it — it is almost always a transitive
+    dependency of request. If you do validate HAR files directly,
+    @har-sdk/validator is actively published, or validate against har-schema
+    with ajv yourself.
+  evidence:
+    - label: npm deprecation notice for har-validator ("this library is no longer
+        supported")
+      url: https://www.npmjs.com/package/har-validator
+    - label: Source repository
+      url: https://github.com/ahmadnassri/node-har-validator
+
+- from: hermione
+  to: testplane
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2024-06"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    Hermione was renamed to Testplane in 2024 by the same gemini-testing team
+    after copyright and trademark issues with the old name; the repository was
+    renamed too, so github.com/gemini-testing/hermione now resolves to the
+    Testplane repository. The hermione README states the project has been
+    renamed and is backward compatible, and the Testplane README states that
+    Testplane v8.x is a drop-in replacement for Hermione v8.x. The hermione
+    package stopped receiving releases after 8.9.6 in June 2024 while Testplane
+    continued the same version line.
+  migration: >-
+    Replace the hermione dependency with testplane at the same major version and
+    rename `.hermione.conf.js` to `.testplane.conf.js`; the official upgrade
+    guide on testplane.io covers the renamed CLI flags.
+  evidence:
+    - label: "Testplane README: \"Testplane v8.x is a drop-in replacement for Hermione
+        v8.x\""
+      url: https://github.com/gemini-testing/testplane#rename-from-hermione
+    - label: "npm: hermione, README says the project has been renamed to testplane"
+      url: https://www.npmjs.com/package/hermione
+    - label: "npm: testplane, the maintained continuation"
+      url: https://www.npmjs.com/package/testplane
+
+- from: istanbul
+  to: nyc
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2016-08"
+  dropIn: false
+  alternatives:
+    - c8
+    - "@vitest/coverage-v8"
+  notes: >-
+    The istanbul CLI stopped at 0.4.5 in August 2016 and is deprecated on npm
+    with a notice recommending nyc. Istanbul did not disappear — it was
+    rewritten as the istanbuljs monorepo, with nyc as the command line front end
+    and istanbul-lib-* as the internals. c8 is the newer option for projects
+    that prefer V8's built-in coverage.
+  migration: >-
+    Replace `istanbul cover _mocha` style commands with `nyc mocha`.
+    Configuration moves from CLI flags to .nycrc or an "nyc" key in
+    package.json.
+  evidence:
+    - label: "npm deprecation notice for istanbul (\"no longer maintained, try this
+        instead: npm i nyc\")"
+      url: https://www.npmjs.com/package/istanbul
+    - label: "istanbul.js.org integrations page: nyc is \"the successor to the
+        istanbul command line tool\""
+      url: https://istanbul.js.org/integrations/
+
+- from: jade
+  to: pug
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2015-06"
+  dropIn: false
+  alternatives:
+    - ejs
+    - handlebars
+  notes: >-
+    Jade was renamed to Pug because of a trademark issue, in conjunction with
+    the Pug 2 release. The jade package's last release was 1.11.0 in June 2015
+    and it is deprecated on npm with a notice telling users to install pug
+    instead; all work since then has happened under the pug name. Pug is still
+    actively released.
+  migration: >-
+    Install pug and change `require('jade')` to `require('pug')`. Pug 2 also
+    changed template semantics and the default file extension to .pug, so read
+    the v2 migration guide for interpolation and attribute changes.
+  evidence:
+    - label: npm deprecation notice for jade ("Jade has been renamed to pug")
+      url: https://www.npmjs.com/package/jade
+    - label: "Pug migration guide: \"Due to a trademark issue, the project name has
+        been changed from Jade to Pug\""
+      url: https://pugjs.org/api/migration-v2.html
+
+- from: jasmine-node
+  to: jasmine
+  toKind: package
+  type: self-declared
+  confidence: high
+  since: "2019-05"
+  dropIn: false
+  alternatives:
+    - jest
+    - vitest
+    - mocha
+  notes: >-
+    jasmine-node's README has a "Project status" section stating the project is
+    in maintenance mode and recommending the jasmine or jasmine-npm package
+    instead. It bundles Jasmine 1.3.1, several major versions behind, and its
+    last release was 3.0.0 in May 2019. The jasmine package is the Jasmine
+    team's own Node runner and is actively released.
+  migration: >-
+    Install jasmine and run `npx jasmine init`; Jasmine 1.x globals such as
+    `ddescribe` and `iit` become `fdescribe` and `fit` in Jasmine 2 and later.
+  evidence:
+    - label: "jasmine-node README: \"This project is now in maintenance mode. It is
+        recommended to use the jasmine or jasmine-npm package\""
+      url: https://github.com/mhevery/jasmine-node#project-status
+    - label: "npm: jasmine, the maintained official runner"
+      url: https://www.npmjs.com/package/jasmine
+
+- from: jest-environment-jsdom-sixteen
+  to: jest-environment-jsdom
+  toKind: package
+  type: absorbed
+  confidence: high
+  since: "2021-04"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    This package existed to give older Jest versions a jsdom 16 environment. It
+    carries an npm notice saying Jest 26 ships jsdom 16 so there is no reason to
+    use it, and its last release was 2.0.0 in April 2021. From Jest 28 onward
+    the jsdom environment is published by the Jest team as
+    jest-environment-jsdom.
+  migration: >-
+    Remove the dependency and set `testEnvironment: 'jsdom'` in the Jest config;
+    on Jest 28 and later also install jest-environment-jsdom, which is no longer
+    bundled with Jest.
+  evidence:
+    - label: npm deprecation notice on jest-environment-jsdom-sixteen ("jest@26 ships
+        with jsdom@16")
+      url: https://www.npmjs.com/package/jest-environment-jsdom-sixteen
+    - label: "npm: jest-environment-jsdom, maintained by the Jest team"
+      url: https://www.npmjs.com/package/jest-environment-jsdom
+
+- from: jquery.cookie
+  to: js-cookie
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2014-04"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    The jquery-cookie README states that the project moved to js-cookie and that
+    new issues belong in that repository; the repository was archived in
+    November 2017. The jquery.cookie package has not been published since April
+    2014, ending at 1.4.1. js-cookie is the same project continued by the same
+    author without the jQuery dependency, and is actively maintained.
+  migration: >-
+    $.cookie('name', 'value', opts) becomes Cookies.set('name', 'value', opts)
+    and $.removeCookie('name') becomes Cookies.remove('name'); jQuery is no
+    longer required.
+  evidence:
+    - label: "jquery-cookie README: \"This project was moved to js-cookie\"
+        (repository archived)"
+      url: https://github.com/carhartl/jquery-cookie
+    - label: js-cookie repository
+      url: https://github.com/js-cookie/js-cookie
+
+- from: jscs
+  to: eslint
+  toKind: package
+  type: self-declared
+  confidence: high
+  since: "2016-04"
+  dropIn: false
+  alternatives:
+    - prettier
+    - "@stylistic/eslint-plugin"
+  notes: >-
+    JSCS merged into ESLint in 2016: the JSCS maintainers joined the ESLint
+    project and the two linters were consolidated into one. The npm package's
+    last release was 3.0.7 in July 2016 and it is deprecated with a notice
+    linking to the maintainer's announcement; the repository is described as
+    unmaintained and was archived in March 2024. ESLint has since moved
+    formatting rules out of core, so Prettier or @stylistic now covers the
+    purely stylistic part of what JSCS did.
+  migration: >-
+    Start from a fresh `eslint --init` config rather than a mechanical
+    translation, and delegate formatting rules to Prettier; there is no
+    maintained .jscsrc converter.
+  evidence:
+    - label: npm deprecation notice for jscs ("JSCS has merged with ESLint!")
+      url: https://www.npmjs.com/package/jscs
+    - label: "Maintainer post: JSCS — end of the line"
+      url: https://medium.com/@markelog/jscs-end-of-the-line-bc9bf0b3fdb2
+    - label: Archived jscs-dev/node-jscs repository, described as unmaintained
+      url: https://github.com/jscs-dev/node-jscs
+
+- from: karma
+  to: vitest
+  toKind: package
+  type: self-declared
+  confidence: medium
+  since: "2023-04"
+  dropIn: false
+  alternatives:
+    - "@web/test-runner"
+    - jasmine-browser-runner
+    - jest
+    - "@playwright/test"
+  notes: >-
+    The Karma maintainers added a deprecation notice to the README in April
+    2023, writing that new test runners offer more performant alternatives and
+    that Karma no longer provides clear unique value; critical security issues
+    are still triaged. The README names Web Test Runner and
+    jasmine-browser-runner as direct browser-based alternatives and Jest and
+    Vitest as Node-based ones. Angular, by far the largest Karma user base, now
+    uses Vitest as the default test runner for new CLI projects.
+  migration: >-
+    New Angular CLI projects already use Vitest with jsdom, and the Angular
+    testing guide documents migrating an existing Karma project; for plain
+    browser unit tests outside Angular, @web/test-runner is the closest
+    structural match to a Karma config.
+  evidence:
+    - label: "Karma README: \"Karma is deprecated and is not accepting new features or
+        general bug fixes\""
+      url: https://github.com/karma-runner/karma#karma-is-deprecated-and-is-not-accepting-new-features-or-general-bug-fixes
+    - label: "Angular testing guide: new CLI projects use Vitest by default"
+      url: https://angular.dev/guide/testing
+    - label: "Angular blog: Moving Angular CLI to Jest and Web Test Runner"
+      url: https://blog.angular.dev/moving-angular-cli-to-jest-and-web-test-runner-ef85ef69ceca
+
+- from: koa-router
+  to: "@koa/router"
+  toKind: package
+  type: rename
+  confidence: high
+  since: null
+  dropIn: true
+  alternatives: []
+  notes: >-
+    Koa's router moved under the official @koa scope at version 9, and every
+    koa-router release since June 2020 carries the npm notice "Please use
+    @koa/router instead, starting from v9!". Both names are published from the
+    koajs/router repository, so the unscoped package is best understood as a
+    deprecated alias rather than an abandoned project — though it lags the
+    scoped package by a major version. New work and documentation reference the
+    scoped name.
+  migration: >-
+    Change the dependency name and the require path; the API is identical, so
+    `new Router()` and all route methods keep working. Check the major version,
+    since @koa/router is ahead of the unscoped alias.
+  evidence:
+    - label: npm deprecation notice for koa-router
+      url: https://www.npmjs.com/package/koa-router
+    - label: Shared koajs/router repository publishing both names
+      url: https://github.com/koajs/router
+
+- from: lab
+  to: "@hapi/lab"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2019-02"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    hapi moved its module family under the @hapi scope in 2019, and the unscoped
+    lab package carries an npm notice saying it has moved to @hapi/lab and is no
+    longer maintained. The last unscoped release was 18.0.2 in February 2019.
+    The hapijs/lab repository README is now titled @hapi/lab, so the test runner
+    itself continued without interruption under the new name.
+  migration: >-
+    Change the dependency to @hapi/lab and update `require('lab')` to
+    `require('@hapi/lab')`; the assertion companion `code` moved to `@hapi/code`
+    at the same time.
+  evidence:
+    - label: npm deprecation notice on lab ("now available at @hapi/lab")
+      url: https://www.npmjs.com/package/lab
+    - label: hapijs/lab repository, README now titled @hapi/lab
+      url: https://github.com/hapijs/lab
+
+- from: left-pad
+  to: String.prototype.padStart
+  toKind: platform
+  type: absorbed
+  confidence: high
+  since: "2018-04"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    left-pad carries an npm deprecation notice consisting of a single line: use
+    String.prototype.padStart(). padStart has been part of the language since
+    ES2017 and is available in every maintained runtime. The package still
+    installs and still works, but has not been published since April 2018 and
+    its repository is archived.
+  migration: >-
+    leftPad(str, len, ch) becomes String(str).padStart(len, ch); note that
+    padStart is a string method, so the argument order changes.
+  evidence:
+    - label: npm deprecation notice on left-pad
+      url: https://www.npmjs.com/package/left-pad
+    - label: "MDN: String.prototype.padStart"
+      url: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padStart
+
+- from: lodash.get
+  to: optional chaining (?.)
+  toKind: platform
+  type: absorbed
+  confidence: high
+  since: "2016-08"
+  dropIn: false
+  alternatives:
+    - lodash
+  notes: >-
+    The single-method lodash.get package was last published in August 2016 and
+    now carries a deprecation notice from the lodash maintainers reading "This
+    package is deprecated. Use the optional chaining (?.) operator instead."
+    Optional chaining is supported in every maintained Node version and browser.
+    The per-method lodash.* packages as a group are no longer being updated.
+  migration: >-
+    get(obj, 'a.b.c', fallback) becomes obj?.a?.b?.c ?? fallback. If the path is
+    only known at runtime, keep get from the full lodash package instead.
+  evidence:
+    - label: npm deprecation notice on lodash.get
+      url: https://www.npmjs.com/package/lodash.get
+    - label: "MDN: optional chaining operator"
+      url: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining
+
+- from: lodash.isequal
+  to: node:util.isDeepStrictEqual
+  toKind: platform
+  type: absorbed
+  confidence: high
+  since: "2017-01"
+  dropIn: false
+  alternatives:
+    - lodash
+    - dequal
+    - fast-deep-equal
+  notes: >-
+    lodash.isequal was last published in January 2017 and now carries a
+    deprecation notice from the lodash maintainers reading "This package is
+    deprecated. Use require('node:util').isDeepStrictEqual instead." That
+    built-in has shipped with Node since version 9. The two are close but not
+    identical: the Node version compares types and prototypes strictly.
+  migration: >-
+    isEqual(a, b) becomes require('node:util').isDeepStrictEqual(a, b) on the
+    server. For browser bundles, dequal or fast-deep-equal are the usual small
+    stand-ins.
+  evidence:
+    - label: npm deprecation notice on lodash.isequal
+      url: https://www.npmjs.com/package/lodash.isequal
+    - label: "Node.js docs: util.isDeepStrictEqual"
+      url: https://nodejs.org/api/util.html#utilisdeepstrictequalval1-val2
+
+- from: moment
+  to: luxon
+  toKind: package
+  type: self-declared
+  confidence: medium
+  since: "2020-09"
+  dropIn: false
+  alternatives:
+    - date-fns
+    - dayjs
+    - "@js-temporal/polyfill"
+    - "@js-joda/core"
+  notes: >-
+    The Moment team publishes a Project Status page describing Moment as a
+    legacy project in maintenance mode: it is "not dead, but it is indeed done",
+    with security fixes and time zone data still landing but no new features and
+    no API changes. Its mutable API and bundle size cannot be changed without
+    breaking every existing user. The same page names Luxon, written by a
+    long-time Moment contributor, as "the evolution of Moment", while listing
+    Day.js, date-fns and js-Joda alongside it, so the right choice depends on
+    the codebase.
+  migration: >-
+    Luxon is immutable and Intl-based, so moment() becomes DateTime.now() and
+    format tokens differ. If you only format or diff dates, native
+    Intl.DateTimeFormat may remove the dependency entirely.
+  evidence:
+    - label: Moment.js official Project Status page
+      url: https://momentjs.com/docs/#/-project-status/
+    - label: Luxon repository (moment/luxon)
+      url: https://github.com/moment/luxon
+
+- from: nightmare
+  to: playwright
+  toKind: package
+  type: replacement
+  confidence: medium
+  since: "2019-04"
+  dropIn: false
+  alternatives:
+    - puppeteer
+    - "@playwright/test"
+  notes: >-
+    Nightmare's README opens with "NOTICE: This library is no longer
+    maintained.", the repository is archived, and the last release was 3.0.2 in
+    April 2019. It drove an older Electron build, and the README carries a
+    security warning about undiscovered Electron vulnerabilities. Playwright and
+    Puppeteer cover the same browser-automation ground with current browser
+    engines.
+  migration: >-
+    Nightmare's chained `.goto().type().click().end()` calls translate to
+    awaited Playwright equivalents on a `page` object; `.evaluate()` maps almost
+    directly to `page.evaluate()`.
+  evidence:
+    - label: "Nightmare README: \"NOTICE: This library is no longer maintained.\""
+      url: https://github.com/segmentio/nightmare#readme
+    - label: "npm: nightmare, last published April 2019"
+      url: https://www.npmjs.com/package/nightmare
+
+- from: node-sass
+  to: sass
+  toKind: package
+  type: reimplementation
+  confidence: high
+  since: "2024-07"
+  dropIn: false
+  alternatives:
+    - sass-embedded
+  notes: >-
+    node-sass is a binding to LibSass, the C++ Sass implementation, which the
+    Sass team deprecated in 2020. In July 2024 the Sass team declared node-sass
+    end-of-life; the npm package carries a deprecation notice pointing at sass
+    and sass-embedded, and the repository is archived. Dart Sass, published as
+    `sass`, is the reference implementation and the only one that receives new
+    language features.
+  migration: >-
+    Replace node-sass with sass in devDependencies. Integrations such as
+    sass-loader and gulp-sass accept it through an `implementation` option, and
+    the modern JS entry points are `compile`/`compileString` rather than
+    `render`.
+  evidence:
+    - label: "Sass team: Node Sass is end-of-life (24 July 2024)"
+      url: https://sass-lang.com/blog/node-sass-is-end-of-life/
+    - label: "Sass team: LibSass is deprecated"
+      url: https://sass-lang.com/blog/libsass-is-deprecated/
+    - label: npm deprecation notice for node-sass ("Node Sass is no longer supported.
+        Please use `sass` or `sass-embedded` instead.")
+      url: https://www.npmjs.com/package/node-sass
+
+- from: node-sass-chokidar
+  to: sass
+  toKind: package
+  type: replacement
+  confidence: high
+  since: "2022-06"
+  dropIn: false
+  alternatives:
+    - sass-embedded
+  notes: >-
+    node-sass-chokidar was a thin wrapper around the node-sass CLI that swapped
+    its file watcher for chokidar. Its README now opens with a DEPRECATED
+    section saying "LibSass is Deprecated ... and dart-sass is the new official
+    recommendation". The npm package is marked deprecated and last shipped 2.0.0
+    in June 2022.
+  migration: >-
+    Replace the binary in your npm scripts: sass --watch src:dist covers the
+    usual node-sass-chokidar --watch case, since Dart Sass ships its own
+    watcher.
+  evidence:
+    - label: node-sass-chokidar README deprecation banner
+      url: https://github.com/michaelwayman/node-sass-chokidar
+    - label: "Sass team announcement: LibSass is deprecated"
+      url: https://sass-lang.com/blog/libsass-is-deprecated/
+
+- from: node-uuid
+  to: uuid
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2017-03"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    node-uuid was renamed to uuid in 2017, and the old package carries an npm
+    deprecation notice reading "Use uuid module instead". Its final release,
+    1.4.8, is a shim published in March 2017. uuid is actively maintained and
+    has moved to named, ESM-friendly exports since the rename.
+  migration: >-
+    Install uuid and switch from uuid.v4() on a default export to import { v4 as
+    uuidv4 } from 'uuid'.
+  evidence:
+    - label: npm deprecation notice on node-uuid
+      url: https://www.npmjs.com/package/node-uuid
+    - label: uuidjs/uuid repository
+      url: https://github.com/uuidjs/uuid
+
+- from: nodeunit
+  to: null
+  toKind: none
+  type: self-declared
+  confidence: low
+  since: "2018-07"
+  dropIn: false
+  alternatives:
+    - tape
+    - ava
+    - mocha
+    - jest
+    - vitest
+  notes: >-
+    nodeunit is marked deprecated on npm and its README carries a "DEPRECATED
+    PROJECT" section explaining that the maintainers saw no reason to keep
+    developing it given how many actively maintained runners exist. The README
+    names tap, ava, tape, mocha, jasmine and jest rather than a single
+    successor, so there is no consensus replacement. Node's built-in `node:test`
+    module is now also an option that needs no dependency at all.
+  migration: >-
+    nodeunit's `test.equal`/`test.done` callback style has no direct equivalent;
+    the closest structural match for existing suites is tape or the built-in
+    `node:test`, both of which pass an assertion object into each test.
+  evidence:
+    - label: npm deprecation notice on nodeunit
+      url: https://www.npmjs.com/package/nodeunit
+    - label: "nodeunit README: \"DEPRECATED PROJECT\" section"
+      url: https://github.com/caolan/nodeunit#deprecated-project
+
+- from: parcel-bundler
+  to: parcel
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2021-03"
+  dropIn: false
+  alternatives:
+    - vite
+    - "@rsbuild/core"
+    - esbuild
+  notes: >-
+    Parcel 1 was published as parcel-bundler; Parcel 2 onwards is published as
+    parcel. The v1 package is deprecated on npm with a notice linking to the
+    official migration guide, and its last release, 1.12.5, was in March 2021.
+    Parcel 2 is a rewrite, so plugin APIs and configuration changed even though
+    the zero-config workflow is the same.
+  migration: >-
+    Follow the official Parcel 1 to 2 guide: Parcel 2 no longer transpiles by
+    default, so set a `browserslist` field in package.json, and declare build
+    outputs through package.json `targets`.
+  evidence:
+    - label: npm deprecation notice for parcel-bundler ("Parcel v1 is no longer
+        maintained… migrate to v2")
+      url: https://www.npmjs.com/package/parcel-bundler
+    - label: Official Parcel 1 to Parcel 2 migration guide
+      url: https://parceljs.org/migration/parcel-1/
+
+- from: phantomjs-prebuilt
+  to: puppeteer
+  toKind: package
+  type: replacement
+  confidence: high
+  since: "2018-03"
+  dropIn: false
+  alternatives:
+    - playwright
+    - chrome-launcher
+  notes: >-
+    PhantomJS development was suspended in March 2018 once Chrome and Firefox
+    shipped headless modes, and both the phantomjs-prebuilt npm package and its
+    Medium/phantomjs repository are deprecated and archived. The older unscoped
+    phantomjs package carries a notice pointing at phantomjs-prebuilt, so it is
+    equally dead. Puppeteer downloads and drives a headless Chrome build in the
+    same way phantomjs-prebuilt downloaded a PhantomJS binary.
+  migration: >-
+    Scripts that shelled out to the PhantomJS binary generally become
+    `puppeteer.launch()` plus `page.goto()`; there is no PhantomJS-compatible
+    API surface to keep.
+  evidence:
+    - label: npm deprecation notice on phantomjs-prebuilt
+      url: https://www.npmjs.com/package/phantomjs-prebuilt
+    - label: "PhantomJS issue 15344: archiving the project, suspending development
+        (March 2018)"
+      url: https://github.com/ariya/phantomjs/issues/15344
+    - label: Medium/phantomjs repository (archived)
+      url: https://github.com/Medium/phantomjs
+
+- from: popper.js
+  to: "@popperjs/core"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2020-01"
+  dropIn: false
+  alternatives:
+    - "@floating-ui/dom"
+  notes: >-
+    Popper v1 shipped as the unscoped popper.js package; from v2 the project
+    moved to @popperjs/core, and the old package carries an npm notice saying it
+    is dedicated to the legacy v1. popper.js last released 1.16.1 in January
+    2020. @popperjs/core is what Bootstrap 5 and most consumers depend on, but
+    it is itself stable rather than actively developed — 2.11.8 from May 2023 is
+    current — because the project has since been renamed again to Floating UI,
+    where new work happens.
+  migration: >-
+    v2 is a rewrite: new Popper(ref, popper, opts) becomes createPopper(ref,
+    popper, opts), and modifiers become an array rather than an object. Floating
+    UI publishes a further migration guide if you want to go all the way.
+  evidence:
+    - label: npm deprecation notice on popper.js pointing at @popperjs/core
+      url: https://www.npmjs.com/package/popper.js
+    - label: Floating UI repository, formerly popperjs/popper-core ("Popper is now
+        Floating UI")
+      url: https://github.com/floating-ui/floating-ui
+    - label: Floating UI migration guide
+      url: https://floating-ui.com/docs/migration
+
+- from: postcss-cssnext
+  to: postcss-preset-env
+  toKind: package
+  type: self-declared
+  confidence: high
+  since: "2018-05"
+  dropIn: false
+  alternatives:
+    - autoprefixer
+    - lightningcss
+  notes: >-
+    The author deprecated postcss-cssnext on 29 May 2018 and named
+    postcss-preset-env as its successor, which is now maintained under the
+    PostCSS organisation. The repository was archived in December 2024 and the
+    npm package carries the same deprecation notice. postcss-preset-env selects
+    features from browserslist targets and standardisation stages rather than a
+    fixed feature list.
+  migration: >-
+    Swap the plugin in your PostCSS config for postcss-preset-env and set
+    `stage` plus a browserslist target. Autoprefixer is bundled, so remove any
+    separate entry for it.
+  evidence:
+    - label: "Author's post: Deprecating cssnext (29 May 2018)"
+      url: https://moox.io/blog/deprecating-cssnext/
+    - label: npm deprecation notice for postcss-cssnext ("deprecated in favor of
+        postcss-preset-env")
+      url: https://www.npmjs.com/package/postcss-cssnext
+    - label: Archived MoOx/postcss-cssnext repository
+      url: https://github.com/MoOx/postcss-cssnext
+
+- from: protractor
+  to: "@playwright/test"
+  toKind: package
+  type: replacement
+  confidence: high
+  since: "2021-04"
+  dropIn: false
+  alternatives:
+    - cypress
+    - webdriverio
+    - nightwatch
+    - puppeteer
+  notes: >-
+    In April 2021 the Angular team opened "Future of Angular E2E & Plans for
+    Protractor", explaining that Protractor's control-flow-era architecture
+    predates async/await and that development would stop rather than continue.
+    The npm package now carries a deprecation notice stating it reached end of
+    life by summer 2023, the repository is archived, and the last release was
+    7.0.0 in May 2020. Angular CLI stopped scaffolding Protractor for new
+    projects and offers builders for third-party runners instead.
+  migration: >-
+    `ng add` builders exist for Playwright, Cypress, WebdriverIO and Nightwatch;
+    the Protractor control flow is gone, so page-object code has to be rewritten
+    as plain async/await.
+  evidence:
+    - label: "angular/protractor issue 5502: Future of Angular E2E & Plans for
+        Protractor (April 2021)"
+      url: https://github.com/angular/protractor/issues/5502
+    - label: npm deprecation notice on protractor (end of life by summer 2023)
+      url: https://www.npmjs.com/package/protractor
+    - label: angular/protractor repository (archived)
+      url: https://github.com/angular/protractor
+
+- from: puppeteer-firefox
+  to: puppeteer
+  toKind: package
+  type: absorbed
+  confidence: high
+  since: "2020-01"
+  dropIn: false
+  alternatives:
+    - playwright
+  notes: >-
+    puppeteer-firefox was an experiment that drove a patched "Juggler" build of
+    Firefox. It is deprecated on npm, the notice records that Juggler builds
+    stopped being available on 11 May 2023, and the last release was 0.5.1 in
+    January 2020. Puppeteer itself now supports Firefox through WebDriver BiDi,
+    which is enabled by default when launching Firefox, so the separate package
+    is unnecessary.
+  migration: >-
+    Use puppeteer and pass `browser: 'firefox'` to `puppeteer.launch()`; a few
+    Juggler-era APIs have no BiDi equivalent and need checking against the
+    current Puppeteer docs.
+  evidence:
+    - label: npm deprecation notice on puppeteer-firefox ("No longer maintained")
+      url: https://www.npmjs.com/package/puppeteer-firefox
+    - label: "Puppeteer docs: Firefox support via WebDriver BiDi"
+      url: https://pptr.dev/webdriver-bidi
+
+- from: q
+  to: Promise (native)
+  toKind: platform
+  type: absorbed
+  confidence: high
+  since: "2017-10"
+  dropIn: false
+  alternatives:
+    - bluebird
+  notes: >-
+    Q was one of the promise libraries that shaped the JavaScript promise
+    specification, and its author deprecated it on npm with a note saying users
+    "can almost certainly migrate to the native JavaScript promise now". The
+    last release was 1.5.1 in October 2017 and the repository is archived.
+    Native promises have been available in every supported Node.js release for
+    years.
+  migration: >-
+    `Q.defer()` becomes `new Promise((resolve, reject) => …)`, `Q.all` becomes
+    `Promise.all`, and `Q.nfcall(fn, …)` becomes `util.promisify(fn)(…)`.
+  evidence:
+    - label: npm deprecation notice from the author of Q
+      url: https://www.npmjs.com/package/q
+    - label: Q repository (archived)
+      url: https://github.com/kriskowal/q
+
+- from: querystring
+  to: URLSearchParams
+  toKind: platform
+  type: absorbed
+  confidence: high
+  since: "2021-02"
+  dropIn: false
+  alternatives:
+    - qs
+  notes: >-
+    The userland querystring package mirrors Node's built-in module of the same
+    name, which the Node documentation labels Legacy and does not recommend for
+    new code. The npm package's deprecation notice repeats that wording and
+    points at the WHATWG URLSearchParams API, which is a global in Node and in
+    browsers. The last release was 0.2.1 in February 2021.
+  migration: >-
+    querystring.parse(s) becomes Object.fromEntries(new URLSearchParams(s)) and
+    querystring.stringify(o) becomes new URLSearchParams(o).toString(). Check
+    behaviour for repeated keys and nested objects, which differ; qs covers the
+    nested case.
+  evidence:
+    - label: npm deprecation notice on querystring
+      url: https://www.npmjs.com/package/querystring
+    - label: Node.js docs marking the querystring API as Legacy
+      url: https://nodejs.org/api/querystring.html
+
+- from: qunitjs
+  to: qunit
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2017-10"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    QUnit reclaimed the qunit name on npm in 2017. The qunitjs package carries a
+    notice saying 2.4.1 is the last version published under that name and that
+    future updates require switching to qunit. The official QUnit documentation
+    now tells users to run `npm install --save-dev qunit`.
+  migration: >-
+    Replace the qunitjs dependency with qunit at the matching 2.x version; no
+    test code changes are needed for the rename itself.
+  evidence:
+    - label: npm deprecation notice on qunitjs (2.4.1 is the last release under that
+        name)
+      url: https://www.npmjs.com/package/qunitjs
+    - label: "QUnit getting started docs: `npm install --save-dev qunit`"
+      url: https://qunitjs.com/intro/
+
+- from: react-addons-test-utils
+  to: react-dom
+  toKind: package
+  type: absorbed
+  confidence: high
+  since: "2017-04"
+  dropIn: false
+  alternatives:
+    - "@testing-library/react"
+  notes: >-
+    React's add-on packages were folded into the core packages in React 15.5.
+    The README for react-addons-test-utils states it is deprecated as of 15.5.0,
+    that TestUtils moved to `react-dom/test-utils` and that the shallow renderer
+    moved to `react-test-renderer/shallow`. Its last release was 15.6.2 in
+    September 2017, and React 19 has since removed the test-utils functions, so
+    the destination depends on which React version you are on.
+  migration: >-
+    On React 15.5 to 18, change `require('react-addons-test-utils')` to
+    `require('react-dom/test-utils')`. On React 19 that no longer works: `act`
+    moved to the `react` package and the remaining test-utils functions error
+    when called, so use @testing-library/react instead.
+  evidence:
+    - label: "react-addons-test-utils README: deprecated as of React 15.5, moved to
+        react-dom/test-utils"
+      url: https://www.npmjs.com/package/react-addons-test-utils
+    - label: "React 19 upgrade guide: react-dom/test-utils functions removed, act
+        moved to react"
+      url: https://react.dev/blog/2024/04/25/react-19-upgrade-guide
+
+- from: react-testing-library
+  to: "@testing-library/react"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2019-05"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    The Testing Library family was consolidated under the @testing-library scope
+    in 2019. The unscoped react-testing-library package carries an npm notice
+    asking users to uninstall it and install @testing-library/react instead,
+    with the reasoning recorded in dom-testing-library issue 260. The sibling
+    package dom-testing-library moved to @testing-library/dom in the same
+    change.
+  migration: >-
+    Swap the dependency and update imports to `@testing-library/react`; the
+    exported `render`, `screen` and query helpers kept their names.
+  evidence:
+    - label: npm deprecation notice on react-testing-library
+      url: https://www.npmjs.com/package/react-testing-library
+    - label: "dom-testing-library issue 260: Create @testing-library scope for
+        publishing"
+      url: https://github.com/testing-library/dom-testing-library/issues/260
+
+- from: recompose
+  to: react
+  toKind: package
+  type: absorbed
+  confidence: high
+  since: "2018-10"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    In October 2018 the author added a note to the recompose README saying he
+    was discontinuing active maintenance because React Hooks solve the problems
+    recompose was built to address. The repository was archived in September
+    2022. Existing code keeps working, but the last release, 0.30.0, predates
+    the note.
+  migration: >-
+    Higher-order components map fairly directly onto hooks: withState becomes
+    useState, withHandlers becomes plain functions or useCallback, and lifecycle
+    becomes useEffect.
+  evidence:
+    - label: Author's note at the top of the recompose README (repository archived
+        September 2022)
+      url: https://github.com/acdlite/recompose
+    - label: "React documentation: built-in hooks reference"
+      url: https://react.dev/reference/react/hooks
+
+- from: redux-form
+  to: react-final-form
+  toKind: package
+  type: self-declared
+  confidence: medium
+  since: "2023-03"
+  dropIn: false
+  alternatives:
+    - react-hook-form
+    - formik
+    - "@tanstack/react-form"
+  notes: >-
+    The redux-form README says the author took what he learned maintaining it
+    and built React Final Form, which he recommends for new projects, alongside
+    the community view that form state generally does not belong in Redux.
+    redux-form is not formally deprecated and still installs, but its last
+    release was 8.3.10 in March 2023 and the repository has been quiet since.
+    The Field component APIs were kept deliberately similar to ease the move,
+    though many new projects now reach for react-hook-form instead.
+  migration: >-
+    Replace the reduxForm() higher-order component with the <Form> component
+    from react-final-form; <Field name component> carries over largely
+    unchanged.
+  evidence:
+    - label: redux-form README recommending React Final Form
+      url: https://github.com/redux-form/redux-form
+    - label: react-final-form repository
+      url: https://github.com/final-form/react-final-form
+
+- from: request
+  to: undici
+  toKind: package
+  type: replacement
+  confidence: high
+  since: "2020-02"
+  dropIn: false
+  alternatives:
+    - got
+    - axios
+    - node-fetch
+    - postman-request
+  notes: >-
+    Mikeal Rogers put request into maintenance mode in March 2019, explaining
+    that its incumbency made it harder for newer HTTP clients to gain adoption.
+    The package carries a full npm deprecation notice, and its final release,
+    2.88.2, went out in February 2020. It still installs and still works, but
+    receives no fixes and its callback-first API predates promises. Postman
+    maintains a hard fork as postman-request for code that cannot move off the
+    API.
+  migration: >-
+    Node 18+ ships a global `fetch()` backed by undici, so most simple call
+    sites need no dependency at all; reach for `got` when you want retries,
+    hooks and streams in one package.
+  evidence:
+    - label: "Maintainer announcement: Request's Past, Present and Future (mikeal,
+        March 2019)"
+      url: https://github.com/request/request/issues/3142
+    - label: npm deprecation notice for request
+      url: https://www.npmjs.com/package/request
+
+- from: request-promise
+  to: got
+  toKind: package
+  type: replacement
+  confidence: high
+  since: "2020-07"
+  dropIn: false
+  alternatives:
+    - axios
+    - undici
+    - node-fetch
+  notes: >-
+    request-promise is a Bluebird-backed promise wrapper around request, and it
+    was deprecated in July 2020 for the same reason its base package was. The
+    npm notice states plainly that it extends the now-deprecated request
+    package. Its last release is 4.2.6; nothing in the request family receives
+    fixes any more.
+  migration: >-
+    `got` is the closest promise-first replacement: `request-promise({uri, json:
+    true})` becomes `got(url).json()`, and `resolveWithFullResponse: true` maps
+    onto got's default response object.
+  evidence:
+    - label: npm deprecation notice for request-promise
+      url: https://www.npmjs.com/package/request-promise
+    - label: Maintainer announcement for the request family
+      url: https://github.com/request/request/issues/3142
+
+- from: request-promise-any
+  to: got
+  toKind: package
+  type: replacement
+  confidence: high
+  since: "2020-07"
+  dropIn: false
+  alternatives:
+    - axios
+    - undici
+  notes: >-
+    request-promise-any let callers plug in any Promises/A+ implementation on
+    top of request via the any-promise module, and it was deprecated in July
+    2020 with the rest of the request family. The npm notice cites the
+    deprecation of the underlying request package. A pluggable promise layer is
+    rarely needed now that native promises are universal.
+  migration: >-
+    Drop the pluggable-promise layer entirely and call `got`, which returns
+    native promises; any remaining Bluebird-specific helpers can be replaced
+    with `Promise.all` or `p-map`.
+  evidence:
+    - label: npm deprecation notice for request-promise-any
+      url: https://www.npmjs.com/package/request-promise-any
+    - label: Maintainer announcement for the request family
+      url: https://github.com/request/request/issues/3142
+
+- from: request-promise-native
+  to: got
+  toKind: package
+  type: replacement
+  confidence: high
+  since: "2020-07"
+  dropIn: false
+  alternatives:
+    - axios
+    - undici
+    - node-fetch
+  notes: >-
+    request-promise-native is the native-Promise variant of request-promise and
+    was deprecated alongside it in July 2020. Its npm notice says it extends the
+    now-deprecated request package and points at the request deprecation issue.
+    The last published version, 1.0.9, is the end of the line.
+  migration: >-
+    Swap to `got`, which returns native promises by default;
+    `request-promise-native(...).then(body => …)` maps to `got(url).text()` or
+    `got(url).json()`.
+  evidence:
+    - label: npm deprecation notice for request-promise-native
+      url: https://www.npmjs.com/package/request-promise-native
+    - label: Maintainer announcement for the request family
+      url: https://github.com/request/request/issues/3142
+
+- from: rollup-plugin-babel
+  to: "@rollup/plugin-babel"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2020-03"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Rollup consolidated its first-party plugins into the @rollup scope in 2020
+    and moved them into the rollup/plugins monorepo. rollup-plugin-babel's last
+    release was 4.4.0 in March 2020 and it is deprecated on npm with a notice
+    pointing at @rollup/plugin-babel. The unscoped node-resolve and commonjs
+    plugins were retired the same way.
+  migration: >-
+    Swap the dependency and import the named export: `import { babel } from
+    '@rollup/plugin-babel'`. The scoped plugin's README asks you to set
+    `babelHelpers` explicitly, usually 'bundled' or 'runtime'.
+  evidence:
+    - label: npm deprecation notice for rollup-plugin-babel ("Please use
+        @rollup/plugin-babel")
+      url: https://www.npmjs.com/package/rollup-plugin-babel
+    - label: "@rollup/plugin-babel in the rollup/plugins monorepo"
+      url: https://github.com/rollup/plugins/tree/master/packages/babel
+
+- from: shortid
+  to: nanoid
+  toKind: package
+  type: self-declared
+  confidence: high
+  since: "2020-10"
+  dropIn: false
+  alternatives:
+    - uuid
+    - "@paralleldrive/cuid2"
+  notes: >-
+    The shortid README states that the package is deprecated because its
+    architecture is unsafe and recommends Nano ID in its place. Development
+    stopped with 2.2.16 in October 2020; a 2.2.17 republish appeared on npm in
+    January 2025, but the repository has had no commits since 2020. Nano ID uses
+    a cryptographically secure random source and is smaller and faster.
+  migration: >-
+    shortid.generate() becomes nanoid(). The default Nano ID length is 21
+    characters rather than shortid's 7-14, so widen fixed-size database columns
+    before switching.
+  evidence:
+    - label: shortid README deprecation notice recommending Nano ID
+      url: https://github.com/dylang/shortid
+    - label: nanoid repository
+      url: https://github.com/ai/nanoid
+
+- from: sinon-as-promised
+  to: sinon
+  toKind: package
+  type: absorbed
+  confidence: high
+  since: "2017-03"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    This package added `resolves` and `rejects` to Sinon stubs. Its README
+    states that Sinon 2 added those methods and no longer requires the library,
+    and the last release was 4.0.3 in March 2017. The functionality now ships in
+    Sinon itself.
+  migration: >-
+    Remove the dependency and the `require('sinon-as-promised')` line;
+    `sinon.stub().resolves(value)` and `.rejects(error)` work unchanged on Sinon
+    2 and later.
+  evidence:
+    - label: "sinon-as-promised README: \"Sinon 2 added resolves and rejects methods
+        and no longer requires this library\""
+      url: https://github.com/bendrucker/sinon-as-promised#readme
+    - label: Sinon project site and current stub documentation
+      url: https://sinonjs.org/
+
+- from: snowpack
+  to: vite
+  toKind: package
+  type: self-declared
+  confidence: high
+  since: "2022-04"
+  dropIn: false
+  alternatives:
+    - esbuild
+    - parcel
+  notes: >-
+    Snowpack's README carries an April 2022 notice from the maintainers saying
+    the project is no longer actively maintained and is not recommended for new
+    projects. It names Vite as a well-maintained Snowpack alternative, with
+    esbuild and Parcel as further options. The last release was 3.8.8 in August
+    2021.
+  migration: >-
+    Vite offers the same unbundled-ESM dev server model: translate
+    snowpack.config.js `mount` entries into Vite's `root` and `publicDir`, and
+    replace Snowpack plugins with the equivalent Vite or Rollup plugins.
+  evidence:
+    - label: "Snowpack README (April 2022): no longer actively maintained, recommends
+        Vite"
+      url: https://github.com/FredKSchott/snowpack
+    - label: npm registry entry for snowpack showing 3.8.8 as the last release (August
+        2021)
+      url: https://www.npmjs.com/package/snowpack
+
+- from: socket.io-redis
+  to: "@socket.io/redis-adapter"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2021-05"
+  dropIn: false
+  alternatives:
+    - "@socket.io/cluster-adapter"
+    - "@socket.io/mongo-adapter"
+  notes: >-
+    The Redis adapter for Socket.IO was republished under the @socket.io scope
+    at version 7, and the old socket.io-redis package stopped at 6.1.1 in May
+    2021. Its npm notice names @socket.io/redis-adapter and links to the
+    official migration guide. The scoped adapter is the one documented on
+    socket.io.
+  migration: >-
+    The default export became the named export `createAdapter`, and the adapter
+    no longer creates Redis clients for you: build your own `pubClient` and
+    `subClient` with redis or ioredis and pass them as `createAdapter(pubClient,
+    subClient)`.
+  evidence:
+    - label: npm deprecation notice for socket.io-redis
+      url: https://www.npmjs.com/package/socket.io-redis
+    - label: Official Socket.IO Redis adapter migration guide
+      url: https://socket.io/docs/v4/redis-adapter/#migrating-from-socketio-redis
+
+- from: standard-version
+  to: commit-and-tag-version
+  toKind: package
+  type: fork
+  confidence: medium
+  since: "2022-05"
+  dropIn: true
+  alternatives:
+    - release-please
+    - semantic-release
+    - changesets
+  notes: >-
+    standard-version's README declares the project deprecated, and its last
+    release was 9.5.0 in May 2022. The maintainer's first recommendation is
+    release-please for projects that can use GitHub Actions, and they point
+    anyone who needs to stay on the same tool at the commit-and-tag-version
+    fork, which is actively released and keeps the original CLI and
+    configuration. Because the maintainer names two different destinations,
+    which one is right depends on whether you want to keep the existing
+    workflow.
+  migration: >-
+    commit-and-tag-version is a drop-in replacement: swap the dependency and
+    change the npm script to `commit-and-tag-version`. Existing .versionrc /
+    .versionrc.json files and the `standard-version` package.json config key are
+    still read.
+  evidence:
+    - label: "standard-version README: \"standard-version is deprecated\", recommends
+        release-please and names the fork"
+      url: https://github.com/conventional-changelog/standard-version
+    - label: "commit-and-tag-version README: \"a fork of standard-version\", drop-in
+        migration"
+      url: https://github.com/absolute-version/commit-and-tag-version
+
+- from: stylelint-config-prettier
+  to: null
+  toKind: none
+  type: absorbed
+  confidence: high
+  since: "2023-02"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Stylelint 15 deprecated its stylistic rules and Stylelint 16 removed them,
+    so there is nothing left for this config to switch off. The repository is
+    archived and its README states that on Stylelint v15 or higher the plugin is
+    no longer necessary; the Stylelint 15 migration guide says the same. Its
+    last release was 9.0.5 in February 2023.
+  migration: >-
+    Remove stylelint-config-prettier from devDependencies and delete it from the
+    "extends" array in your Stylelint config. No replacement package is needed.
+  evidence:
+    - label: "Archived repository README: \"this plugin is no longer necessary\" as of
+        Stylelint v15"
+      url: https://github.com/prettier/stylelint-config-prettier
+    - label: "Stylelint 15 migration guide: 76 stylistic rules deprecated; \"you may
+        no longer need to extend Prettier's Stylelint config\""
+      url: https://stylelint.io/migration-guide/to-15
+
+- from: supertest-as-promised
+  to: supertest
+  toKind: package
+  type: absorbed
+  confidence: high
+  since: "2016-11"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    This package existed only to add promise support to SuperTest. SuperTest 2.0
+    made its request objects thenable natively, and the wrapper carries an npm
+    notice saying to use SuperTest directly. The repository is archived and the
+    last release was 4.0.2 in November 2016.
+  migration: >-
+    Delete the dependency and call `supertest(app)` directly; `.expect(...)`
+    already returns a thenable, so existing `.then()` chains keep working.
+  evidence:
+    - label: "npm deprecation notice: \"SuperTest 2.0+ supports promises natively; use
+        that instead!\""
+      url: https://www.npmjs.com/package/supertest-as-promised
+    - label: WhoopInc/supertest-as-promised repository (archived)
+      url: https://github.com/WhoopInc/supertest-as-promised
+
+- from: tslint
+  to: typescript-eslint
+  toKind: package
+  type: replacement
+  confidence: high
+  since: "2019-02"
+  dropIn: false
+  alternatives:
+    - "@typescript-eslint/eslint-plugin"
+    - eslint
+    - oxlint
+  notes: >-
+    Palantir announced in February 2019 that TSLint would be deprecated in
+    favour of ESLint with first-class TypeScript support, and the final release,
+    6.1.3, shipped in July 2020. The repository was archived in March 2021 and
+    the npm package carries a deprecation notice pointing at that announcement.
+    typescript-eslint is the project the TypeScript and ESLint communities
+    backed as the successor.
+  migration: >-
+    typescript-eslint documents the TSLint story and a rule-by-rule comparison;
+    `tslint-to-eslint-config` can convert an existing tslint.json into an ESLint
+    config as a starting point.
+  evidence:
+    - label: TSLint deprecation announcement, 23 Feb 2019 (palantir/tslint#4534)
+      url: https://github.com/palantir/tslint/issues/4534
+    - label: "typescript-eslint: What about TSLint?"
+      url: https://typescript-eslint.io/users/what-about-tslint/
+    - label: npm deprecation notice for tslint
+      url: https://www.npmjs.com/package/tslint
+
+- from: uglify-es
+  to: terser
+  toKind: package
+  type: fork
+  confidence: high
+  since: "2018-02"
+  dropIn: false
+  alternatives:
+    - esbuild
+    - "@swc/core"
+    - uglify-js
+  notes: >-
+    uglify-es was the ES2015+ branch of UglifyJS and its releases stopped in
+    early 2018; it is deprecated on npm, with the notice directing ES support
+    back to uglify-js as of v3.13.0. Terser is a community fork of uglify-es
+    that deliberately kept the option and CLI surface, and it became the default
+    minifier for webpack and Rollup. Both destinations are live, but the
+    ecosystem settled on terser.
+  migration: >-
+    Terser accepts uglify-es options largely unchanged, so
+    `require('terser').minify(code, options)` is close to a direct swap — but
+    Terser 5's minify() is async and returns a promise, so call sites need
+    updating.
+  evidence:
+    - label: npm deprecation notice for uglify-es (points ES support at uglify-js
+        v3.13.0+)
+      url: https://www.npmjs.com/package/uglify-es
+    - label: "Terser README: terser is a fork of uglify-es, and \"uglify-es is no
+        longer maintained\""
+      url: https://github.com/terser/terser
+    - label: mishoo/UglifyJS2#3156 — the release-request thread Terser cites as
+        evidence uglify-es is unmaintained (May 2018)
+      url: https://github.com/mishoo/UglifyJS2/issues/3156
+
+- from: uglifyjs-webpack-plugin
+  to: terser-webpack-plugin
+  toKind: package
+  type: self-declared
+  confidence: high
+  since: "2019-07"
+  dropIn: false
+  alternatives:
+    - esbuild-loader
+    - "@swc/core"
+    - minimizer-webpack-plugin
+  notes: >-
+    webpack-contrib archived uglifyjs-webpack-plugin in December 2019, and the
+    README's notice points at terser-webpack-plugin. The last release was 2.2.0
+    in July 2019 and the plugin only ever supported webpack 4. webpack 5
+    minifies with Terser in production mode without any plugin entry of your
+    own; note the maintained plugin is now also published under the name
+    minimizer-webpack-plugin.
+  migration: >-
+    On webpack 5 you can usually delete the plugin entirely, since production
+    mode minifies by default; if you need custom options, configure
+    `optimization.minimizer` with terser-webpack-plugin.
+  evidence:
+    - label: "Archived webpack-contrib/uglifyjs-webpack-plugin README: \"Please use
+        terser-webpack-plugin\""
+      url: https://github.com/webpack-contrib/uglifyjs-webpack-plugin
+    - label: webpack-contrib/terser-webpack-plugin, the maintained successor
+      url: https://github.com/webpack-contrib/terser-webpack-plugin
+
+- from: vue-resource
+  to: axios
+  toKind: package
+  type: self-declared
+  confidence: high
+  since: "2016-11"
+  dropIn: false
+  alternatives:
+    - ofetch
+  notes: >-
+    Evan You announced on the official Vue blog in November 2016 that
+    vue-resource was being retired from official recommendation status,
+    suggesting Axios as the default instead. The last release, 1.5.3, shipped in
+    June 2021, the repository was archived in December 2023, and the library
+    targets Vue 2 rather than Vue 3.
+  migration: >-
+    this.$http.get(url) becomes axios.get(url), and the response body moves from
+    response.body to response.data. Register axios yourself rather than relying
+    on a Vue plugin.
+  evidence:
+    - label: Retiring vue-resource, official Vue blog (Evan You, 3 Nov 2016)
+      url: https://medium.com/the-vue-point/retiring-vue-resource-871a82880af4
+    - label: Archived pagekit/vue-resource repository
+      url: https://github.com/pagekit/vue-resource
+
+- from: wreck
+  to: "@hapi/wreck"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2019-03"
+  dropIn: false
+  alternatives:
+    - undici
+    - got
+  notes: >-
+    wreck is hapi's HTTP client utility and moved to the @hapi scope along with
+    the rest of the framework. The unscoped package stopped at 14.2.0 in March
+    2019 and its npm notice says the module has moved to @hapi/wreck and is no
+    longer maintained under the old name. The scoped package is still being
+    released.
+  migration: >-
+    Install @hapi/wreck and update the require path; if you are not otherwise
+    using hapi, undici or got are better-supported general-purpose clients.
+  evidence:
+    - label: npm deprecation notice for wreck
+      url: https://www.npmjs.com/package/wreck
+    - label: Maintained scoped package
+      url: https://www.npmjs.com/package/@hapi/wreck

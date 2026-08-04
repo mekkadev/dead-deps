@@ -27,6 +27,7 @@ not dead") must **not** be added. Being quiet is not being abandoned.
 | --- | --- | --- | --- |
 | `from` | string | yes | Exact npm package name that is dead or superseded. |
 | `to` | string \| null | yes | Primary recommended successor. `null` when nothing credible exists. |
+| `toKind` | `package` \| `platform` \| `none` | yes | What `to` actually is. See below. |
 | `type` | enum | yes | How the successor relates to `from`. See below. |
 | `confidence` | `high` \| `medium` \| `low` | yes | How settled the succession is. |
 | `since` | `YYYY-MM` \| null | yes | Approximately when `from` stopped being maintained. |
@@ -35,6 +36,21 @@ not dead") must **not** be added. Being quiet is not being abandoned.
 | `notes` | string | yes | Two or three sentences of plain prose. Rendered on the website. |
 | `migration` | string \| null | yes | One concrete migration hint, or `null`. |
 | `evidence` | list | yes | `{ label, url }` pairs. At least one. |
+
+### `toKind` values
+
+About a fifth of real successions do not point at a package at all. Forcing a
+language feature into a package-name field would make the tool recommend
+installing something that does not exist, so the schema names the difference.
+
+| Value | Meaning | `to` holds |
+| --- | --- | --- |
+| `package` | The successor is an npm package you install. | `undici` |
+| `platform` | The capability moved into the language or runtime — the right fix is to delete the dependency. | `String.prototype.padStart` |
+| `none` | Nothing credible succeeded it. `to` is `null`. | `null` |
+
+`dropIn` must be `false` whenever `toKind` is not `package`: there is no package
+to swap in.
 
 ### `type` values
 
@@ -52,6 +68,7 @@ not dead") must **not** be added. Being quiet is not being abandoned.
 ```yaml
 - from: request
   to: undici
+  toKind: package
   type: replacement
   confidence: high
   since: "2020-02"
