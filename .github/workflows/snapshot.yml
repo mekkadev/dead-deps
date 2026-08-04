@@ -38,7 +38,7 @@ jobs:
 
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # Commit onto the default branch, not the detached ref a schedule
           # would otherwise hand us. Full history so the rebase below has
