@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-04T13:49:34.813Z",
+  "generatedAt": "2026-08-04T14:15:16.568Z",
   "partial": false,
   "corpus": {
     "path": "data/calibration.yaml",
@@ -8,7 +8,7 @@
     "evaluated": 49
   },
   "run": {
-    "durationMs": 2225,
+    "durationMs": 3685,
     "concurrency": 6,
     "cacheEnabled": true,
     "cacheTtlHours": 24,
@@ -62,18 +62,18 @@
   },
   "accuracy": {
     "strict": {
-      "correct": 35,
+      "correct": 37,
       "total": 49,
-      "rate": 0.7142857142857143
+      "rate": 0.7551020408163265
     },
     "nearMiss": {
       "count": 2,
       "rate": 0.04081632653061224
     },
     "lenient": {
-      "correct": 37,
+      "correct": 39,
       "total": 49,
-      "rate": 0.7551020408163265
+      "rate": 0.7959183673469388
     }
   },
   "headlineFalsePositiveRate": {
@@ -93,8 +93,8 @@
   "missedDead": {
     "bucket": "packages that should have been reported but were not",
     "support": 24,
-    "hits": 9,
-    "rate": 0.375,
+    "hits": 8,
+    "rate": 0.3333333333333333,
     "packages": [
       "grunt (expected low-activity, predicted active)",
       "handlebars (expected low-activity, predicted active)",
@@ -102,7 +102,6 @@
       "morgan (expected low-activity, predicted active)",
       "ejs (expected low-activity, predicted active)",
       "colors (expected unmaintained, predicted stable-complete)",
-      "enzyme (expected unmaintained, predicted active)",
       "browserify (expected unmaintained, predicted active)",
       "underscore.string (expected unmaintained, predicted stable-complete)"
     ]
@@ -136,10 +135,10 @@
       "hijack-risk": 0
     },
     "unmaintained": {
-      "active": 2,
+      "active": 1,
       "stable-complete": 2,
-      "low-activity": 2,
-      "unmaintained": 2,
+      "low-activity": 1,
+      "unmaintained": 4,
       "deprecated": 0,
       "abandoned": 0,
       "hijack-risk": 0
@@ -158,11 +157,11 @@
     {
       "label": "active",
       "support": 12,
-      "predicted": 19,
+      "predicted": 18,
       "truePositives": 12,
-      "precision": 0.631578947368421,
+      "precision": 0.6666666666666666,
       "recall": 1,
-      "f1": 0.7741935483870968
+      "f1": 0.8
     },
     {
       "label": "stable-complete",
@@ -176,7 +175,7 @@
     {
       "label": "low-activity",
       "support": 6,
-      "predicted": 2,
+      "predicted": 1,
       "truePositives": 0,
       "precision": 0,
       "recall": 0,
@@ -185,11 +184,11 @@
     {
       "label": "unmaintained",
       "support": 8,
-      "predicted": 3,
-      "truePositives": 2,
-      "precision": 0.6666666666666666,
-      "recall": 0.25,
-      "f1": 0.36363636363636365
+      "predicted": 5,
+      "truePositives": 4,
+      "precision": 0.8,
+      "recall": 0.5,
+      "f1": 0.6153846153846154
     },
     {
       "label": "deprecated",
@@ -230,13 +229,13 @@
       "predicted": "unmaintained",
       "nearMiss": false,
       "flagged": true,
-      "score": 56,
+      "score": 69,
       "confidence": "medium",
       "topEvidence": [
         {
           "kind": "release-cadence",
           "label": "No release in 2.6 years — 38x longer than this package has ever gone quiet before (its own median gap between releases is 25 days).",
-          "weight": 16,
+          "weight": 22,
           "url": "https://www.npmjs.com/package/moment"
         },
         {
@@ -259,7 +258,7 @@
       "predicted": "active",
       "nearMiss": false,
       "flagged": false,
-      "score": 2,
+      "score": 4,
       "confidence": "low",
       "topEvidence": [
         {
@@ -346,7 +345,7 @@
       "predicted": "active",
       "nearMiss": false,
       "flagged": false,
-      "score": 2,
+      "score": 3,
       "confidence": "low",
       "topEvidence": [
         {
@@ -375,7 +374,7 @@
       "predicted": "active",
       "nearMiss": false,
       "flagged": false,
-      "score": 5,
+      "score": 8,
       "confidence": "medium",
       "topEvidence": [
         {
@@ -391,10 +390,10 @@
           "url": "https://github.com/mde/ejs"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 15,041 packages depend on it, 1,532,080 repositories use it, 149,132,110 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/ejs"
+          "kind": "bus-factor",
+          "label": "Commits are spread across several people (distribution score 0.60 of 1.00, 162 committers in total).",
+          "weight": -6,
+          "url": "https://github.com/mde/ejs"
         }
       ]
     },
@@ -404,7 +403,7 @@
       "predicted": "stable-complete",
       "nearMiss": false,
       "flagged": false,
-      "score": 8,
+      "score": 20,
       "confidence": "low",
       "topEvidence": [
         {
@@ -414,74 +413,45 @@
           "url": "https://github.com/Marak/colors.js"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 29,121 packages depend on it, 535,834 repositories use it, 106,772,025 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/colors"
-        },
-        {
           "kind": "bus-factor",
           "label": "Commits are spread across several people (distribution score 0.66 of 1.00, 47 committers in total).",
           "weight": -6,
           "url": "https://github.com/Marak/colors.js"
+        },
+        {
+          "kind": "stability-heuristic",
+          "label": "26 versions in 15.4 years (1.7 per year): the API converged long ago and the silence is the expected end state.",
+          "weight": -6,
+          "url": "https://www.npmjs.com/package/colors"
         }
       ]
     },
     {
       "name": "enzyme",
       "expected": "unmaintained",
-      "predicted": "active",
-      "nearMiss": false,
-      "flagged": false,
-      "score": 9,
-      "confidence": "low",
-      "topEvidence": [
-        {
-          "kind": "issue-responsiveness",
-          "label": "5 issues opened in the past year, 5 closed (100%), averaging 3.6 comments each — somebody is triaging.",
-          "weight": -14,
-          "url": "https://github.com/airbnb/enzyme"
-        },
-        {
-          "kind": "issue-responsiveness",
-          "label": "1 pull request merged in the past year — someone with commit rights is still landing changes.",
-          "weight": -10,
-          "url": "https://github.com/airbnb/enzyme"
-        },
-        {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 29,834 packages depend on it, 161,126 repositories use it, 5,139,536 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/enzyme"
-        }
-      ]
-    },
-    {
-      "name": "jshint",
-      "expected": "unmaintained",
       "predicted": "low-activity",
       "nearMiss": false,
       "flagged": true,
-      "score": 34,
+      "score": 39,
       "confidence": "low",
       "topEvidence": [
         {
           "kind": "release-cadence",
-          "label": "No release in 3.7 years — 63x longer than this package has ever gone quiet before (its own median gap between releases is 22 days).",
-          "weight": 16,
-          "url": "https://www.npmjs.com/package/jshint"
+          "label": "No release in 6.6 years — 173x longer than this package has ever gone quiet before (its own median gap between releases is 10 days).",
+          "weight": 26,
+          "url": "https://www.npmjs.com/package/enzyme"
         },
         {
           "kind": "maintainer-activity",
           "label": "No maintainer has commented, closed an issue or merged a pull request in the past year.",
           "weight": 12,
-          "url": "https://github.com/jshint/jshint"
+          "url": "https://github.com/airbnb/enzyme"
         },
         {
-          "kind": "commit-activity",
-          "label": "No commits pushed to the repository in 2.9 years.",
-          "weight": 6,
-          "url": "https://github.com/jshint/jshint"
+          "kind": "bus-factor",
+          "label": "Commits are spread across several people (distribution score 0.56 of 1.00, 406 committers in total).",
+          "weight": -6,
+          "url": "https://github.com/airbnb/enzyme"
         }
       ]
     },
@@ -491,7 +461,7 @@
       "predicted": "active",
       "nearMiss": false,
       "flagged": false,
-      "score": 10,
+      "score": 17,
       "confidence": "low",
       "topEvidence": [
         {
@@ -507,39 +477,10 @@
           "url": "https://github.com/browserify/browserify"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 31,322 packages depend on it, 365,847 repositories use it, 6,884,059 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/browserify"
-        }
-      ]
-    },
-    {
-      "name": "coffeescript",
-      "expected": "unmaintained",
-      "predicted": "low-activity",
-      "nearMiss": false,
-      "flagged": true,
-      "score": 44,
-      "confidence": "medium",
-      "topEvidence": [
-        {
-          "kind": "maintainer-activity",
-          "label": "No maintainer has commented, closed an issue or merged a pull request in the past year.",
-          "weight": 12,
-          "url": "https://github.com/jashkenas/coffeescript"
-        },
-        {
-          "kind": "release-cadence",
-          "label": "No release in 12.4 years; too few releases exist to know what this package’s normal gap is.",
-          "weight": 10,
-          "url": "https://www.npmjs.com/package/coffeescript"
-        },
-        {
-          "kind": "issue-responsiveness",
-          "label": "5 pull requests opened in the past year and none merged — contributors are offering fixes that nobody lands.",
-          "weight": 10,
-          "url": "https://github.com/jashkenas/coffeescript"
+          "kind": "commit-activity",
+          "label": "No commits pushed to the repository in 2.4 years.",
+          "weight": 6,
+          "url": "https://github.com/browserify/browserify"
         }
       ]
     },
@@ -549,7 +490,7 @@
       "predicted": "stable-complete",
       "nearMiss": false,
       "flagged": false,
-      "score": 7,
+      "score": 13,
       "confidence": "low",
       "topEvidence": [
         {
@@ -588,16 +529,16 @@
           "url": "https://www.npmjs.com/package/request"
         },
         {
+          "kind": "release-cadence",
+          "label": "No release in 6.5 years — 169x longer than this package has ever gone quiet before (its own median gap between releases is 8 days).",
+          "weight": 26,
+          "url": "https://www.npmjs.com/package/request"
+        },
+        {
           "kind": "issue-responsiveness",
           "label": "26 issues opened in the past year, 3 closed (12%), averaging 0.3 comments each — people are asking and nobody is answering.",
           "weight": 22,
           "url": "https://github.com/request/request"
-        },
-        {
-          "kind": "security-advisory",
-          "label": "Open moderate advisory GHSA-p8p7-x288-28g6: Server-Side Request Forgery in Request — published 3.4 years ago with no release since.",
-          "weight": 18,
-          "url": "https://github.com/advisories/GHSA-p8p7-x288-28g6"
         }
       ]
     },
@@ -607,7 +548,7 @@
       "predicted": "abandoned",
       "nearMiss": true,
       "flagged": true,
-      "score": 82,
+      "score": 90,
       "confidence": "low",
       "topEvidence": [
         {
@@ -619,7 +560,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 8.0 years — 209x longer than this package has ever gone quiet before (its own median gap between releases is 11 days).",
-          "weight": 16,
+          "weight": 26,
           "url": "https://www.npmjs.com/package/should"
         },
         {
@@ -639,7 +580,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 2,
+      "score": 4,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -672,7 +613,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 0,
+      "score": 1,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -705,7 +646,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 1,
+      "score": 2,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -738,7 +679,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 2,
+      "score": 3,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -771,7 +712,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 2,
+      "score": 3,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -804,7 +745,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 0,
+      "score": 1,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -837,7 +778,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 0,
+      "score": 1,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -870,7 +811,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 0,
+      "score": 1,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -903,7 +844,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 0,
+      "score": 1,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -969,7 +910,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 1,
+      "score": 2,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1002,7 +943,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 0,
+      "score": 1,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -1035,7 +976,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 2,
+      "score": 4,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1068,7 +1009,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 8,
+      "score": 20,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -1080,16 +1021,16 @@
           "url": "https://github.com/isaacs/inherits"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 6,194 packages depend on it, 2,323,492 repositories use it, 768,910,266 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/inherits"
-        },
-        {
           "kind": "stability-heuristic",
           "label": "7 versions in 15.3 years (0.5 per year): the API converged long ago and the silence is the expected end state.",
           "weight": -6,
           "url": "https://www.npmjs.com/package/inherits"
+        },
+        {
+          "kind": "maintainer-activity",
+          "label": "No maintainer has commented, closed an issue or merged a pull request in the past year.",
+          "weight": 12,
+          "url": "https://github.com/isaacs/inherits"
         }
       ],
       "rationale": "Twenty lines wrapping `Object.setPrototypeOf` for old Node, last released 2.0.4 in June 2019 with no deprecation and a repository that is still touched — quiet because the API it shims is frozen."
@@ -1101,7 +1042,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 6,
+      "score": 15,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -1113,16 +1054,16 @@
           "url": "https://github.com/isaacs/once"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 3,665 packages depend on it, 2,121,111 repositories use it, 516,257,386 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/once"
-        },
-        {
           "kind": "issue-responsiveness",
           "label": "Nobody opened an issue in the past year. For a widely used package that usually means it works, not that it is unwatched.",
           "weight": -8,
           "url": "https://github.com/isaacs/once"
+        },
+        {
+          "kind": "stability-heuristic",
+          "label": "7 versions in 14.0 years (0.5 per year): the API converged long ago and the silence is the expected end state.",
+          "weight": -6,
+          "url": "https://www.npmjs.com/package/once"
         }
       ],
       "rationale": "Last released 1.4.0 in September 2016 and still correct: wrapping a function so it runs once is a finished problem, and the repository is neither archived nor deprecated."
@@ -1134,7 +1075,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 6,
+      "score": 15,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1146,15 +1087,15 @@
           "url": "https://github.com/npm/wrappy"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 2,464 packages depend on it, 2,102,639 repositories use it, 541,969,345 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/wrappy"
-        },
-        {
           "kind": "issue-responsiveness",
           "label": "Nobody opened an issue in the past year. For a widely used package that usually means it works, not that it is unwatched.",
           "weight": -8,
+          "url": "https://github.com/npm/wrappy"
+        },
+        {
+          "kind": "bus-factor",
+          "label": "Commits are spread across several people (distribution score 0.63 of 1.00, 7 committers in total).",
+          "weight": -6,
           "url": "https://github.com/npm/wrappy"
         }
       ],
@@ -1167,7 +1108,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 1,
+      "score": 4,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1200,7 +1141,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 2,
+      "score": 4,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1212,16 +1153,16 @@
           "url": "https://github.com/ljharb/concat-map"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 2,498 packages depend on it, 1,298,661 repositories use it, 572,336,085 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/concat-map"
-        },
-        {
           "kind": "release-cadence",
           "label": "Quiet for 3.8 years, but its own median gap between releases is 5.2 years — that is within this package’s normal rhythm.",
           "weight": -8,
           "url": "https://www.npmjs.com/package/concat-map"
+        },
+        {
+          "kind": "issue-responsiveness",
+          "label": "Nobody opened an issue in the past year. For a widely used package that usually means it works, not that it is unwatched.",
+          "weight": -8,
+          "url": "https://github.com/ljharb/concat-map"
         }
       ],
       "rationale": "A one-line flat-map helper whose only release since 2013 was a 0.0.2 housekeeping publish in October 2022 after ljharb adopted it; no deprecation and the repository is live."
@@ -1233,7 +1174,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 11,
+      "score": 20,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1245,16 +1186,16 @@
           "url": "https://github.com/feross/safe-buffer"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 4,055 packages depend on it, 1,261,649 repositories use it, 1,130,301,054 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/safe-buffer"
-        },
-        {
           "kind": "stability-heuristic",
           "label": "11 versions in 10.6 years (1.0 per year): the API converged long ago and the silence is the expected end state.",
           "weight": -6,
           "url": "https://www.npmjs.com/package/safe-buffer"
+        },
+        {
+          "kind": "commit-activity",
+          "label": "No commits pushed to the repository in 3.2 years.",
+          "weight": 6,
+          "url": "https://github.com/feross/safe-buffer"
         }
       ],
       "rationale": "A Buffer-constructor shim last released 5.2.1 in May 2020 with no deprecation; the Node API it wraps is stable, so the package is finished."
@@ -1266,7 +1207,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 8,
+      "score": 20,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1278,16 +1219,16 @@
           "url": "https://github.com/TooTallNate/util-deprecate"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 1,985 packages depend on it, 2,198,932 repositories use it, 629,901,951 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/util-deprecate"
-        },
-        {
           "kind": "issue-responsiveness",
           "label": "Nobody opened an issue in the past year. For a widely used package that usually means it works, not that it is unwatched.",
           "weight": -8,
           "url": "https://github.com/TooTallNate/util-deprecate"
+        },
+        {
+          "kind": "stability-heuristic",
+          "label": "3 versions in 12.3 years (0.2 per year): the API converged long ago and the silence is the expected end state.",
+          "weight": -6,
+          "url": "https://www.npmjs.com/package/util-deprecate"
         }
       ],
       "rationale": "Last released 1.0.2 in October 2015 and last committed in 2018, yet carries no deprecation notice and still does its one job in both Node and browsers."
@@ -1299,7 +1240,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 7,
+      "score": 18,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1317,9 +1258,9 @@
           "url": "https://github.com/sindresorhus/escape-string-regexp"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 5,200 packages depend on it, 2,044,639 repositories use it, 1,271,755,495 downloads last month.",
-          "weight": -10,
+          "kind": "stability-heuristic",
+          "label": "10 versions in 12.1 years (0.8 per year): the API converged long ago and the silence is the expected end state.",
+          "weight": -6,
           "url": "https://www.npmjs.com/package/escape-string-regexp"
         }
       ],
@@ -1332,7 +1273,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 8,
+      "score": 13,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1344,16 +1285,16 @@
           "url": "https://github.com/isaacs/fs.realpath"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 2,476 packages depend on it, 5,532,257 repositories use it, 365,749,494 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/fs.realpath"
-        },
-        {
           "kind": "issue-responsiveness",
           "label": "Nobody opened an issue in the past year. For a widely used package that usually means it works, not that it is unwatched.",
           "weight": -8,
           "url": "https://github.com/isaacs/fs.realpath"
+        },
+        {
+          "kind": "stability-heuristic",
+          "label": "2 versions in 10.1 years (0.2 per year): the API converged long ago and the silence is the expected end state.",
+          "weight": -6,
+          "url": "https://www.npmjs.com/package/fs.realpath"
         }
       ],
       "rationale": "A frozen copy of an old Node `fs.realpath` implementation, released 1.0.0 in June 2016 and deliberately never changed since; not deprecated, repository still touched."
@@ -1365,7 +1306,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 8,
+      "score": 20,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -1377,16 +1318,16 @@
           "url": "https://github.com/sindresorhus/object-assign"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 12,624 packages depend on it, 2,052,350 repositories use it, 611,935,258 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/object-assign"
-        },
-        {
           "kind": "issue-responsiveness",
           "label": "Nobody opened an issue in the past year. For a widely used package that usually means it works, not that it is unwatched.",
           "weight": -8,
           "url": "https://github.com/sindresorhus/object-assign"
+        },
+        {
+          "kind": "stability-heuristic",
+          "label": "17 versions in 12.5 years (1.4 per year): the API converged long ago and the silence is the expected end state.",
+          "weight": -6,
+          "url": "https://www.npmjs.com/package/object-assign"
         }
       ],
       "rationale": "An `Object.assign` ponyfill last released 4.1.1 in January 2017 with no deprecation and an unarchived repository, still depended on by over twelve thousand packages."
@@ -1398,7 +1339,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 11,
+      "score": 20,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -1410,16 +1351,16 @@
           "url": "https://github.com/component/escape-html"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 3,043 packages depend on it, 2,500,873 repositories use it, 422,237,011 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/escape-html"
-        },
-        {
           "kind": "stability-heuristic",
           "label": "5 versions in 14.0 years (0.4 per year): the API converged long ago and the silence is the expected end state.",
           "weight": -6,
           "url": "https://www.npmjs.com/package/escape-html"
+        },
+        {
+          "kind": "commit-activity",
+          "label": "No commits pushed to the repository in 3.9 years.",
+          "weight": 6,
+          "url": "https://github.com/component/escape-html"
         }
       ],
       "rationale": "Escapes five HTML characters; last released 1.0.3 in September 2015, carries no deprecation, and the set of characters requiring escaping has not changed."
@@ -1431,7 +1372,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 11,
+      "score": 20,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -1443,16 +1384,16 @@
           "url": "https://github.com/jensyt/imurmurhash-js"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 1,815 packages depend on it, 5,719 repositories use it, 625,320,471 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/imurmurhash"
-        },
-        {
           "kind": "stability-heuristic",
           "label": "5 versions in 13.0 years (0.4 per year): the API converged long ago and the silence is the expected end state.",
           "weight": -6,
           "url": "https://www.npmjs.com/package/imurmurhash"
+        },
+        {
+          "kind": "commit-activity",
+          "label": "No commits pushed to the repository in 12.9 years.",
+          "weight": 6,
+          "url": "https://github.com/jensyt/imurmurhash-js"
         }
       ],
       "rationale": "An incremental MurmurHash3 implementation last released 0.1.4 in August 2013 with no commits since — the algorithm is a fixed published specification, and the package remains undeprecated with hundreds of millions of downloads."
@@ -1464,7 +1405,7 @@
       "exact": false,
       "nearMiss": false,
       "flagged": true,
-      "score": 56,
+      "score": 69,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -1472,7 +1413,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 2.6 years — 38x longer than this package has ever gone quiet before (its own median gap between releases is 25 days).",
-          "weight": 16,
+          "weight": 22,
           "url": "https://www.npmjs.com/package/moment"
         },
         {
@@ -1497,7 +1438,7 @@
       "exact": false,
       "nearMiss": false,
       "flagged": false,
-      "score": 2,
+      "score": 4,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1596,7 +1537,7 @@
       "exact": false,
       "nearMiss": false,
       "flagged": false,
-      "score": 2,
+      "score": 3,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1629,7 +1570,7 @@
       "exact": false,
       "nearMiss": false,
       "flagged": false,
-      "score": 5,
+      "score": 8,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -1647,10 +1588,10 @@
           "url": "https://github.com/mde/ejs"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 15,041 packages depend on it, 1,532,080 repositories use it, 149,132,110 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/ejs"
+          "kind": "bus-factor",
+          "label": "Commits are spread across several people (distribution score 0.60 of 1.00, 162 committers in total).",
+          "weight": -6,
+          "url": "https://github.com/mde/ejs"
         }
       ],
       "rationale": "Released 6.0.1 in May 2026, but all 26 commits in the past year came from a single committer, making it a maintained project with a bus factor of one."
@@ -1668,16 +1609,16 @@
       "sourceErrors": [],
       "topEvidence": [
         {
+          "kind": "release-cadence",
+          "label": "No release in 6.7 years — 174x longer than this package has ever gone quiet before (its own median gap between releases is 3 days).",
+          "weight": 26,
+          "url": "https://www.npmjs.com/package/bluebird"
+        },
+        {
           "kind": "issue-responsiveness",
           "label": "7 issues opened in the past year, 0 closed (0%), averaging 0.9 comments each — people are asking and nobody is answering.",
           "weight": 18,
           "url": "https://github.com/petkaantonov/bluebird"
-        },
-        {
-          "kind": "release-cadence",
-          "label": "No release in 6.7 years — 174x longer than this package has ever gone quiet before (its own median gap between releases is 3 days).",
-          "weight": 16,
-          "url": "https://www.npmjs.com/package/bluebird"
         },
         {
           "kind": "maintainer-activity",
@@ -1695,7 +1636,7 @@
       "exact": false,
       "nearMiss": false,
       "flagged": false,
-      "score": 8,
+      "score": 20,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1707,16 +1648,16 @@
           "url": "https://github.com/Marak/colors.js"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 29,121 packages depend on it, 535,834 repositories use it, 106,772,025 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/colors"
-        },
-        {
           "kind": "bus-factor",
           "label": "Commits are spread across several people (distribution score 0.66 of 1.00, 47 committers in total).",
           "weight": -6,
           "url": "https://github.com/Marak/colors.js"
+        },
+        {
+          "kind": "stability-heuristic",
+          "label": "26 versions in 15.4 years (1.7 per year): the API converged long ago and the silence is the expected end state.",
+          "weight": -6,
+          "url": "https://www.npmjs.com/package/colors"
         }
       ],
       "rationale": "The `latest` tag still points at 1.4.0 from September 2019; the only later publishes were the January 2022 1.4.44-liberty-2 / 1.4.1 / 1.4.2 sequence around the author's intentional sabotage of the package, and the repository has taken no commits since."
@@ -1724,32 +1665,32 @@
     {
       "name": "enzyme",
       "expected": "unmaintained",
-      "predicted": "active",
+      "predicted": "low-activity",
       "exact": false,
       "nearMiss": false,
-      "flagged": false,
-      "score": 9,
+      "flagged": true,
+      "score": 39,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
       "topEvidence": [
         {
-          "kind": "issue-responsiveness",
-          "label": "5 issues opened in the past year, 5 closed (100%), averaging 3.6 comments each — somebody is triaging.",
-          "weight": -14,
-          "url": "https://github.com/airbnb/enzyme"
-        },
-        {
-          "kind": "issue-responsiveness",
-          "label": "1 pull request merged in the past year — someone with commit rights is still landing changes.",
-          "weight": -10,
-          "url": "https://github.com/airbnb/enzyme"
-        },
-        {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 29,834 packages depend on it, 161,126 repositories use it, 5,139,536 downloads last month.",
-          "weight": -10,
+          "kind": "release-cadence",
+          "label": "No release in 6.6 years — 173x longer than this package has ever gone quiet before (its own median gap between releases is 10 days).",
+          "weight": 26,
           "url": "https://www.npmjs.com/package/enzyme"
+        },
+        {
+          "kind": "maintainer-activity",
+          "label": "No maintainer has commented, closed an issue or merged a pull request in the past year.",
+          "weight": 12,
+          "url": "https://github.com/airbnb/enzyme"
+        },
+        {
+          "kind": "bus-factor",
+          "label": "Commits are spread across several people (distribution score 0.56 of 1.00, 406 committers in total).",
+          "weight": -6,
+          "url": "https://github.com/airbnb/enzyme"
         }
       ],
       "rationale": "Last released 3.11.0 in December 2019 and never shipped an adapter for React 18 or later, so it cannot be used with supported React versions, but it carries no npm deprecation."
@@ -1757,11 +1698,11 @@
     {
       "name": "jshint",
       "expected": "unmaintained",
-      "predicted": "low-activity",
-      "exact": false,
+      "predicted": "unmaintained",
+      "exact": true,
       "nearMiss": false,
       "flagged": true,
-      "score": 34,
+      "score": 56,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1769,7 +1710,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 3.7 years — 63x longer than this package has ever gone quiet before (its own median gap between releases is 22 days).",
-          "weight": 16,
+          "weight": 22,
           "url": "https://www.npmjs.com/package/jshint"
         },
         {
@@ -1794,7 +1735,7 @@
       "exact": false,
       "nearMiss": false,
       "flagged": false,
-      "score": 10,
+      "score": 17,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1812,10 +1753,10 @@
           "url": "https://github.com/browserify/browserify"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 31,322 packages depend on it, 365,847 repositories use it, 6,884,059 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/browserify"
+          "kind": "commit-activity",
+          "label": "No commits pushed to the repository in 2.4 years.",
+          "weight": 6,
+          "url": "https://github.com/browserify/browserify"
         }
       ],
       "rationale": "Released 17.0.1 in October 2024 as a one-off after four years of silence, and has taken zero commits in the trailing year despite thirty thousand dependent packages."
@@ -1823,11 +1764,11 @@
     {
       "name": "coffeescript",
       "expected": "unmaintained",
-      "predicted": "low-activity",
-      "exact": false,
+      "predicted": "unmaintained",
+      "exact": true,
       "nearMiss": false,
       "flagged": true,
-      "score": 44,
+      "score": 53,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -1860,7 +1801,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": true,
-      "score": 61,
+      "score": 69,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1868,7 +1809,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 7.3 years — 190x longer than this package has ever gone quiet before (its own median gap between releases is 4 days).",
-          "weight": 16,
+          "weight": 26,
           "url": "https://www.npmjs.com/package/nightmare"
         },
         {
@@ -1893,7 +1834,7 @@
       "exact": false,
       "nearMiss": false,
       "flagged": false,
-      "score": 7,
+      "score": 13,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1938,16 +1879,16 @@
           "url": "https://www.npmjs.com/package/request"
         },
         {
+          "kind": "release-cadence",
+          "label": "No release in 6.5 years — 169x longer than this package has ever gone quiet before (its own median gap between releases is 8 days).",
+          "weight": 26,
+          "url": "https://www.npmjs.com/package/request"
+        },
+        {
           "kind": "issue-responsiveness",
           "label": "26 issues opened in the past year, 3 closed (12%), averaging 0.3 comments each — people are asking and nobody is answering.",
           "weight": 22,
           "url": "https://github.com/request/request"
-        },
-        {
-          "kind": "security-advisory",
-          "label": "Open moderate advisory GHSA-p8p7-x288-28g6: Server-Side Request Forgery in Request — published 3.4 years ago with no release since.",
-          "weight": 18,
-          "url": "https://github.com/advisories/GHSA-p8p7-x288-28g6"
         }
       ],
       "rationale": "Carries an explicit npm deprecation notice on 2.88.2 pointing at the maintainers' announcement issue, and has had no release since February 2020."
@@ -1959,7 +1900,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": true,
-      "score": 86,
+      "score": 89,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1973,7 +1914,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 3.2 years — 84x longer than this package has ever gone quiet before (its own median gap between releases is 8 days).",
-          "weight": 16,
+          "weight": 22,
           "url": "https://www.npmjs.com/package/node-sass"
         },
         {
@@ -2012,7 +1953,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 6.0 years — 157x longer than this package has ever gone quiet before (its own median gap between releases is 10 days).",
-          "weight": 16,
+          "weight": 26,
           "url": "https://www.npmjs.com/package/tslint"
         }
       ],
@@ -2043,10 +1984,10 @@
           "url": "https://github.com/angular/protractor"
         },
         {
-          "kind": "issue-responsiveness",
-          "label": "6 issues opened in the past year, 0 closed (0%), averaging 0.5 comments each — people are asking and nobody is answering.",
-          "weight": 22,
-          "url": "https://github.com/angular/protractor"
+          "kind": "release-cadence",
+          "label": "No release in 6.2 years — 151x longer than this package has ever gone quiet before (its own median gap between releases is 15 days).",
+          "weight": 26,
+          "url": "https://www.npmjs.com/package/protractor"
         }
       ],
       "rationale": "The Angular team deprecated Protractor with an end-of-life date of summer 2023; the npm deprecation notice is on 7.0.0 and the repository is archived."
@@ -2072,7 +2013,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 10.0 years — 260x longer than this package has ever gone quiet before (its own median gap between releases is 8 days).",
-          "weight": 16,
+          "weight": 26,
           "url": "https://www.npmjs.com/package/istanbul"
         },
         {
@@ -2111,7 +2052,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 6.4 years — 168x longer than this package has ever gone quiet before (its own median gap between releases is 2 days).",
-          "weight": 16,
+          "weight": 26,
           "url": "https://www.npmjs.com/package/babel-eslint"
         }
       ],
@@ -2138,7 +2079,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 11.5 years — 300x longer than this package has ever gone quiet before (its own median gap between releases is 8 days).",
-          "weight": 16,
+          "weight": 26,
           "url": "https://www.npmjs.com/package/q"
         },
         {
@@ -2175,10 +2116,10 @@
           "url": "https://github.com/sindresorhus/code-point-at"
         },
         {
-          "kind": "maintainer-activity",
-          "label": "No maintainer has commented, closed an issue or merged a pull request in the past year.",
-          "weight": 12,
-          "url": "https://github.com/sindresorhus/code-point-at"
+          "kind": "release-cadence",
+          "label": "No release in 4.8 years, about 4.0x its usual gap (its own median gap between releases is 15 months).",
+          "weight": 14,
+          "url": "https://www.npmjs.com/package/code-point-at"
         }
       ],
       "rationale": "The stable-complete trap inverted — a tiny, ancient, heavily depended-on micro-library that looks exactly like `once` or `isarray`, but 2.0.0 carries an npm deprecation in favour of `String#codePointAt()` and the repository is archived."
@@ -2208,10 +2149,10 @@
           "url": "https://github.com/sindresorhus/path-is-absolute"
         },
         {
-          "kind": "maintainer-activity",
-          "label": "No maintainer has commented, closed an issue or merged a pull request in the past year.",
-          "weight": 12,
-          "url": "https://github.com/sindresorhus/path-is-absolute"
+          "kind": "release-cadence",
+          "label": "No release in 7.7 years, about 4.2x its usual gap (its own median gap between releases is 22 months).",
+          "weight": 18,
+          "url": "https://www.npmjs.com/package/path-is-absolute"
         }
       ],
       "rationale": "Same inverted trap as code-point-at: a micro-library with nearly three thousand dependents whose 2.0.0 is formally deprecated ('no longer relevant as Node.js 0.12 is unmaintained') and whose repository is archived."
@@ -2223,7 +2164,7 @@
       "exact": false,
       "nearMiss": true,
       "flagged": true,
-      "score": 82,
+      "score": 90,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -2237,7 +2178,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 8.0 years — 209x longer than this package has ever gone quiet before (its own median gap between releases is 11 days).",
-          "weight": 16,
+          "weight": 26,
           "url": "https://www.npmjs.com/package/should"
         },
         {

@@ -198,8 +198,21 @@ export const WEIGHTS = {
   maintainersNone: 12,
   maintainersActive: -12,
 
-  adoption: -6,
-  adoptionStrong: -10,
+  /**
+   * Adoption is context, not a vital sign — hence zero.
+   *
+   * It used to carry a negative weight, on the theory that a package everybody
+   * depends on is probably fine. That is backwards for this tool: `enzyme` has
+   * not shipped in six years and `browserify` in nearly two, and both were
+   * being rescued to `active` by their download counts. Popularity does not
+   * maintain a package; it only decides how many people are hurt when nobody
+   * does. The evidence line is still emitted, because blast radius is worth
+   * showing, and adoption still does real work inside the stable-complete
+   * guard — where "the ecosystem keeps depending on it" is one veto among
+   * several rather than a standalone argument for health.
+   */
+  adoption: 0,
+  adoptionStrong: 0,
 
   advisoryOverflow: 6,
   hijackProfile: 15,
@@ -648,12 +661,33 @@ function collectReleaseEvidence(
 
   if (cadenceDays !== null && silenceRatio !== null) {
     const rhythm = `its own median gap between releases is ${duration(cadenceDays)}`;
+
+    /**
+     * How long the silence is in absolute terms, added on top of how long it is
+     * relative to the package's own rhythm. They are different facts and both
+     * matter: six years of nothing is worse than one year of nothing even when
+     * both are "far outside the usual gap".
+     *
+     * Applied only once the silence has already broken the package's own
+     * rhythm. Adding it to the within-rhythm branch below would flag `ms`,
+     * quiet for five years because it is finished, and that single false
+     * positive costs more than every true positive this clause buys.
+     */
+    const absoluteSilence =
+      silenceDays >= VERY_LONG_SILENCE_DAYS
+        ? WEIGHTS.releaseSilenceVeryLong
+        : silenceDays >= LONG_SILENCE_DAYS
+          ? WEIGHTS.releaseSilenceLong
+          : silenceDays >= MIN_SILENCE_DAYS
+            ? WEIGHTS.releaseSilenceYear
+            : 0;
+
     if (silenceDays >= MIN_SILENCE_DAYS && silenceRatio >= SILENCE_SEVERE_MULTIPLE) {
       out.push(
         evidence(
           'release-cadence',
           `No release in ${duration(silenceDays)} — ${ratio(silenceRatio)} longer than this package has ever gone quiet before (${rhythm}).`,
-          WEIGHTS.releaseSilenceSevere,
+          WEIGHTS.releaseSilenceSevere + absoluteSilence,
           url,
           signals.latestReleaseAt,
         ),
@@ -663,7 +697,7 @@ function collectReleaseEvidence(
         evidence(
           'release-cadence',
           `No release in ${duration(silenceDays)}, about ${ratio(silenceRatio)} its usual gap (${rhythm}).`,
-          WEIGHTS.releaseSilenceMild,
+          WEIGHTS.releaseSilenceMild + absoluteSilence,
           url,
           signals.latestReleaseAt,
         ),
@@ -772,11 +806,20 @@ function collectIssueEvidence(
           ),
         );
       } else if (rate >= ISSUE_CLOSE_RATE_HEALTHY) {
+        // Triage is only evidence of maintenance if maintenance is still
+        // shipping. A repository that closes its handful of issues while
+        // publishing nothing for years is being tidied, not maintained — and
+        // letting that cancel out a decade of release silence is what kept
+        // `enzyme` (last release 2019) scored as active.
+        const shippingStopped =
+          facts.silenceDays !== null && facts.silenceDays >= VERY_LONG_SILENCE_DAYS;
         out.push(
           evidence(
             'issue-responsiveness',
-            `${summary} — somebody is triaging.`,
-            WEIGHTS.issuesResponsive,
+            shippingStopped
+              ? `${summary} — issues get closed, but no release has followed them.`
+              : `${summary} — somebody is triaging.`,
+            shippingStopped ? 0 : WEIGHTS.issuesResponsive,
             url,
             observed,
           ),

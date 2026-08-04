@@ -29,6 +29,29 @@ real npm packages and reports:
 
 The first row is the headline. The rest are context for it.
 
+## What the detector is *not* given
+
+Calibration scores `assess()` — inference from upstream signals alone. Two
+deliberate exclusions keep the numbers meaningful.
+
+**The succession dataset is withheld.** `data/successors.yaml` is hand-verified
+ground truth about which packages are dead, and several corpus packages appear
+in it. Feeding it to the scorer would be grading the detector on answers it was
+handed. In the product it *is* used, but one layer up: `applyCuratedFloor()` in
+`src/scan.ts` raises a verdict to at least `unmaintained` when a curated row
+exists. So the shipped tool catches packages the measured detector misses —
+`enzyme` and `colors` among them — and the published accuracy figures do not
+take credit for it.
+
+**Advisories only count when the newest release is still exposed.** An advisory
+that was fixed in a later version is evidence the maintainer showed up, not
+evidence of abandonment. This is not a hypothetical refinement: an early build
+scored `ms@2.1.3` as `hijack-risk` on the strength of GHSA-w9mr-4mfr-499f, a
+ReDoS patched back in `2.0.0`. That single bug was the entire false-positive
+rate on the headline bucket. Affected-version windows now come from the advisory
+data itself, and a range the tool cannot parse keeps counting rather than being
+silently discarded — understating risk is the worse error.
+
 ## Why the `stable-complete` bucket is the headline
 
 The naive abandoned-package detector reads the date of the last release and
