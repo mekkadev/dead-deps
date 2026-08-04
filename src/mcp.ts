@@ -6,14 +6,11 @@
  * something a human can open in a browser. Every response carries evidence
  * URLs, and `find_successor` refuses to name a package it cannot source.
  *
- * ## Usage with Claude Code / Cursor
+ * ## Configuring an MCP client
  *
- * Claude Code, one-liner:
- *
- *     claude mcp add dead-deps -- npx -y -p dead-deps dead-deps-mcp
- *
- * Or, by hand — Claude Code `.mcp.json` (project) / `~/.claude.json` (user),
- * and Cursor `~/.cursor/mcp.json` or `.cursor/mcp.json`, share this shape:
+ * Clients differ only in where the file lives — a project-level `.mcp.json`,
+ * or a user-level config such as Cursor's `~/.cursor/mcp.json`. The entry
+ * itself is the same everywhere:
  *
  * ```json
  * {
