@@ -213,8 +213,14 @@ export interface SuccessorEvidence {
  * dependency, the platform does this now" is a better answer than any package
  * name, so the model has to be able to express it rather than forcing a fake
  * package into `to`.
+ *
+ * `bundled` is the same good news from a different direction: the capability
+ * now ships inside a package the project already depends on. Every deprecated
+ * `@types/*` stub is this — `@types/uuid` is dead because `uuid` carries its
+ * own types. Reporting that as "no successor" would read as a dead end when
+ * the actual instruction is simply to delete the line.
  */
-export type SuccessorKind = 'package' | 'platform' | 'none';
+export type SuccessorKind = 'package' | 'platform' | 'bundled' | 'none';
 
 /** One curated row of `data/successors.yaml`. */
 export interface SuccessorRecord {
@@ -249,6 +255,66 @@ export interface SuccessorDataset {
   records: SuccessorRecord[];
   /** Index by `from`, lowercased. */
   byFrom: Map<string, SuccessorRecord>;
+}
+
+// ---------------------------------------------------------------------------
+// Longitudinal health
+// ---------------------------------------------------------------------------
+
+/**
+ * One package, one observation, one point in time.
+ *
+ * Every index in this space publishes the current state and nothing else, so
+ * "is this getting worse?" is unanswerable from the outside. History cannot be
+ * bought or backfilled — it can only be accumulated — which is why snapshots
+ * start before the rest of the work is finished. A week not sampled is a week
+ * gone.
+ *
+ * Deliberately narrow: only fields whose change over time means something.
+ * Storing the whole `PackageSignals` would multiply the archive for prose that
+ * never moves.
+ */
+export interface HealthSnapshot {
+  name: string;
+  /** ISO timestamp of the run that produced this row. */
+  observedAt: string;
+  state: MaintenanceState;
+  score: number;
+  latestReleaseAt: string | null;
+  dependentPackagesCount: number | null;
+  dependentReposCount: number | null;
+  downloadsLastMonth: number | null;
+  pastYearIssues: number | null;
+  pastYearIssuesClosed: number | null;
+  /** Count, not names: names churn for reasons that are not health. */
+  activeMaintainers: number;
+  openAdvisories: number;
+  developmentDistributionScore: number | null;
+}
+
+export type TrendDirection = 'improving' | 'steady' | 'declining' | 'collapsing' | 'unknown';
+
+/** What two or more snapshots say that one snapshot cannot. */
+export interface Trajectory {
+  name: string;
+  /** Bounds of the compared window, ISO timestamps. */
+  from: string;
+  to: string;
+  samples: number;
+  direction: TrendDirection;
+  /** Positive means the package moved toward abandonment. */
+  scoreDelta: number;
+  /**
+   * Share of dependent packages lost across the window; negative means gained.
+   *
+   * The earliest signal there is. The ecosystem leaves a package long before
+   * anybody writes a deprecation notice, and this is the only way to see it.
+   */
+  dependentFlight: number | null;
+  /** Change in the share of issues closed within the trailing year. */
+  responsivenessDelta: number | null;
+  /** One sentence per observation, written for a human. */
+  notes: string[];
 }
 
 // ---------------------------------------------------------------------------

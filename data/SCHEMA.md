@@ -47,7 +47,12 @@ installing something that does not exist, so the schema names the difference.
 | --- | --- | --- |
 | `package` | The successor is an npm package you install. | `undici` |
 | `platform` | The capability moved into the language or runtime — the right fix is to delete the dependency. | `String.prototype.padStart` |
+| `bundled` | The capability now ships inside a package the project already has. Delete the line; install nothing. `to` names the package that carries it. | `uuid` (for `@types/uuid`) |
 | `none` | Nothing credible succeeded it. `to` is `null`. | `null` |
+
+Every deprecated `@types/*` stub is `bundled`: the typings moved into the
+library itself. Recording those as `none` would read as a dead end when the
+instruction is simply to remove the dependency.
 
 `dropIn` must be `false` whenever `toKind` is not `package`: there is no package
 to swap in.
