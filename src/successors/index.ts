@@ -33,7 +33,7 @@ const SUCCESSION_TYPES: readonly SuccessionType[] = [
 
 const CONFIDENCES: readonly Confidence[] = ['high', 'medium', 'low'];
 
-const SUCCESSOR_KINDS: readonly SuccessorKind[] = ['package', 'platform', 'none'];
+const SUCCESSOR_KINDS: readonly SuccessorKind[] = ['package', 'platform', 'bundled', 'none'];
 
 /** Exactly the fields documented in `data/SCHEMA.md`, nothing else. */
 const ROW_FIELDS = [

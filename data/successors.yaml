@@ -10,6 +10,90 @@
 # Contributors: read data/SCHEMA.md before adding or editing a row. It defines the
 # inclusion rules, every field, the `type` enum and the house style.
 
+
+- from: "@angular-devkit/build-angular"
+  to: "@angular/build"
+  toKind: package
+  type: reimplementation
+  confidence: high
+  since: "2026-06"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Angular rebuilt its application build pipeline on esbuild and Vite and split it out
+    as @angular/build, first released alongside Angular v18 in May 2024. The
+    webpack-based @angular-devkit/build-angular carries an npm deprecation notice naming
+    that replacement on every release from 22.0.0 (June 2026) onward. Builder names in
+    angular.json change with it, so this is a configuration change rather than a
+    straight dependency swap.
+  migration: >-
+    Run `ng update @angular/cli --name use-application-builder` to move angular.json
+    onto @angular/build. Application and SSR code has to be ESM-compatible, so remove
+    CommonJS assumptions such as require, __filename and __dirname.
+  evidence:
+    - label: "npm deprecation notice (\"Angular's Webpack support is deprecated. Use the
+        esbuild and Vite-based \\\"@angular/build\\\" package instead.\")"
+      url: https://www.npmjs.com/package/@angular-devkit/build-angular
+    - label: "Angular docs: migrating to the new esbuild/Vite build system, including
+        `ng update @angular/cli --name use-application-builder`"
+      url: https://angular.dev/tools/cli/build-system-migration
+
+- from: "@angular/animations"
+  to: "@angular/core"
+  toKind: bundled
+  type: absorbed
+  confidence: medium
+  since: "2025-08"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Angular deprecated @angular/animations from v20.2.0 (August 2025) in favour of the
+    compiler-level animate.enter and animate.leave template bindings, which drive plain
+    CSS animations with no animations runtime attached. Those bindings are part of the
+    framework itself, so nothing extra needs installing; the package is still published
+    alongside each Angular release. Enter and leave transitions map over cleanly, while
+    longer sequenced animations written with the animate()/keyframes DSL have to be
+    rewritten as CSS or handed to a dedicated animation library.
+  migration: >-
+    Drop provideAnimations()/BrowserAnimationsModule and the @angular/animations
+    dependency, then express enter and leave transitions with the animate.enter and
+    animate.leave bindings plus CSS keyframes.
+  evidence:
+    - label: "npm deprecation notice (\"@angular/animations is deprecated. Use
+        `animate.enter` and `animate.leave` instead. For more information see:
+        https://v22.angular.dev/guide/animations.\")"
+      url: https://www.npmjs.com/package/@angular/animations
+    - label: "Angular animations guide: \"Animating your applications with animate.enter
+        and animate.leave\""
+      url: https://angular.dev/guide/animations
+
+- from: "@angular/flex-layout"
+  to: CSS Flexbox and Grid
+  toKind: platform
+  type: absorbed
+  confidence: high
+  since: "2023-01"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    The Angular team put flex-layout into long-term support and then deprecated it, on
+    the grounds that CSS flexbox and grid now cover what the library was built to
+    provide. Its npm deprecation notice links the team's "Modern CSS in Angular Layouts"
+    post, and the final release was 15.0.0-beta.42 in January 2023. The replacement is
+    stylesheet code, so there is nothing to install.
+  migration: >-
+    Translate the directives into CSS: fxLayout becomes `display: flex` plus
+    `flex-direction`, fxFlex becomes a `flex` shorthand, and fxLayoutGap becomes `gap`.
+    Responsive suffixes such as fxHide.lt-md become ordinary media queries or container
+    queries.
+  evidence:
+    - label: "npm deprecation notice (\"This package has been deprecated. Please see
+        https://blog.angular.io/modern-css-in-angular-layouts-4a259dca9127\")"
+      url: https://www.npmjs.com/package/@angular/flex-layout
+    - label: "Angular team post \"Modern CSS in Angular Layouts\", linked from the
+        deprecation notice (now redirects to blog.angular.dev)"
+      url: https://blog.angular.io/modern-css-in-angular-layouts-4a259dca9127
+
 - from: "@angular/http"
   to: "@angular/common"
   toKind: package
@@ -35,6 +119,551 @@
     - label: "Angular v8 deprecations guide: \"The entire @angular/http package has
         been removed. Use @angular/common/http instead.\""
       url: https://github.com/angular/angular/blob/8.0.x/aio/content/guide/deprecations.md
+
+- from: "@angular/platform-browser-dynamic"
+  to: "@angular/platform-browser"
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2025-07"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Angular folded the dynamic bootstrap entry points into @angular/platform-browser,
+    and every release from 20.1.0 (July 2025) onward carries an npm deprecation notice
+    pointing there. @angular/platform-browser is already a required peer dependency of
+    this package, so the fix is to delete the dependency rather than install anything
+    new. The package is still published in step with each Angular release while the
+    deprecation window runs.
+  migration: >-
+    Remove @angular/platform-browser-dynamic and call platformBrowser() from
+    @angular/platform-browser instead of platformBrowserDynamic(); in tests use
+    BrowserTestingModule and platformBrowserTesting() from
+    @angular/platform-browser/testing. Outside the CLI, add an explicit import of
+    @angular/compiler if you rely on JIT compilation.
+  evidence:
+    - label: "npm deprecation notice (\"@angular/platform-browser-dynamic is deprecated.
+        Use `@angular/platform-browser` instead.\")"
+      url: https://www.npmjs.com/package/@angular/platform-browser-dynamic
+    - label: "Angular API reference for platformBrowserDynamic, marked deprecated: \"Use
+        the platformBrowser function instead from @angular/platform-browser. In case you
+        are not in a CLI app and rely on JIT compilation, you will also need to import
+        @angular/compiler\""
+      url: https://angular.dev/api/platform-browser-dynamic/platformBrowserDynamic
+
+- from: "@babel/plugin-proposal-async-generator-functions"
+  to: "@babel/plugin-transform-async-generator-functions"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2022-12"
+  dropIn: true
+  alternatives:
+    - "@babel/preset-env"
+  notes: >-
+    Async generators and `for await...of` have been standard since ES2018, so Babel
+    moved the plugin out of the -proposal- namespace in 7.22.0. The old package is
+    deprecated on npm with a notice naming the transform plugin, and its last release
+    was 7.20.7 in December 2022. The transform carried over under the new name.
+  migration: >-
+    Rename the dependency and the config entry to
+    @babel/plugin-transform-async-generator-functions. If you compile async generators
+    down to ES5 you still need the regenerator runtime, exactly as before.
+  evidence:
+    - label: "npm deprecation notice (\"This proposal has been merged to the ECMAScript
+        standard and thus this plugin is no longer maintained. Please use
+        @babel/plugin-transform-async-generator-functions instead.\")"
+      url: https://www.npmjs.com/package/@babel/plugin-proposal-async-generator-functions
+    - label: "Babel 7.22.0 release post, \"Renamed packages\" table:
+        proposal-async-generator-functions → transform-async-generator-functions
+        (ES2018)"
+      url: https://babeljs.io/blog/2023/05/26/7.22.0
+    - label: "@babel/plugin-transform-async-generator-functions documentation"
+      url: https://babeljs.io/docs/babel-plugin-transform-async-generator-functions
+
+- from: "@babel/plugin-proposal-class-properties"
+  to: "@babel/plugin-transform-class-properties"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2022-06"
+  dropIn: true
+  alternatives:
+    - "@babel/preset-env"
+  notes: >-
+    Class fields reached Stage 4 and are part of ES2022, so Babel renamed the plugin
+    from -proposal- to -transform- in 7.22.0. The old package carries an npm deprecation
+    notice naming the new one, and its last release was 7.18.6 in June 2022. The release
+    post states that packages under the old names will no longer be updated.
+  migration: >-
+    Change the dependency and the config entry to
+    @babel/plugin-transform-class-properties; the `loose` option and behaviour carry
+    over. If you use @babel/preset-env with real targets you can usually drop the plugin
+    entry entirely, since preset-env includes this transform for targets that need it.
+  evidence:
+    - label: "npm deprecation notice (\"This proposal has been merged to the ECMAScript
+        standard and thus this plugin is no longer maintained. Please use
+        @babel/plugin-transform-class-properties instead.\")"
+      url: https://www.npmjs.com/package/@babel/plugin-proposal-class-properties
+    - label: "Babel 7.22.0 release post, \"Renamed packages\" table:
+        @babel/plugin-proposal-class-properties →
+        @babel/plugin-transform-class-properties (ES2022)"
+      url: https://babeljs.io/blog/2023/05/26/7.22.0
+    - label: "@babel/plugin-transform-class-properties documentation"
+      url: https://babeljs.io/docs/babel-plugin-transform-class-properties
+
+- from: "@babel/plugin-proposal-class-static-block"
+  to: "@babel/plugin-transform-class-static-block"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2023-02"
+  dropIn: true
+  alternatives:
+    - "@babel/preset-env"
+  notes: >-
+    Static initialisation blocks are part of ES2022, and Babel renamed the plugin
+    accordingly in 7.22.0. The npm deprecation notice on the old package points at
+    @babel/plugin-transform-class-static-block, and the last release under the old name
+    was 7.21.0 in February 2023. The transform moved across under the new name.
+  migration: >-
+    Rename the dependency and the config entry to
+    @babel/plugin-transform-class-static-block; there are no option changes.
+    @babel/preset-env includes this transform for targets that need it, so the explicit
+    entry is usually redundant.
+  evidence:
+    - label: "npm deprecation notice (\"This proposal has been merged to the ECMAScript
+        standard and thus this plugin is no longer maintained. Please use
+        @babel/plugin-transform-class-static-block instead.\")"
+      url: https://www.npmjs.com/package/@babel/plugin-proposal-class-static-block
+    - label: "Babel 7.22.0 release post, \"Renamed packages\" table:
+        proposal-class-static-block → transform-class-static-block (ES2022)"
+      url: https://babeljs.io/blog/2023/05/26/7.22.0
+    - label: "@babel/plugin-transform-class-static-block documentation"
+      url: https://babeljs.io/docs/babel-plugin-transform-class-static-block
+
+- from: "@babel/plugin-proposal-dynamic-import"
+  to: "@babel/plugin-transform-dynamic-import"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2022-06"
+  dropIn: true
+  alternatives:
+    - "@babel/preset-env"
+  notes: >-
+    Dynamic `import()` reached ES2020, so Babel renamed the plugin to the -transform-
+    form. The old package is deprecated on npm with a notice naming
+    @babel/plugin-transform-dynamic-import, and its last release was 7.18.6 in June
+    2022. This plugin is missing from the rename table in the 7.22.0 release post, but
+    the transform package was first published in that same 7.22.0 release.
+  migration: >-
+    Rename the dependency and the config entry to
+    @babel/plugin-transform-dynamic-import. Note that the transform only applies when
+    you also compile modules to a non-ESM format; bundlers that handle `import()`
+    themselves do not need it.
+  evidence:
+    - label: "npm deprecation notice (\"This proposal has been merged to the ECMAScript
+        standard and thus this plugin is no longer maintained. Please use
+        @babel/plugin-transform-dynamic-import instead.\")"
+      url: https://www.npmjs.com/package/@babel/plugin-proposal-dynamic-import
+    - label: Babel 7.22.0 release post announcing the -proposal- to -transform- rename
+        policy (@babel/plugin-transform-dynamic-import 7.22.0 was first published in
+        this release, though it is absent from the post's table)
+      url: https://babeljs.io/blog/2023/05/26/7.22.0
+    - label: "@babel/plugin-transform-dynamic-import documentation"
+      url: https://babeljs.io/docs/babel-plugin-transform-dynamic-import
+
+- from: "@babel/plugin-proposal-export-namespace-from"
+  to: "@babel/plugin-transform-export-namespace-from"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2022-07"
+  dropIn: true
+  alternatives:
+    - "@babel/preset-env"
+  notes: >-
+    `export * as ns from '...'` became part of ES2020, and Babel renamed the plugin from
+    -proposal- to -transform- in 7.22.0. The npm deprecation notice on the old package
+    names the replacement, and its final release was 7.18.9 in July 2022. Same
+    behaviour, new package name.
+  migration: >-
+    Swap the dependency and the config entry for
+    @babel/plugin-transform-export-namespace-from; there are no options. This syntax is
+    widely supported now, so under @babel/preset-env the entry is usually redundant.
+  evidence:
+    - label: "npm deprecation notice (\"This proposal has been merged to the ECMAScript
+        standard and thus this plugin is no longer maintained. Please use
+        @babel/plugin-transform-export-namespace-from instead.\")"
+      url: https://www.npmjs.com/package/@babel/plugin-proposal-export-namespace-from
+    - label: "Babel 7.22.0 release post, \"Renamed packages\" table:
+        proposal-export-namespace-from → transform-export-namespace-from (ES2020)"
+      url: https://babeljs.io/blog/2023/05/26/7.22.0
+    - label: "@babel/plugin-transform-export-namespace-from documentation"
+      url: https://babeljs.io/docs/babel-plugin-transform-export-namespace-from
+
+- from: "@babel/plugin-proposal-json-strings"
+  to: "@babel/plugin-transform-json-strings"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2022-06"
+  dropIn: true
+  alternatives:
+    - "@babel/preset-env"
+  notes: >-
+    Well-formed JSON strings landed in ES2019, so Babel moved the plugin out of the
+    -proposal- namespace in 7.22.0. The old package is deprecated on npm with a notice
+    naming @babel/plugin-transform-json-strings, and its last release was 7.18.6 in June
+    2022. The transform is the same under the new name.
+  migration: >-
+    Change the dependency and the config entry to @babel/plugin-transform-json-strings;
+    nothing else needs adjusting. Under @babel/preset-env the explicit entry is
+    generally unnecessary.
+  evidence:
+    - label: "npm deprecation notice (\"This proposal has been merged to the ECMAScript
+        standard and thus this plugin is no longer maintained. Please use
+        @babel/plugin-transform-json-strings instead.\")"
+      url: https://www.npmjs.com/package/@babel/plugin-proposal-json-strings
+    - label: "Babel 7.22.0 release post, \"Renamed packages\" table:
+        proposal-json-strings → transform-json-strings (ES2019)"
+      url: https://babeljs.io/blog/2023/05/26/7.22.0
+    - label: "@babel/plugin-transform-json-strings documentation"
+      url: https://babeljs.io/docs/babel-plugin-transform-json-strings
+
+- from: "@babel/plugin-proposal-logical-assignment-operators"
+  to: "@babel/plugin-transform-logical-assignment-operators"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2022-12"
+  dropIn: true
+  alternatives:
+    - "@babel/preset-env"
+  notes: >-
+    Logical assignment (`&&=`, `||=`, `??=`) reached ES2021, so the plugin was renamed
+    from -proposal- to -transform- in Babel 7.22.0. The old package is deprecated on npm
+    with a notice naming the new one, and its last release was 7.20.7 in December 2022.
+    Nothing else about the plugin changed.
+  migration: >-
+    Rename the dependency and the config entry to
+    @babel/plugin-transform-logical-assignment-operators; options are identical.
+    @babel/preset-env pulls the transform in automatically for targets that need it.
+  evidence:
+    - label: "npm deprecation notice (\"This proposal has been merged to the ECMAScript
+        standard and thus this plugin is no longer maintained. Please use
+        @babel/plugin-transform-logical-assignment-operators instead.\")"
+      url: https://www.npmjs.com/package/@babel/plugin-proposal-logical-assignment-operators
+    - label: "Babel 7.22.0 release post, \"Renamed packages\" table:
+        proposal-logical-assignment-operators → transform-logical-assignment-operators
+        (ES2021)"
+      url: https://babeljs.io/blog/2023/05/26/7.22.0
+    - label: "@babel/plugin-transform-logical-assignment-operators documentation"
+      url: https://babeljs.io/docs/babel-plugin-transform-logical-assignment-operators
+
+- from: "@babel/plugin-proposal-nullish-coalescing-operator"
+  to: "@babel/plugin-transform-nullish-coalescing-operator"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2022-06"
+  dropIn: true
+  alternatives:
+    - "@babel/preset-env"
+  notes: >-
+    The `??` operator became part of ES2020, and Babel renames plugins from -proposal-
+    to -transform- once the proposal is standard. The old package carries an npm
+    deprecation notice naming the replacement, and its final release was 7.18.6 in June
+    2022. The transform and its options carried over unchanged.
+  migration: >-
+    Point the dependency and the config entry at
+    @babel/plugin-transform-nullish-coalescing-operator. If you use @babel/preset-env
+    with a browserslist that only includes runtimes supporting `??`, you can delete the
+    plugin instead of renaming it.
+  evidence:
+    - label: "npm deprecation notice (\"This proposal has been merged to the ECMAScript
+        standard and thus this plugin is no longer maintained. Please use
+        @babel/plugin-transform-nullish-coalescing-operator instead.\")"
+      url: https://www.npmjs.com/package/@babel/plugin-proposal-nullish-coalescing-operator
+    - label: "Babel 7.22.0 release post, \"Renamed packages\" table:
+        proposal-nullish-coalescing-operator → transform-nullish-coalescing-operator
+        (ES2020)"
+      url: https://babeljs.io/blog/2023/05/26/7.22.0
+    - label: "@babel/plugin-transform-nullish-coalescing-operator documentation"
+      url: https://babeljs.io/docs/babel-plugin-transform-nullish-coalescing-operator
+
+- from: "@babel/plugin-proposal-numeric-separator"
+  to: "@babel/plugin-transform-numeric-separator"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2022-06"
+  dropIn: true
+  alternatives:
+    - "@babel/preset-env"
+  notes: >-
+    Numeric separators (`1_000_000`) became standard in ES2021, and Babel renamed the
+    plugin to match in 7.22.0. The npm deprecation notice on the old package names
+    @babel/plugin-transform-numeric-separator, and its final release was 7.18.6 in June
+    2022. The transform is the same; only the package name changed.
+  migration: >-
+    Change the dependency and the config entry to
+    @babel/plugin-transform-numeric-separator; there are no options to adjust. Under
+    @babel/preset-env the explicit entry is normally unnecessary.
+  evidence:
+    - label: "npm deprecation notice (\"This proposal has been merged to the ECMAScript
+        standard and thus this plugin is no longer maintained. Please use
+        @babel/plugin-transform-numeric-separator instead.\")"
+      url: https://www.npmjs.com/package/@babel/plugin-proposal-numeric-separator
+    - label: "Babel 7.22.0 release post, \"Renamed packages\" table:
+        proposal-numeric-separator → transform-numeric-separator (ES2021)"
+      url: https://babeljs.io/blog/2023/05/26/7.22.0
+    - label: "@babel/plugin-transform-numeric-separator documentation"
+      url: https://babeljs.io/docs/babel-plugin-transform-numeric-separator
+
+- from: "@babel/plugin-proposal-object-rest-spread"
+  to: "@babel/plugin-transform-object-rest-spread"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2022-12"
+  dropIn: true
+  alternatives:
+    - "@babel/preset-env"
+  notes: >-
+    Object rest and spread has been standard since ES2018, and Babel renamed the plugin
+    from -proposal- to -transform- in 7.22.0 to reflect that. The old package is
+    deprecated on npm with a notice naming the replacement, and its final release was
+    7.20.7 in December 2022. The same transform continues under the new name.
+  migration: >-
+    Change the dependency and the config entry to
+    @babel/plugin-transform-object-rest-spread; the `loose` and `useBuiltIns` options
+    behave as before. Most projects can drop the plugin and let @babel/preset-env decide
+    whether the transform is needed for their targets.
+  evidence:
+    - label: "npm deprecation notice (\"This proposal has been merged to the ECMAScript
+        standard and thus this plugin is no longer maintained. Please use
+        @babel/plugin-transform-object-rest-spread instead.\")"
+      url: https://www.npmjs.com/package/@babel/plugin-proposal-object-rest-spread
+    - label: "Babel 7.22.0 release post, \"Renamed packages\" table:
+        proposal-object-rest-spread → transform-object-rest-spread (ES2018)"
+      url: https://babeljs.io/blog/2023/05/26/7.22.0
+    - label: "@babel/plugin-transform-object-rest-spread documentation"
+      url: https://babeljs.io/docs/babel-plugin-transform-object-rest-spread
+
+- from: "@babel/plugin-proposal-optional-catch-binding"
+  to: "@babel/plugin-transform-optional-catch-binding"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2022-06"
+  dropIn: true
+  alternatives:
+    - "@babel/preset-env"
+  notes: >-
+    Omitting the catch binding (`try {} catch {}`) became standard in ES2019, and Babel
+    renamed the plugin accordingly in 7.22.0. The npm deprecation notice on the old
+    package names the replacement, and its final release was 7.18.6 in June 2022. The
+    plugin carried over unchanged.
+  migration: >-
+    Rename the dependency and the config entry to
+    @babel/plugin-transform-optional-catch-binding; there are no options to update.
+    @babel/preset-env includes it automatically for targets that need it.
+  evidence:
+    - label: "npm deprecation notice (\"This proposal has been merged to the ECMAScript
+        standard and thus this plugin is no longer maintained. Please use
+        @babel/plugin-transform-optional-catch-binding instead.\")"
+      url: https://www.npmjs.com/package/@babel/plugin-proposal-optional-catch-binding
+    - label: "Babel 7.22.0 release post, \"Renamed packages\" table:
+        proposal-optional-catch-binding → transform-optional-catch-binding (ES2019)"
+      url: https://babeljs.io/blog/2023/05/26/7.22.0
+    - label: "@babel/plugin-transform-optional-catch-binding documentation"
+      url: https://babeljs.io/docs/babel-plugin-transform-optional-catch-binding
+
+- from: "@babel/plugin-proposal-optional-chaining"
+  to: "@babel/plugin-transform-optional-chaining"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2023-02"
+  dropIn: true
+  alternatives:
+    - "@babel/preset-env"
+  notes: >-
+    Optional chaining shipped in ES2020, so Babel moved the plugin out of the -proposal-
+    namespace in 7.22.0. The npm deprecation notice on the old package names
+    @babel/plugin-transform-optional-chaining, and the last release under the old name
+    was 7.21.0 in February 2023. Only the package name changed.
+  migration: >-
+    Rename the dependency and the config entry to
+    @babel/plugin-transform-optional-chaining; the `loose` option carries over. If your
+    browserslist only includes runtimes that support `?.` natively, @babel/preset-env
+    will skip the transform anyway, so the entry can simply be removed.
+  evidence:
+    - label: "npm deprecation notice (\"This proposal has been merged to the ECMAScript
+        standard and thus this plugin is no longer maintained. Please use
+        @babel/plugin-transform-optional-chaining instead.\")"
+      url: https://www.npmjs.com/package/@babel/plugin-proposal-optional-chaining
+    - label: "Babel 7.22.0 release post, \"Renamed packages\" table:
+        proposal-optional-chaining → transform-optional-chaining (ES2020)"
+      url: https://babeljs.io/blog/2023/05/26/7.22.0
+    - label: "@babel/plugin-transform-optional-chaining documentation"
+      url: https://babeljs.io/docs/babel-plugin-transform-optional-chaining
+
+- from: "@babel/plugin-proposal-private-methods"
+  to: "@babel/plugin-transform-private-methods"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2022-06"
+  dropIn: true
+  alternatives:
+    - "@babel/preset-env"
+  notes: >-
+    Private class methods are part of ES2022, and Babel renames a plugin from -proposal-
+    to -transform- once its proposal reaches Stage 4. The npm deprecation notice on the
+    old package names the replacement, and its final release was 7.18.6 in June 2022.
+    The 7.22.0 release post lists this rename and says the old names will no longer be
+    updated.
+  migration: >-
+    Rename the dependency and the config entry to
+    @babel/plugin-transform-private-methods; options are unchanged, and `loose` must
+    still match whatever you set on the class-properties transform. Projects on
+    @babel/preset-env can generally remove the explicit entry.
+  evidence:
+    - label: "npm deprecation notice (\"This proposal has been merged to the ECMAScript
+        standard and thus this plugin is no longer maintained. Please use
+        @babel/plugin-transform-private-methods instead.\")"
+      url: https://www.npmjs.com/package/@babel/plugin-proposal-private-methods
+    - label: "Babel 7.22.0 release post, \"Renamed packages\" table lists
+        @babel/plugin-proposal-private-methods →
+        @babel/plugin-transform-private-methods"
+      url: https://babeljs.io/blog/2023/05/26/7.22.0
+    - label: "@babel/plugin-transform-private-methods documentation"
+      url: https://babeljs.io/docs/babel-plugin-transform-private-methods
+
+- from: "@babel/plugin-proposal-private-property-in-object"
+  to: "@babel/plugin-transform-private-property-in-object"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2023-06"
+  dropIn: true
+  alternatives:
+    - "@babel/preset-env"
+  notes: >-
+    The `#x in obj` brand check landed in ES2022, so Babel moved the plugin out of the
+    -proposal- namespace in 7.22.0. The old package is deprecated on npm with a notice
+    naming the transform plugin, and its last release was 7.21.11 in June 2023. The
+    release post confirms the old name will no longer be updated.
+  migration: >-
+    Swap the package and the config entry for
+    @babel/plugin-transform-private-property-in-object; options are unchanged. This one
+    is often pulled in indirectly, so check whether a preset or another dependency is
+    what actually requests it.
+  evidence:
+    - label: "npm deprecation notice (\"This proposal has been merged to the ECMAScript
+        standard and thus this plugin is no longer maintained. Please use
+        @babel/plugin-transform-private-property-in-object instead.\")"
+      url: https://www.npmjs.com/package/@babel/plugin-proposal-private-property-in-object
+    - label: "Babel 7.22.0 release post, \"Renamed packages\" table:
+        proposal-private-property-in-object → transform-private-property-in-object
+        (ES2022)"
+      url: https://babeljs.io/blog/2023/05/26/7.22.0
+    - label: "@babel/plugin-transform-private-property-in-object documentation"
+      url: https://babeljs.io/docs/babel-plugin-transform-private-property-in-object
+
+- from: "@babel/plugin-proposal-unicode-property-regex"
+  to: "@babel/plugin-transform-unicode-property-regex"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2022-06"
+  dropIn: true
+  alternatives:
+    - "@babel/preset-env"
+  notes: >-
+    Unicode property escapes in regular expressions became standard in ES2018, and Babel
+    renamed the plugin to match in 7.22.0. The npm deprecation notice on the old package
+    names the transform plugin, and its final release was 7.18.6 in June 2022. Behaviour
+    and options carried over.
+  migration: >-
+    Rename the dependency and the config entry to
+    @babel/plugin-transform-unicode-property-regex; the `useUnicodeFlag` option carries
+    over. Most projects can rely on @babel/preset-env to include it when their targets
+    require it.
+  evidence:
+    - label: "npm deprecation notice (\"This proposal has been merged to the ECMAScript
+        standard and thus this plugin is no longer maintained. Please use
+        @babel/plugin-transform-unicode-property-regex instead.\")"
+      url: https://www.npmjs.com/package/@babel/plugin-proposal-unicode-property-regex
+    - label: "Babel 7.22.0 release post, \"Renamed packages\" table:
+        proposal-unicode-property-regex → transform-unicode-property-regex (ES2018)"
+      url: https://babeljs.io/blog/2023/05/26/7.22.0
+    - label: "@babel/plugin-transform-unicode-property-regex documentation"
+      url: https://babeljs.io/docs/babel-plugin-transform-unicode-property-regex
+
+- from: "@babel/plugin-proposal-unicode-sets-regex"
+  to: "@babel/plugin-transform-unicode-sets-regex"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2022-06"
+  dropIn: true
+  alternatives:
+    - "@babel/preset-env"
+  notes: >-
+    The regular expression `v` flag reached Stage 4 and is part of ES2024, so Babel
+    renamed the plugin from -proposal- to -transform- in 7.22.0. The old package carries
+    an npm deprecation notice naming the replacement, and its last release was 7.18.6 in
+    June 2022. The 7.22.0 post lists this rename first in its table.
+  migration: >-
+    Rename the dependency and the config entry to
+    @babel/plugin-transform-unicode-sets-regex; there are no option changes.
+    @babel/preset-env has included v-flag transform support by default since 7.22.0, so
+    the explicit entry is usually unnecessary.
+  evidence:
+    - label: "npm deprecation notice (\"This proposal has been merged to the ECMAScript
+        standard and thus this plugin is no longer maintained. Please use
+        @babel/plugin-transform-unicode-sets-regex instead.\")"
+      url: https://www.npmjs.com/package/@babel/plugin-proposal-unicode-sets-regex
+    - label: "Babel 7.22.0 release post: \"@babel/preset-env now includes transform
+        support for the v regular expressions flag ... by default\", plus the rename
+        table entry proposal-unicode-sets-regex → transform-unicode-sets-regex (ES2024)"
+      url: https://babeljs.io/blog/2023/05/26/7.22.0
+    - label: "@babel/plugin-transform-unicode-sets-regex documentation"
+      url: https://babeljs.io/docs/babel-plugin-transform-unicode-sets-regex
+
+- from: "@babel/polyfill"
+  to: core-js
+  toKind: package
+  type: self-declared
+  confidence: high
+  since: "2019-03"
+  dropIn: false
+  alternatives:
+    - regenerator-runtime
+    - core-js-pure
+  notes: >-
+    Babel deprecated @babel/polyfill in 7.4.0 in favour of importing core-js directly,
+    plus the regenerator runtime where it is still needed. Both the npm notice and the
+    Babel docs say so, and the package's final release was 7.12.1 in October 2020.
+    core-js remains actively released.
+  migration: >-
+    Replace `import '@babel/polyfill'` with `import 'core-js/stable'`. The Babel docs
+    add that you only need to load regenerator-runtime separately if you compile
+    generators or async functions to ES5 on a @babel/core or
+    @babel/plugin-transform-regenerator older than 7.18.0. Setting `useBuiltIns:
+    'usage'` and a `corejs` version on @babel/preset-env injects only the polyfills your
+    targets need.
+  evidence:
+    - label: "npm deprecation notice (\"This package has been deprecated in favor of
+        separate inclusion of a polyfill and regenerator-runtime (when needed)\")"
+      url: https://www.npmjs.com/package/@babel/polyfill
+    - label: "Babel docs for @babel/polyfill: \"As of Babel 7.4.0, this package has been
+        deprecated in favor of directly including core-js/stable\""
+      url: https://babeljs.io/docs/babel-polyfill
 
 - from: "@hapi/joi"
   to: joi
@@ -86,6 +715,786 @@
       url: https://www.npmjs.com/package/@material-ui/core
     - label: Official MUI v4 to v5 migration guide
       url: https://mui.com/material-ui/migration/migration-v4/
+
+- from: "@oclif/command"
+  to: "@oclif/core"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2023-08"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    oclif merged @oclif/command together with @oclif/config, @oclif/errors and
+    @oclif/parser into a single @oclif/core package. The Command base class and flag
+    helpers moved across, so the same code lives on under one import. The npm notice is
+    oclif's generic deprecation text, but oclif publishes a migration guide that names
+    this package explicitly.
+  migration: >-
+    Install @oclif/core, change `import {Command, Flags} from '@oclif/command'` to
+    `import {Command, Flags} from '@oclif/core'`, and make `this.parse(...)` awaited.
+  evidence:
+    - label: "npm deprecation: \"Package no longer supported. Contact Support at
+        https://www.npmjs.com/support for more info.\""
+      url: https://www.npmjs.com/package/@oclif/command
+    - label: "oclif migration guide: \"Migrating to @oclif/core from deprecated
+        libraries (@oclif/config, @oclif/command, @oclif/error, @oclif/parser)\""
+      url: https://github.com/oclif/core/blob/main/guides/PRE_CORE_MIGRATION.md
+
+- from: "@oclif/config"
+  to: "@oclif/core"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2023-08"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    @oclif/config was one of four oclif libraries folded into @oclif/core. Types such as
+    Config, Plugin and Topic are exported from @oclif/core now, and the standalone
+    package stopped receiving releases in August 2023. oclif's migration guide lists the
+    import and type changes.
+  migration: >-
+    Install @oclif/core and change imports from '@oclif/config' to '@oclif/core';
+    consult oclif's pre-core migration guide for the renamed types.
+  evidence:
+    - label: "npm deprecation: \"Package no longer supported. Contact Support at
+        https://www.npmjs.com/support for more info.\""
+      url: https://www.npmjs.com/package/@oclif/config
+    - label: oclif migration guide naming @oclif/config as one of the deprecated
+        libraries replaced by @oclif/core
+      url: https://github.com/oclif/core/blob/main/guides/PRE_CORE_MIGRATION.md
+
+- from: "@oclif/dev-cli"
+  to: oclif
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2022-04"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    The development helpers in @oclif/dev-cli were folded into the main oclif CLI
+    package, and the dev-cli repository was archived in April 2022 with a notice saying
+    it had been replaced by oclif. Manifest generation and README updating are now oclif
+    subcommands. Install oclif as a dev dependency in its place.
+  migration: >-
+    Replace @oclif/dev-cli with oclif and change scripts from `oclif-dev manifest` /
+    `oclif-dev readme` to `oclif manifest` / `oclif readme`.
+  evidence:
+    - label: "Archived oclif/dev-cli repository notice: \"This library has been replaced
+        by oclif and is now in maintenance mode.\""
+      url: https://github.com/oclif/dev-cli
+    - label: "npm deprecation: \"Package no longer supported. Contact Support at
+        https://www.npmjs.com/support for more info.\""
+      url: https://www.npmjs.com/package/@oclif/dev-cli
+    - label: oclif is published and actively released
+      url: https://www.npmjs.com/package/oclif
+
+- from: "@storybook/testing-library"
+  to: "@storybook/test"
+  toKind: package
+  type: self-declared
+  confidence: high
+  since: "2023-10"
+  dropIn: false
+  alternatives:
+    - storybook
+    - "@testing-library/react"
+  notes: >-
+    Storybook 8 replaced this wrapper with @storybook/test, which builds on Vitest APIs
+    and adds spies and assertions alongside the Testing Library queries. The
+    storybookjs/testing-library repository was archived in January 2024 and its README
+    points at the new package. @storybook/test's releases stop on the Storybook 8 line,
+    because from Storybook 9 the same module moved into the main storybook package and
+    is imported as storybook/test.
+  migration: >-
+    On Storybook 8, `npx storybook@latest upgrade` offers an automigration; otherwise
+    swap the dependency and change `from '@storybook/testing-library'` to `from
+    '@storybook/test'`. On Storybook 9 or newer, import from 'storybook/test' and remove
+    the separate dependency entirely.
+  evidence:
+    - label: "npm deprecation notice: \"In Storybook 8, this package functionality has
+        been integrated to a new package called @storybook/test, which uses Vitest APIs
+        for an improved experience.\""
+      url: https://www.npmjs.com/package/@storybook/testing-library
+    - label: "storybookjs/testing-library repository, archived 23 January 2024: \"Please
+        use @storybook/test instead\""
+      url: https://github.com/storybookjs/testing-library
+    - label: Storybook interaction testing docs (current storybook/test module)
+      url: https://storybook.js.org/docs/writing-tests/interaction-testing
+
+- from: "@types/axios"
+  to: axios
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2017-02"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    axios has shipped its own TypeScript definitions since 0.14.0 (August 2016), and
+    @types/axios became a stub in February 2017. The stub package contains no
+    declarations, so keeping it installed adds nothing to a build. Removing it is the
+    whole migration.
+  migration: >-
+    Run `npm uninstall @types/axios`; axios exposes its own `index.d.ts` automatically.
+  evidence:
+    - label: "npm deprecation notice on @types/axios: \"This is a stub types definition.
+        axios provides its own type definitions, so you do not need this installed.\""
+      url: https://www.npmjs.com/package/@types/axios
+    - label: axios on npm — declares its own `typings` entry from 0.14.0 onward
+      url: https://www.npmjs.com/package/axios
+
+- from: "@types/chalk"
+  to: chalk
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2017-10"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    chalk added its own TypeScript definitions in 2.2.0, and the DefinitelyTyped package
+    was replaced by a stub about a week later in October 2017. chalk 2.2.0 and later
+    carry their own definitions. The dependency line can simply be deleted.
+  migration: >-
+    Run `npm uninstall @types/chalk`; chalk resolves its own definitions with no
+    configuration.
+  evidence:
+    - label: "npm deprecation notice on @types/chalk: \"This is a stub types definition.
+        chalk provides its own type definitions, so you do not need this installed.\""
+      url: https://www.npmjs.com/package/@types/chalk
+    - label: chalk on npm — declares a `types` entry from 2.2.0 onward
+      url: https://www.npmjs.com/package/chalk
+
+- from: "@types/classnames"
+  to: classnames
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2021-04"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    classnames added its own TypeScript definitions in 2.3.0, and @types/classnames was
+    turned into a stub later that month in April 2021. The bundled definitions cover the
+    default export plus the bind and dedupe entry points. Nothing needs installing in
+    its place.
+  migration: >-
+    Run `npm uninstall @types/classnames`.
+  evidence:
+    - label: "npm deprecation notice on @types/classnames: \"This is a stub types
+        definition. classnames provides its own type definitions, so you do not need
+        this installed.\""
+      url: https://www.npmjs.com/package/@types/classnames
+    - label: classnames on npm — declares a `types` entry from 2.3.0 onward
+      url: https://www.npmjs.com/package/classnames
+
+- from: "@types/commander"
+  to: commander
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2017-12"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    commander added bundled TypeScript definitions in 2.12.0, and the DefinitelyTyped
+    package was reduced to a stub in December 2017. commander 2.12.0 and later carry
+    their own typings. Delete the dependency and install nothing.
+  migration: >-
+    Run `npm uninstall @types/commander`.
+  evidence:
+    - label: "npm deprecation notice on @types/commander: \"This is a stub types
+        definition. commander provides its own type definitions, so you do not need this
+        installed.\""
+      url: https://www.npmjs.com/package/@types/commander
+    - label: commander on npm — declares a `typings` entry from 2.12.0 onward
+      url: https://www.npmjs.com/package/commander
+
+- from: "@types/date-fns"
+  to: date-fns
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2016-12"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    date-fns declared its own TypeScript typings entry in 1.11.0 and has shipped the
+    definitions file itself since 1.12.0, and @types/date-fns became a stub in December
+    2016. date-fns v2 and later treat types as a first-class published output, so the
+    bundled definitions are the accurate ones. Remove the stub and install nothing.
+  migration: >-
+    Run `npm uninstall @types/date-fns`.
+  evidence:
+    - label: "npm deprecation notice on @types/date-fns: \"This is a stub types
+        definition. date-fns provides its own type definitions, so you do not need this
+        installed.\""
+      url: https://www.npmjs.com/package/@types/date-fns
+    - label: date-fns on npm — declares a `typings` entry from 1.11.0 onward
+      url: https://www.npmjs.com/package/date-fns
+
+- from: "@types/dotenv"
+  to: dotenv
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2019-10"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    dotenv began shipping its own TypeScript definitions in 8.2.0, and @types/dotenv was
+    published as a matching stub later that same month in October 2019. The bundled
+    types cover the current config and parse APIs. The stub can be removed with no
+    replacement.
+  migration: >-
+    Run `npm uninstall @types/dotenv`.
+  evidence:
+    - label: "npm deprecation notice on @types/dotenv: \"This is a stub types
+        definition. dotenv provides its own type definitions, so you do not need this
+        installed.\""
+      url: https://www.npmjs.com/package/@types/dotenv
+    - label: dotenv on npm — declares a `types` entry from 8.2.0 onward
+      url: https://www.npmjs.com/package/dotenv
+
+- from: "@types/execa"
+  to: execa
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2019-07"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    execa began publishing an index.d.ts inside the package at version 2.0.0, and
+    @types/execa became a stub in July 2019. The bundled definitions stay in step with
+    execa's own API changes across majors. Removing the stub is the entire migration.
+  migration: >-
+    Run `npm uninstall @types/execa`.
+  evidence:
+    - label: "npm deprecation notice on @types/execa: \"This is a stub types definition.
+        execa provides its own type definitions, so you do not need this installed.\""
+      url: https://www.npmjs.com/package/@types/execa
+    - label: execa on npm — published tarball ships index.d.ts from 2.0.0 onward
+      url: https://www.npmjs.com/package/execa
+
+- from: "@types/glob"
+  to: glob
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2025-07"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    DefinitelyTyped replaced @types/glob with a stub package because glob has shipped
+    its own TypeScript declarations since v9. The stub contains no type definitions, so
+    keeping it installed adds a dependency that does nothing. The fix is to delete the
+    line from package.json.
+  migration: >-
+    Remove @types/glob. If the project is still on glob@8 or earlier, upgrade glob to
+    v9+ first — those versions have no bundled declarations.
+  evidence:
+    - label: "npm deprecation: \"This is a stub types definition. glob provides its own
+        type definitions, so you do not need this installed.\""
+      url: https://www.npmjs.com/package/@types/glob
+    - label: glob manifest declares its own bundled type declarations
+      url: https://www.npmjs.com/package/glob
+
+- from: "@types/joi"
+  to: joi
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2021-01"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    joi added its own TypeScript definitions in 17.2.0, and @types/joi was published as
+    a stub in January 2021. Note this is separate from the @hapi/joi rename: the package
+    to depend on today is plain joi, and it needs no external types.
+  migration: >-
+    Run `npm uninstall @types/joi`, and make sure the runtime dependency is `joi` rather
+    than the older `@hapi/joi` name.
+  evidence:
+    - label: "npm deprecation notice on @types/joi: \"This is a stub types definition.
+        joi provides its own type definitions, so you do not need this installed.\""
+      url: https://www.npmjs.com/package/@types/joi
+    - label: joi on npm — declares a `types` entry from 17.2.0 onward
+      url: https://www.npmjs.com/package/joi
+
+- from: "@types/marked"
+  to: marked
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2023-10"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    marked moved to TypeScript sources and began shipping its own definitions in version
+    6, and @types/marked 6.0.0 followed in October 2023 as a stub. The bundled types
+    describe the current extension and hooks API accurately. Projects still on marked 5
+    or earlier should keep the corresponding stub version.
+  migration: >-
+    Run `npm uninstall @types/marked` once you are on marked 6 or later.
+  evidence:
+    - label: "npm deprecation notice on @types/marked 6.0.0: \"This is a stub types
+        definition. marked provides its own type definitions, so you do not need this
+        installed.\""
+      url: https://www.npmjs.com/package/@types/marked
+    - label: marked on npm — declares a `types` entry from 6.0.0 onward
+      url: https://www.npmjs.com/package/marked
+
+- from: "@types/mkdirp"
+  to: mkdirp
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2023-02"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    mkdirp began shipping its own TypeScript definitions in version 2, and @types/mkdirp
+    2.0.0 was published as a stub in February 2023. Worth noting that on modern Node the
+    capability itself is built in as fs.mkdir with the recursive option, so many call
+    sites can drop mkdirp entirely. Projects still on mkdirp 1.x need the older stub.
+  migration: >-
+    Run `npm uninstall @types/mkdirp` once on mkdirp 2+, or consider replacing mkdirp
+    itself with `fs.promises.mkdir(dir, { recursive: true })`.
+  evidence:
+    - label: "npm deprecation notice on @types/mkdirp 2.0.0: \"This is a stub types
+        definition. mkdirp provides its own type definitions, so you do not need this
+        installed.\""
+      url: https://www.npmjs.com/package/@types/mkdirp
+    - label: mkdirp on npm — declares a `types` entry from 2.0.0 onward
+      url: https://www.npmjs.com/package/mkdirp
+
+- from: "@types/moment"
+  to: moment
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2016-08"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Moment has shipped its own TypeScript definitions since 2.13.0, and @types/moment
+    became a stub in August 2016. Separately, Moment itself is in maintenance mode and
+    this dataset carries a row recommending a modern date library, so removing the stub
+    is often a first step in a larger migration.
+  migration: >-
+    Run `npm uninstall @types/moment`. If you are also moving off Moment itself, see the
+    separate `moment` row for successor options.
+  evidence:
+    - label: "npm deprecation notice on @types/moment: \"This is a stub types definition
+        for Moment (https://github.com/moment/moment). Moment provides its own type
+        definitions, so you don't need @types/moment installed!\""
+      url: https://www.npmjs.com/package/@types/moment
+    - label: moment on npm — declares a `typings` entry from 2.13.0 onward
+      url: https://www.npmjs.com/package/moment
+
+- from: "@types/mongoose"
+  to: mongoose
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2021-06"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Mongoose started shipping officially supported TypeScript definitions inside the
+    package in the 5.11 line, and @types/mongoose was deprecated in June 2021. The
+    bundled types model generics on Model and Document differently from the community
+    stub. Remove the stub rather than replacing it.
+  migration: >-
+    Run `npm uninstall @types/mongoose`. The official definitions treat schema and
+    document generics differently from the old stub, so the first build after removal
+    may surface new type errors.
+  evidence:
+    - label: "npm deprecation notice on @types/mongoose: \"Mongoose publishes its own
+        types, so you do not need to install this package.\""
+      url: https://www.npmjs.com/package/@types/mongoose
+    - label: mongoose on npm — published tarball ships index.d.ts from 5.11.0 onward
+      url: https://www.npmjs.com/package/mongoose
+
+- from: "@types/nanoid"
+  to: nanoid
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2021-05"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    nanoid ships .d.ts files for its main, async and non-secure entry points from
+    version 3.0.0, and @types/nanoid was replaced by a stub in May 2021. The definitions
+    travel with the package, so TypeScript finds them without configuration. Deleting
+    the stub is all that is required.
+  migration: >-
+    Run `npm uninstall @types/nanoid`.
+  evidence:
+    - label: "npm deprecation notice on @types/nanoid: \"This is a stub types
+        definition. nanoid provides its own type definitions, so you do not need this
+        installed.\""
+      url: https://www.npmjs.com/package/@types/nanoid
+    - label: nanoid on npm — published tarball ships index.d.ts from 3.0.0 onward
+      url: https://www.npmjs.com/package/nanoid
+
+- from: "@types/ora"
+  to: ora
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2019-03"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    ora started shipping an index.d.ts in the published package at version 3.2.0, and
+    @types/ora was replaced by a stub in March 2019. ora 3.2.0 and later carry their own
+    definitions. Delete the dependency line and install nothing.
+  migration: >-
+    Run `npm uninstall @types/ora`.
+  evidence:
+    - label: "npm deprecation notice on @types/ora: \"This is a stub types definition.
+        ora provides its own type definitions, so you do not need this installed.\""
+      url: https://www.npmjs.com/package/@types/ora
+    - label: ora on npm — published tarball ships index.d.ts from 3.2.0 onward
+      url: https://www.npmjs.com/package/ora
+
+- from: "@types/p-limit"
+  to: p-limit
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2019-03"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    p-limit started including an index.d.ts in the published package at version 2.2.0,
+    and @types/p-limit was turned into a stub in March 2019. TypeScript picks the
+    bundled definitions up automatically. Nothing replaces the stub; it just goes away.
+  migration: >-
+    Run `npm uninstall @types/p-limit`.
+  evidence:
+    - label: "npm deprecation notice on @types/p-limit: \"This is a stub types
+        definition. p-limit provides its own type definitions, so you do not need this
+        installed.\""
+      url: https://www.npmjs.com/package/@types/p-limit
+    - label: p-limit on npm — published tarball ships index.d.ts from 2.2.0 onward
+      url: https://www.npmjs.com/package/p-limit
+
+- from: "@types/prettier"
+  to: prettier
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2023-07"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Prettier 3.0.0 began publishing its own TypeScript definitions, and @types/prettier
+    3.0.0 followed later in July 2023 as a stub. The bundled types describe the
+    asynchronous v3 API, which differs from the synchronous v2 signatures the old stub
+    described. Only projects still on Prettier 2 need the older @types/prettier.
+  migration: >-
+    Run `npm uninstall @types/prettier` once you are on Prettier 3. Stay on
+    @types/prettier 2.x if the project is pinned to Prettier 2, since the v3 API is
+    asynchronous.
+  evidence:
+    - label: "npm deprecation notice on @types/prettier 3.0.0: \"This is a stub types
+        definition. prettier provides its own type definitions, so you do not need this
+        installed.\""
+      url: https://www.npmjs.com/package/@types/prettier
+    - label: prettier on npm — declares a `types` entry from 3.0.0 onward
+      url: https://www.npmjs.com/package/prettier
+
+- from: "@types/puppeteer"
+  to: puppeteer
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2022-11"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Puppeteer has declared its own bundled TypeScript definitions since v7.1.0, and
+    DefinitelyTyped later retired @types/puppeteer to a stub. The stub carries no types.
+    Delete it from package.json and the types resolve from puppeteer.
+  migration: >-
+    Remove @types/puppeteer; on puppeteer@7.1 or later the bundled declarations are used
+    automatically.
+  evidence:
+    - label: "npm deprecation: \"This is a stub types definition. puppeteer provides its
+        own type definitions, so you do not need this installed.\""
+      url: https://www.npmjs.com/package/@types/puppeteer
+    - label: puppeteer manifest declares bundled type declarations
+      url: https://www.npmjs.com/package/puppeteer
+
+- from: "@types/query-string"
+  to: query-string
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2019-03"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    query-string started publishing an index.d.ts inside the package at version 6.3.0,
+    and @types/query-string became a stub in March 2019. The bundled definitions track
+    the parse and stringify option shapes across majors. Delete the dependency and
+    install nothing.
+  migration: >-
+    Run `npm uninstall @types/query-string`.
+  evidence:
+    - label: "npm deprecation notice on @types/query-string: \"This is a stub types
+        definition. query-string provides its own type definitions, so you do not need
+        this installed.\""
+      url: https://www.npmjs.com/package/@types/query-string
+    - label: query-string on npm — published tarball ships index.d.ts from 6.3.0 onward
+      url: https://www.npmjs.com/package/query-string
+
+- from: "@types/react-native"
+  to: react-native
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2023-12"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    React Native started shipping its own TypeScript definitions in 0.71 (January 2023),
+    and the DefinitelyTyped package was turned into a stub with @types/react-native
+    0.73.0 in December 2023. The bundled types track the framework release you actually
+    installed, so they stay in step across upgrades. Nothing needs to be installed in
+    its place.
+  migration: >-
+    Run `npm uninstall @types/react-native`. Projects still on React Native 0.70 or
+    earlier should keep the matching @types/react-native version until they upgrade.
+  evidence:
+    - label: "npm deprecation notice on @types/react-native 0.73.0: \"This is a stub
+        types definition. react-native provides its own type definitions, so you do not
+        need this installed.\""
+      url: https://www.npmjs.com/package/@types/react-native
+    - label: react-native on npm — package manifest declares a `types` entry from 0.71.0
+      url: https://www.npmjs.com/package/react-native
+
+- from: "@types/redis"
+  to: redis
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2021-12"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    node-redis was rewritten in TypeScript for version 4 and publishes its own
+    definitions, so @types/redis was reduced to a stub in December 2021. The bundled
+    types model the v4 promise-based client and its command signatures, which differ
+    substantially from the v3 callback client. Only projects still on redis 3.x need the
+    external stub.
+  migration: >-
+    Run `npm uninstall @types/redis` once on redis 4 or later. On redis 3.x keep
+    @types/redis 2.x, since the v4 client API is a rewrite rather than an increment.
+  evidence:
+    - label: "npm deprecation notice on @types/redis 4.0.11: \"This is a stub types
+        definition. redis provides its own type definitions, so you do not need this
+        installed.\""
+      url: https://www.npmjs.com/package/@types/redis
+    - label: redis on npm — declares a `types` entry from 4.0.0 onward
+      url: https://www.npmjs.com/package/redis
+
+- from: "@types/redux"
+  to: redux
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2016-11"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Redux has shipped its own TypeScript definitions since 3.4.0 (April 2016), and
+    @types/redux was turned into a stub in November 2016. The definitions ship inside
+    the redux package itself. The dependency can be deleted outright.
+  migration: >-
+    Run `npm uninstall @types/redux`; redux resolves its own definitions, and Redux
+    Toolkit types come from @reduxjs/toolkit.
+  evidence:
+    - label: "npm deprecation notice on @types/redux: \"This is a stub types definition
+        for Redux (https://github.com/reactjs/redux). Redux provides its own type
+        definitions, so you don't need @types/redux installed!\""
+      url: https://www.npmjs.com/package/@types/redux
+    - label: redux on npm — declares a `typings` entry from 3.4.0 onward
+      url: https://www.npmjs.com/package/redux
+
+- from: "@types/rimraf"
+  to: rimraf
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2023-02"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    rimraf was rewritten in TypeScript for version 4 and now publishes its own
+    definitions, so @types/rimraf 4.0.5 was released as a stub in February 2023. The v4
+    API returns promises by default, which the old callback-shaped stub did not
+    describe. Projects still on rimraf 3 should keep the matching stub version.
+  migration: >-
+    Run `npm uninstall @types/rimraf` once you are on rimraf 4 or later. On rimraf 3,
+    keep @types/rimraf 3.x until you upgrade.
+  evidence:
+    - label: "npm deprecation notice on @types/rimraf 4.0.5: \"This is a stub types
+        definition. rimraf provides its own type definitions, so you do not need this
+        installed.\""
+      url: https://www.npmjs.com/package/@types/rimraf
+    - label: rimraf on npm — declares a `types` entry from 4.0.0 onward
+      url: https://www.npmjs.com/package/rimraf
+
+- from: "@types/sequelize"
+  to: sequelize
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2025-07"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Sequelize has declared its own TypeScript definitions since the v5 line (March
+    2019), and @types/sequelize 6.12.0 was published as a stub in July 2025. The bundled
+    types match the model and query interfaces of whichever Sequelize major is
+    installed. Only projects still on Sequelize 4 need the external stub.
+  migration: >-
+    Run `npm uninstall @types/sequelize`. If the project is pinned to Sequelize 4, keep
+    @types/sequelize 4.x until you upgrade.
+  evidence:
+    - label: "npm deprecation notice on @types/sequelize 6.12.0: \"This is a stub types
+        definition. sequelize provides its own type definitions, so you do not need this
+        installed.\""
+      url: https://www.npmjs.com/package/@types/sequelize
+    - label: sequelize on npm — declares a `types` entry from 5.1.0 onward
+      url: https://www.npmjs.com/package/sequelize
+
+- from: "@types/socket.io"
+  to: socket.io
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2021-05"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Socket.IO moved to TypeScript sources in version 3.0 and publishes its own
+    definitions, so @types/socket.io was reduced to a stub in May 2021. The bundled
+    types support the generic event maps introduced in v4, which the older
+    DefinitelyTyped definitions did not cover. Client-side code gets its types from
+    socket.io-client in the same way.
+  migration: >-
+    Run `npm uninstall @types/socket.io` (and @types/socket.io-client if present, which
+    is a stub too). Projects still on Socket.IO 2.x should keep the older stub version
+    until they upgrade.
+  evidence:
+    - label: "npm deprecation notice on @types/socket.io: \"This is a stub types
+        definition. socket.io provides its own type definitions, so you do not need this
+        installed.\""
+      url: https://www.npmjs.com/package/@types/socket.io
+    - label: "socket.io on npm — declares `types: ./dist/index.d.ts` from 3.0.0 onward"
+      url: https://www.npmjs.com/package/socket.io
+
+- from: "@types/testing-library__jest-dom"
+  to: "@testing-library/jest-dom"
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2023-08"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    @testing-library/jest-dom started declaring its own TypeScript definitions in v6, so
+    DefinitelyTyped replaced this package with a stub. The stub provides no matcher
+    types of its own. Remove it and let the library supply them.
+  migration: >-
+    Remove @types/testing-library__jest-dom after upgrading to
+    @testing-library/jest-dom@6 or later.
+  evidence:
+    - label: "npm deprecation: \"This is a stub types definition.
+        @testing-library/jest-dom provides its own type definitions, so you do not need
+        this installed.\""
+      url: https://www.npmjs.com/package/@types/testing-library__jest-dom
+    - label: "@testing-library/jest-dom manifest declares bundled type declarations"
+      url: https://www.npmjs.com/package/@testing-library/jest-dom
+
+- from: "@types/uuid"
+  to: uuid
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2025-09"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    uuid began shipping its own TypeScript definitions in 11.0.0 (October 2024), and
+    @types/uuid 11.0.0 was published in September 2025 as a stub containing no type
+    declarations. TypeScript resolves the definitions bundled with uuid, so the stub
+    contributes nothing to a build. The fix is to remove the dependency, not replace it.
+  migration: >-
+    Run `npm uninstall @types/uuid`. If the project is still pinned to uuid 10 or
+    earlier, keep the matching @types/uuid major until you upgrade uuid to 11+.
+  evidence:
+    - label: "npm deprecation notice on @types/uuid 11.0.0: \"This is a stub types
+        definition. uuid provides its own type definitions, so you do not need this
+        installed.\""
+      url: https://www.npmjs.com/package/@types/uuid
+    - label: uuid on npm — declares its own `types` entry point from v11.0.0 onward
+      url: https://www.npmjs.com/package/uuid
+
+- from: "@types/vue"
+  to: vue
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2016-12"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Vue has shipped its own TypeScript definitions since Vue 2.0, and @types/vue was
+    published as a stub in December 2016. Vue 3 is written in TypeScript and its types
+    come straight from the vue package. There is nothing to install in place of the
+    stub.
+  migration: >-
+    Run `npm uninstall @types/vue`; for single-file components pair the bundled types
+    with vue-tsc rather than an @types package.
+  evidence:
+    - label: "npm deprecation notice on @types/vue: \"This is a stub types definition
+        for vuejs (https://github.com/vuejs/vue). vuejs provides its own type
+        definitions, so you don't need @types/vue installed!\""
+      url: https://www.npmjs.com/package/@types/vue
+    - label: vue on npm — declares a `typings` entry from 2.0.0 onward
+      url: https://www.npmjs.com/package/vue
+
+- from: "@vitest/coverage-c8"
+  to: "@vitest/coverage-v8"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2023-07"
+  dropIn: false
+  alternatives:
+    - "@vitest/coverage-istanbul"
+  notes: >-
+    Vitest replaced its c8-based coverage provider with one built directly on V8's
+    coverage output, published as @vitest/coverage-v8. The old package stopped at Vitest
+    0.33. The provider name in the Vitest config changes along with the package name.
+  migration: >-
+    Install @vitest/coverage-v8 and set `coverage: { provider: 'v8' }` in your Vitest
+    config instead of `'c8'`.
+  evidence:
+    - label: "npm deprecation: \"v8 coverage is moved to @vitest/coverage-v8 package\""
+      url: https://www.npmjs.com/package/@vitest/coverage-c8
+    - label: "@vitest/coverage-v8 is released in lockstep with Vitest"
+      url: https://www.npmjs.com/package/@vitest/coverage-v8
 
 - from: "@zeit/next-sass"
   to: next
@@ -202,6 +1611,62 @@
     - label: Official "Migrating from Apollo Server 3" guide
       url: https://www.apollographql.com/docs/apollo-server/migration-from-v3
 
+- from: aws-sdk
+  to: null
+  toKind: none
+  type: replacement
+  confidence: high
+  since: "2025-09"
+  dropIn: false
+  alternatives:
+    - "@aws-sdk/client-s3"
+    - "@aws-sdk/client-dynamodb"
+    - "@aws-sdk/client-lambda"
+    - "@aws-sdk/client-sqs"
+    - "@aws-sdk/client-sns"
+    - "@aws-sdk/client-secrets-manager"
+  notes: >-
+    The AWS SDK for JavaScript v2 reached end-of-support and no longer receives
+    updates. v3 has no single successor package: it is split into one client per
+    service, so there is nothing to swap `aws-sdk` for one-to-one — you install
+    only the clients you actually call.
+  migration: >-
+    Replace `aws-sdk` with the specific clients you use, e.g.
+    `@aws-sdk/client-s3`. The v3 API is modular and command-based
+    (`new S3Client()` plus `send(new GetObjectCommand(...))`) rather than
+    method-per-operation, and responses are streams instead of buffers.
+  evidence:
+    - label: "npm deprecation notice on aws-sdk 2.1693.0"
+      url: https://www.npmjs.com/package/aws-sdk
+    - label: "AWS: SDK for JavaScript v2 end-of-support"
+      url: https://aws.amazon.com/blogs/developer/announcing-end-of-support-for-aws-sdk-for-javascript-v2/
+- from: babel
+  to: "@babel/cli"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2017-02"
+  dropIn: false
+  alternatives:
+    - "@babel/core"
+  notes: >-
+    The unscoped babel package carried the compiler and command line tool in the Babel 5
+    era. Its npm deprecation notice says it was superseded by babel-cli in Babel 6, and
+    the Babel 7 upgrade guide records babel-cli → @babel/cli as part of the move to
+    scoped packages, so @babel/cli is the maintained end of that chain. The final
+    release of babel was 6.23.0 in February 2017.
+  migration: >-
+    Install @babel/core and @babel/cli and invoke `npx babel`. Plugins and presets need
+    the @babel/ prefix too, and configuration moves to babel.config.json or .babelrc
+    with @babel/preset-env.
+  evidence:
+    - label: "npm deprecation notice (\"In 6.x, the babel package has been deprecated in
+        favor of babel-cli\")"
+      url: https://www.npmjs.com/package/babel
+    - label: "Babel 7 upgrade guide: \"Your dependencies will need to be modified like
+        so: babel-cli -> @babel/cli\", and a \"Dropping the babel package\" section"
+      url: https://babeljs.io/docs/v7-migration
+
 - from: babel-eslint
   to: "@babel/eslint-parser"
   toKind: package
@@ -252,6 +1717,90 @@
       url: https://www.npmjs.com/package/babel-preset-es2015
     - label: "@babel/preset-env documentation"
       url: https://babeljs.io/docs/babel-preset-env
+
+- from: babel-preset-es2016
+  to: "@babel/preset-env"
+  toKind: package
+  type: self-declared
+  confidence: high
+  since: "2017-04"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Babel replaced its year-based presets with one preset that compiles for the browsers
+    and Node versions you target. babel-preset-es2016 covered only the exponentiation
+    operator; it is deprecated on npm with a notice from the Babel team recommending
+    preset-env, and its final release was 6.24.1 in April 2017. Babel 7 publishes the
+    successor as @babel/preset-env.
+  migration: >-
+    Replace the preset with @babel/preset-env and declare targets through a browserslist
+    config or the preset's `targets` option. With a browserslist limited to runtimes
+    that support `**` natively, the preset will skip the transform entirely.
+  evidence:
+    - label: "npm deprecation notice (\"Thanks for using Babel: we recommend using
+        babel-preset-env now: please read https://babeljs.io/env to update!\")"
+      url: https://www.npmjs.com/package/babel-preset-es2016
+    - label: "@babel/preset-env documentation"
+      url: https://babeljs.io/docs/babel-preset-env
+    - label: "Babel 7 upgrade guide: every package moved to the @babel/ scope (\"we
+        basically started by replacing babel- with @babel/\")"
+      url: https://babeljs.io/docs/v7-migration
+
+- from: babel-preset-es2017
+  to: "@babel/preset-env"
+  toKind: package
+  type: self-declared
+  confidence: high
+  since: "2017-04"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Babel replaced its year-based presets with one preset that compiles for the
+    environments you actually target. babel-preset-es2017 covered async functions and
+    trailing commas in parameter lists; it is deprecated on npm with a notice from the
+    Babel team recommending preset-env, and its final release was 6.24.1 in April 2017.
+    Babel 7 publishes the successor as @babel/preset-env.
+  migration: >-
+    Replace the preset with @babel/preset-env and declare targets through a browserslist
+    config or the preset's `targets` option, which will decide whether async functions
+    still need to be downlevelled.
+  evidence:
+    - label: "npm deprecation notice (\"Thanks for using Babel: we recommend using
+        babel-preset-env now: please read https://babeljs.io/env to update!\")"
+      url: https://www.npmjs.com/package/babel-preset-es2017
+    - label: "@babel/preset-env documentation"
+      url: https://babeljs.io/docs/babel-preset-env
+    - label: "Babel 7 upgrade guide: every package moved to the @babel/ scope (\"we
+        basically started by replacing babel- with @babel/\")"
+      url: https://babeljs.io/docs/v7-migration
+
+- from: babel-preset-latest
+  to: "@babel/preset-env"
+  toKind: package
+  type: self-declared
+  confidence: high
+  since: "2017-04"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Babel replaced its year-based and "latest" presets with a single preset driven by
+    the environments you actually target. babel-preset-latest is deprecated on npm with
+    a notice from the Babel team recommending preset-env, and its final release was
+    6.24.1 in April 2017. In Babel 7 that successor is published as @babel/preset-env.
+  migration: >-
+    Replace the preset with @babel/preset-env and declare targets through a browserslist
+    config or the preset's `targets` option; with no targets set it compiles down to
+    ES5, which is what preset-latest did.
+  evidence:
+    - label: "npm deprecation notice (\"instead of making more yearly presets, Babel now
+        has a better preset that we recommend you use instead: npm install
+        babel-preset-env\")"
+      url: https://www.npmjs.com/package/babel-preset-latest
+    - label: "@babel/preset-env documentation"
+      url: https://babeljs.io/docs/babel-preset-env
+    - label: "Babel 7 upgrade guide: every package moved to the @babel/ scope (\"we
+        basically started by replacing babel- with @babel/\")"
+      url: https://babeljs.io/docs/v7-migration
 
 - from: bluebird
   to: Promise (native)
@@ -360,6 +1909,34 @@
     - label: Codecov uploader deprecation plan (September 2021)
       url: https://about.codecov.io/blog/codecov-uploader-deprecation-plan/
 
+- from: coffee-script
+  to: coffeescript
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2017-07"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    CoffeeScript moved to the unhyphenated npm name when version 2 was published, and
+    the hyphenated package carries a notice saying so. It is the same project from the
+    same repository, not a fork, and 1.12.7 from July 2017 is the final release under
+    the old name. The unhyphenated package also publishes 1.12.7, so the rename itself
+    can be made without any code change.
+  migration: >-
+    Change the dependency name and any `require('coffee-script')` to
+    `require('coffeescript')`. Pinning coffeescript@1.12.7 is an exact swap; moving on
+    to 2.x is a separate step, since CoffeeScript 2 compiles to modern JavaScript and
+    changes the semantics of fat arrows, default values and classes.
+  evidence:
+    - label: "npm deprecation notice: \"CoffeeScript on NPM has moved to
+        \\\"coffeescript\\\" (no hyphen)\""
+      url: https://www.npmjs.com/package/coffee-script
+    - label: coffeescript package on npm (current home of the project)
+      url: https://www.npmjs.com/package/coffeescript
+    - label: CoffeeScript 2 breaking changes, coffeescript.org
+      url: https://coffeescript.org/#breaking-changes
+
 - from: colors
   to: "@colors/colors"
   toKind: package
@@ -423,6 +2000,36 @@
     - label: npm deprecation notice for connect-multiparty
       url: https://www.npmjs.com/package/connect-multiparty
 
+- from: conventional-changelog-cli
+  to: conventional-changelog
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2024-05"
+  dropIn: false
+  alternatives:
+    - conventional-changelog-conventionalcommits
+    - release-please
+    - changesets
+  notes: >-
+    The conventional-changelog monorepo consolidated its command line entry point into
+    the conventional-changelog package, and the separate CLI package carries a notice
+    saying so. The executable is still called conventional-changelog, so scripts that
+    invoke it by name keep working. The last release of the CLI package was 5.0.0 in May
+    2024.
+  migration: >-
+    Swap conventional-changelog-cli for conventional-changelog in devDependencies; the
+    `conventional-changelog` binary and its `-p`, `-i` and `-s` flags stay the same.
+    Review the intervening major releases, since preset resolution and some option
+    defaults changed.
+  evidence:
+    - label: "npm deprecation notice: \"This package is no longer maintained. Please use
+        the conventional-changelog package instead.\""
+      url: https://www.npmjs.com/package/conventional-changelog-cli
+    - label: conventional-changelog on npm, which now exposes the conventional-changelog
+        binary
+      url: https://www.npmjs.com/package/conventional-changelog
+
 - from: create-react-app
   to: vite
   toKind: package
@@ -455,6 +2062,31 @@
     - label: "Create React App README: the project is in long-term stasis and
         migration is recommended"
       url: https://github.com/facebook/create-react-app
+
+- from: crypto
+  to: node:crypto
+  toKind: platform
+  type: absorbed
+  confidence: high
+  since: "2017-08"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    The `crypto` name on npm is a placeholder package published from npm's
+    deprecate-holder repository; Node has provided crypto as a core module since its
+    earliest releases. Node resolves the built-in ahead of anything in node_modules, so
+    listing the npm package adds nothing and only obscures which implementation is in
+    play. Remove it from package.json and the imports keep working.
+  migration: >-
+    Delete the `crypto` dependency and import from `node:crypto`; no other code change
+    is needed.
+  evidence:
+    - label: "npm deprecation: \"This package is no longer supported. It's now a
+        built-in Node module. If you've depended on crypto, you should switch to the one
+        that's built-in.\""
+      url: https://www.npmjs.com/package/crypto
+    - label: Node.js crypto module documentation
+      url: https://nodejs.org/api/crypto.html
 
 - from: csurf
   to: csrf-csrf
@@ -538,6 +2170,101 @@
     - label: paralleldrive/cuid2 repository
       url: https://github.com/paralleldrive/cuid2
 
+- from: ember-cli-eslint
+  to: eslint
+  toKind: package
+  type: self-declared
+  confidence: high
+  since: "2019-01"
+  dropIn: false
+  alternatives:
+    - eslint-plugin-ember
+  notes: >-
+    Ember RFC 121 retired the build-time linting addons in favour of running ESLint
+    directly from an npm script, and the deprecation notice points at that RFC. Linting
+    no longer runs as part of the ember-cli build. The replacement is the eslint CLI
+    itself, usually paired with eslint-plugin-ember for framework rules.
+  migration: >-
+    Remove ember-cli-eslint and add a `"lint:js": "eslint ."` script; keep
+    eslint-plugin-ember for Ember-specific rules.
+  evidence:
+    - label: "npm deprecation: \"Call eslint directly instead:
+        https://github.com/emberjs/rfcs/blob/master/text/0121-remove-ember-cli-eslint.md\""
+      url: https://www.npmjs.com/package/ember-cli-eslint
+    - label: "Ember RFC 121: Remove ember-cli-eslint"
+      url: https://github.com/emberjs/rfcs/blob/master/text/0121-remove-ember-cli-eslint.md
+
+- from: ember-cli-htmlbars-inline-precompile
+  to: ember-cli-htmlbars
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2021-02"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Inline template precompilation moved into ember-cli-htmlbars, which every Ember
+    application already depends on. The separate addon therefore became redundant rather
+    than replaced, and nothing new needs installing. Remove it and import `hbs` from
+    ember-cli-htmlbars.
+  migration: >-
+    Delete ember-cli-htmlbars-inline-precompile and change `import hbs from
+    'htmlbars-inline-precompile'` to `import { hbs } from 'ember-cli-htmlbars'`.
+  evidence:
+    - label: "npm deprecation: \"Use ember-cli-htmlbars instead.\""
+      url: https://www.npmjs.com/package/ember-cli-htmlbars-inline-precompile
+    - label: ember-cli-htmlbars is published and actively released, and still handles
+        the legacy inline-precompile import sources
+      url: https://www.npmjs.com/package/ember-cli-htmlbars
+
+- from: ember-cli-qunit
+  to: ember-qunit
+  toKind: package
+  type: self-declared
+  confidence: high
+  since: "2018-10"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    ember-cli-qunit was the ember-cli wrapper around ember-qunit, and its deprecation
+    notice names ember-qunit directly. ember-qunit is a pre-existing package that is
+    still actively released, so this is a pointer to a sibling project rather than a
+    rename. Test bootstrapping differs between the two, so tests/test-helper.js needs
+    updating rather than just the dependency.
+  migration: >-
+    Replace ember-cli-qunit with ember-qunit and use its `setupTest` helpers and
+    `start()` in tests/test-helper.js.
+  evidence:
+    - label: "npm deprecation: \"Use ember-qunit instead.\""
+      url: https://www.npmjs.com/package/ember-cli-qunit
+    - label: ember-qunit is published and actively released
+      url: https://www.npmjs.com/package/ember-qunit
+
+- from: ember-cli-uglify
+  to: ember-cli-terser
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2019-04"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    The addon was renamed to ember-cli-terser when it switched from UglifyJS to Terser
+    as the underlying minifier, and both live under the ember-cli organisation. The
+    option shape is the same apart from the minifier's own name. Because both the build
+    option key and the nested options hash are derived from the minifier, the swap needs
+    a small config edit.
+  migration: >-
+    Install ember-cli-terser, rename the `'ember-cli-uglify'` options key in
+    ember-cli-build.js to `'ember-cli-terser'`, and rename the nested `uglify` options
+    hash to `terser`.
+  evidence:
+    - label: "npm deprecation: \"Renamed to ember-cli-terser.\""
+      url: https://www.npmjs.com/package/ember-cli-uglify
+    - label: ember-cli-terser is published under the ember-cli organisation and
+        documents the `terser` options hash
+      url: https://www.npmjs.com/package/ember-cli-terser
+
 - from: enzyme
   to: "@testing-library/react"
   toKind: package
@@ -569,6 +2296,32 @@
     - label: "npm: enzyme, last published December 2019"
       url: https://www.npmjs.com/package/enzyme
 
+- from: eslint-config-standard-with-typescript
+  to: eslint-config-love
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2024-01"
+  dropIn: false
+  alternatives:
+    - eslint-config-standard
+    - typescript-eslint
+    - neostandard
+  notes: >-
+    The maintainer renamed this config to eslint-config-love and continued developing it
+    there; the new package's README still tracks its pre-rename dependents. The new name
+    is released frequently and its rule set has moved well beyond what the old package
+    shipped. Expect to triage new lint errors on first run rather than a silent swap.
+  migration: >-
+    Replace eslint-config-standard-with-typescript with eslint-config-love; current
+    majors are written for flat config, so move the rules into eslint.config.js.
+  evidence:
+    - label: "npm deprecation: \"Please use eslint-config-love, instead.\""
+      url: https://www.npmjs.com/package/eslint-config-standard-with-typescript
+    - label: eslint-config-love is published and actively released by the same
+        maintainer
+      url: https://www.npmjs.com/package/eslint-config-love
+
 - from: eslint-loader
   to: eslint-webpack-plugin
   toKind: package
@@ -593,6 +2346,29 @@
     - label: "webpack docs: ESLintPlugin"
       url: https://webpack.js.org/plugins/eslint-webpack-plugin/
 
+- from: eslint-plugin-markdown
+  to: "@eslint/markdown"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2024-07"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    The ESLint team moved this plugin into the @eslint scope as part of consolidating
+    its first-party packages. @eslint/markdown is the maintained continuation and is
+    written for flat config. The configuration shape differs from the old
+    .eslintrc-style setup, so the swap involves a config change.
+  migration: >-
+    Install @eslint/markdown and register it in eslint.config.js; it requires ESLint
+    v9.15 or later, and the old `plugins: ['markdown']` plus `overrides` form does not
+    carry over.
+  evidence:
+    - label: "npm deprecation: \"Please use @eslint/markdown instead\""
+      url: https://www.npmjs.com/package/eslint-plugin-markdown
+    - label: "@eslint/markdown is published and actively released by the ESLint team"
+      url: https://www.npmjs.com/package/@eslint/markdown
+
 - from: eslint-plugin-node
   to: eslint-plugin-n
   toKind: package
@@ -615,6 +2391,31 @@
       url: https://github.com/mysticatea/eslint-plugin-node
     - label: "eslint-plugin-n README: \"forked from eslint-plugin-node v11.1.0\""
       url: https://github.com/eslint-community/eslint-plugin-n
+
+- from: eslint-plugin-standard
+  to: eslint-config-standard
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2020-11"
+  dropIn: false
+  alternatives:
+    - standard
+  notes: >-
+    The only rule this plugin still provided was no-callback-literal, and it was folded
+    into the shared config so the extra dependency could go away. From standard 16.0.0
+    and eslint-config-standard 16.0.0 onward the plugin is not needed, and its npm
+    notice says to remove it. Nothing needs to be installed in its place.
+  migration: >-
+    Run `npm rm eslint-plugin-standard` and delete "standard" from the `plugins` array
+    in your ESLint config; keep `extends: standard` as it is.
+  evidence:
+    - label: "npm deprecation notice: \"standard 16.0.0 and eslint-config-standard
+        16.0.0 no longer require the eslint-plugin-standard package. You can remove it
+        from your dependencies with 'npm rm eslint-plugin-standard'.\""
+      url: https://www.npmjs.com/package/eslint-plugin-standard
+    - label: "standard/standard#1316 \"Eliminate eslint-plugin-standard\""
+      url: https://github.com/standard/standard/issues/1316
 
 - from: event-stream
   to: null
@@ -809,6 +2610,30 @@
     - label: "paypal/glamorous issue #419: \"Deprecate glamorous in favor of
         emotion\""
       url: https://github.com/paypal/glamorous/issues/419
+
+- from: gulp-minify-css
+  to: gulp-clean-css
+  toKind: package
+  type: replacement
+  confidence: high
+  since: "2016-02"
+  dropIn: false
+  alternatives:
+    - cssnano
+    - postcss
+  notes: >-
+    gulp-minify-css was deprecated in favour of gulp-clean-css, a separate project that
+    wraps the same clean-css minifier. Both forward their options to clean-css, but the
+    plugin surface is not identical. gulp-clean-css is stable and sees infrequent
+    releases, so it is also worth asking whether the Gulp step is still needed.
+  migration: >-
+    Replace gulp-minify-css with gulp-clean-css and pass clean-css options as the first
+    argument, e.g. `cleanCSS({ compatibility: 'ie8' })`.
+  evidence:
+    - label: "npm deprecation: \"Please use gulp-clean-css\""
+      url: https://www.npmjs.com/package/gulp-minify-css
+    - label: gulp-clean-css is published and not deprecated
+      url: https://www.npmjs.com/package/gulp-clean-css
 
 - from: gulp-util
   to: null
@@ -1125,6 +2950,37 @@
     - label: "Angular blog: Moving Angular CLI to Jest and Web Test Runner"
       url: https://blog.angular.dev/moving-angular-cli-to-jest-and-web-test-runner-ef85ef69ceca
 
+- from: karma-phantomjs-launcher
+  to: karma-chrome-launcher
+  toKind: package
+  type: replacement
+  confidence: medium
+  since: "2017-03"
+  dropIn: false
+  alternatives:
+    - puppeteer
+    - "@web/test-runner"
+    - vitest
+    - playwright
+  notes: >-
+    PhantomJS development was suspended in March 2018 once Chrome and Firefox shipped
+    headless modes, and this launcher's npm notice points at Puppeteer or similar. For a
+    project that wants to keep its existing Karma setup, karma-chrome-launcher with the
+    ChromeHeadless browser is the direct equivalent. Karma itself is also deprecated, so
+    a larger move to Vitest or Web Test Runner is worth considering at the same time.
+  migration: >-
+    Replace the launcher dependency, change `browsers: ['PhantomJS']` to `browsers:
+    ['ChromeHeadless']`, and drop the `phantomjs` plugin entry. Adding puppeteer as a
+    devDependency and setting `process.env.CHROME_BIN =
+    require('puppeteer').executablePath()` gives CI a Chrome binary the same way
+    phantomjs-prebuilt used to supply one.
+  evidence:
+    - label: "npm deprecation notice: \"PhantomJS development have stopped, use
+        puppeteer or similar\""
+      url: https://www.npmjs.com/package/karma-phantomjs-launcher
+    - label: karma-chrome-launcher on npm (maintained, supports ChromeHeadless)
+      url: https://www.npmjs.com/package/karma-chrome-launcher
+
 - from: koa-router
   to: "@koa/router"
   toKind: package
@@ -1248,6 +3104,53 @@
       url: https://www.npmjs.com/package/lodash.isequal
     - label: "Node.js docs: util.isDeepStrictEqual"
       url: https://nodejs.org/api/util.html#utilisdeepstrictequalval1-val2
+
+- from: lolex
+  to: "@sinonjs/fake-timers"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2020-02"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    lolex was renamed to @sinonjs/fake-timers when it moved fully under the Sinon
+    organisation. The deprecation notice states that no API changes were made in the
+    move. It remains the timer-faking library that Sinon itself is built on.
+  migration: >-
+    Replace lolex with @sinonjs/fake-timers and update imports; `install()`, the
+    returned clock object and the option names are unchanged.
+  evidence:
+    - label: "npm deprecation: \"lolex has been renamed to @sinonjs/fake-timers. No API
+        changes made. Please use the new package instead\""
+      url: https://www.npmjs.com/package/lolex
+    - label: "@sinonjs/fake-timers is published and actively released"
+      url: https://www.npmjs.com/package/@sinonjs/fake-timers
+
+- from: metro-react-native-babel-preset
+  to: "@react-native/babel-preset"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2023-07"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    React Native moved its Babel preset out of the Metro repository and into the
+    react-native monorepo under the @react-native scope, and the old package's npm
+    notice names the replacement. The preset itself is the same, but it is versioned
+    alongside React Native releases, so the version you pick has to match your
+    react-native version rather than carry over from the old range. The old name last
+    published 0.77.0 in July 2023 while the scoped package has continued past 0.86.
+  migration: >-
+    Change the devDependency and update babel.config.js to `presets:
+    ['module:@react-native/babel-preset']`. Pick the @react-native/babel-preset version
+    that matches your react-native version rather than reusing the old range.
+  evidence:
+    - label: "npm deprecation notice: \"Use @react-native/babel-preset instead\""
+      url: https://www.npmjs.com/package/metro-react-native-babel-preset
+    - label: "@react-native/babel-preset on npm, released alongside React Native"
+      url: https://www.npmjs.com/package/@react-native/babel-preset
 
 - from: moment
   to: luxon
@@ -1414,6 +3317,83 @@
     - label: "nodeunit README: \"DEPRECATED PROJECT\" section"
       url: https://github.com/caolan/nodeunit#deprecated-project
 
+- from: nsp
+  to: npm audit
+  toKind: platform
+  type: absorbed
+  confidence: high
+  since: "2018-09"
+  dropIn: false
+  alternatives:
+    - snyk
+    - audit-ci
+  notes: >-
+    The Node Security Platform service that nsp queried was shut down at the end of
+    September 2018 after npm acquired it, so the CLI has had no backend since. Its
+    advisory data and scanning became `npm audit`, which ships with npm itself. There is
+    no package to install in its place.
+  migration: >-
+    Remove nsp and run `npm audit` instead, e.g. `npm audit --audit-level=high` in CI.
+  evidence:
+    - label: "npm deprecation: \"The Node Security Platform service is shutting down
+        9/30\""
+      url: https://www.npmjs.com/package/nsp
+    - label: npm audit command documentation
+      url: https://docs.npmjs.com/cli/v11/commands/npm-audit
+
+- from: opn
+  to: open
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2019-03"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    This is the same project published under a clearer name; the npm notice simply says
+    the package has been renamed to open. The last release under the old name was 6.0.0
+    in March 2019 and open published its own 6.0.0 the same day, continuing the version
+    numbering. The function signature is unchanged.
+  migration: >-
+    Change the dependency name and the require path; `opn(target, options)` becomes
+    `open(target, options)` with the same arguments. open has no 5.x line, so a range
+    like `^5.5.0` has to be moved up to `^6.0.0` when you rename it. Note that open 9
+    and later are ESM-only, so CommonJS consumers should either pin open 8 or switch to
+    dynamic import.
+  evidence:
+    - label: "npm deprecation notice: \"The package has been renamed to `open`\""
+      url: https://www.npmjs.com/package/opn
+    - label: open package on npm (current home of the project)
+      url: https://www.npmjs.com/package/open
+
+- from: optimize-css-assets-webpack-plugin
+  to: css-minimizer-webpack-plugin
+  toKind: package
+  type: self-declared
+  confidence: high
+  since: "2021-06"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    This plugin minified CSS assets during a webpack build, usually with cssnano, and
+    its last release was 6.0.1 in June 2021. There is no npm deprecation marker, but its
+    README now tells anyone on webpack v5 or above to use css-minimizer-webpack-plugin
+    instead, which is maintained under webpack-contrib and still released. Projects
+    still on webpack 4 can keep the original.
+  migration: >-
+    css-minimizer-webpack-plugin is registered under `optimization.minimizer` rather
+    than `plugins`, and cssnano settings move into `minimizerOptions`. Leave
+    `optimization.minimize` on so the minimizer runs for production builds.
+  evidence:
+    - label: "optimize-css-assets-webpack-plugin README: \"For webpack v5 or above
+        please use css-minimizer-webpack-plugin instead.\""
+      url: https://github.com/NMFR/optimize-css-assets-webpack-plugin
+    - label: optimize-css-assets-webpack-plugin on npm, last published June 2021 with
+        the same README warning
+      url: https://www.npmjs.com/package/optimize-css-assets-webpack-plugin
+    - label: css-minimizer-webpack-plugin, maintained under webpack-contrib
+      url: https://github.com/webpack-contrib/css-minimizer-webpack-plugin
+
 - from: parcel-bundler
   to: parcel
   toKind: package
@@ -1441,6 +3421,54 @@
       url: https://www.npmjs.com/package/parcel-bundler
     - label: Official Parcel 1 to Parcel 2 migration guide
       url: https://parceljs.org/migration/parcel-1/
+
+- from: path-is-absolute
+  to: path.isAbsolute
+  toKind: platform
+  type: absorbed
+  confidence: high
+  since: "2018-11"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    This module existed to paper over Node 0.10, which lacked path.isAbsolute. Every
+    supported Node release has had the function in core for years, which is why the
+    author deprecated the package. Delete the dependency and call the built-in directly.
+  migration: >-
+    Replace `require('path-is-absolute')(p)` with `require('node:path').isAbsolute(p)`.
+  evidence:
+    - label: "npm deprecation: \"This package is no longer relevant as Node.js 0.12 is
+        unmaintained.\""
+      url: https://www.npmjs.com/package/path-is-absolute
+    - label: Node.js documentation for path.isAbsolute()
+      url: https://nodejs.org/api/path.html#pathisabsolutepath
+
+- from: phantomjs
+  to: puppeteer
+  toKind: package
+  type: replacement
+  confidence: high
+  since: "2016-04"
+  dropIn: false
+  alternatives:
+    - playwright
+    - "@playwright/test"
+  notes: >-
+    The phantomjs npm package was renamed to phantomjs-prebuilt in 2016, and PhantomJS
+    development was later suspended once headless Chrome shipped. Both npm packages are
+    deprecated, so following the rename only lands on another dead end. Headless browser
+    automation moved to Puppeteer and Playwright.
+  migration: >-
+    Replace PhantomJS with puppeteer (or playwright) and rewrite page scripts against
+    the async, promise-based API; there is no compatibility shim.
+  evidence:
+    - label: "npm deprecation: \"Package renamed to phantomjs-prebuilt. Please update
+        'phantomjs' package references to 'phantomjs-prebuilt'\""
+      url: https://www.npmjs.com/package/phantomjs
+    - label: phantomjs-prebuilt, the rename target, is itself deprecated on npm
+      url: https://www.npmjs.com/package/phantomjs-prebuilt
+    - label: puppeteer is published and actively released
+      url: https://www.npmjs.com/package/puppeteer
 
 - from: phantomjs-prebuilt
   to: puppeteer
@@ -1471,6 +3499,30 @@
       url: https://github.com/ariya/phantomjs/issues/15344
     - label: Medium/phantomjs repository (archived)
       url: https://github.com/Medium/phantomjs
+
+- from: pkg-dir
+  to: package-directory
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2025-06"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    pkg-dir was renamed to package-directory in June 2025 by the same author, who
+    published the renamed package the same day the deprecation went up. The exported
+    functions and their behaviour are the same, so the change is a package name swap.
+    The new name continues to be released.
+  migration: >-
+    Replace pkg-dir with package-directory and update imports; `packageDirectory()` and
+    `packageDirectorySync()` keep the same signatures. Projects on pkg-dir v5 or earlier
+    used a default export and need that call site updated too.
+  evidence:
+    - label: "npm deprecation: \"Renamed to `package-directory`.\""
+      url: https://www.npmjs.com/package/pkg-dir
+    - label: package-directory README documents the same
+        packageDirectory/packageDirectorySync API
+      url: https://www.npmjs.com/package/package-directory
 
 - from: popper.js
   to: "@popperjs/core"
@@ -1719,6 +3771,28 @@
         publishing"
       url: https://github.com/testing-library/dom-testing-library/issues/260
 
+- from: read-pkg-up
+  to: read-package-up
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2023-11"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    read-pkg-up was renamed to read-package-up. The API is unchanged — the same
+    readPackageUp and readPackageUpSync functions with the same options — so the
+    migration is a rename in package.json and imports. The new name is the one that
+    continues to receive releases.
+  migration: >-
+    Replace read-pkg-up with read-package-up and update imports; `readPackageUp()` and
+    `readPackageUpSync()` are unchanged.
+  evidence:
+    - label: "npm deprecation: \"Renamed to read-package-up\""
+      url: https://www.npmjs.com/package/read-pkg-up
+    - label: read-package-up README documents the same readPackageUp API
+      url: https://www.npmjs.com/package/read-package-up
+
 - from: recompose
   to: react
   toKind: package
@@ -1883,6 +3957,31 @@
     - label: Maintainer announcement for the request family
       url: https://github.com/request/request/issues/3142
 
+- from: rollup-plugin-alias
+  to: "@rollup/plugin-alias"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2019-10"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Rollup's alias plugin moved into the @rollup scope as part of the plugins monorepo.
+    rollup-plugin-alias stopped at 2.2.0 in October 2019 and npm carries a deprecation
+    notice saying the module has moved to @rollup/plugin-alias. The scoped plugin is the
+    same project and is still released.
+  migration: >-
+    Keep the default import but move the alias map under `entries`: `alias({ entries: {
+    utils: './src/utils' } })`. The array form of `{ find, replacement }` objects is
+    also accepted and makes match ordering explicit.
+  evidence:
+    - label: "npm deprecation notice for rollup-plugin-alias (\"This module has moved
+        and is now available at @rollup/plugin-alias. Please update your dependencies.
+        This version is no longer maintained.\")"
+      url: https://www.npmjs.com/package/rollup-plugin-alias
+    - label: "@rollup/plugin-alias in the rollup/plugins monorepo"
+      url: https://github.com/rollup/plugins/tree/master/packages/alias
+
 - from: rollup-plugin-babel
   to: "@rollup/plugin-babel"
   toKind: package
@@ -1907,6 +4006,452 @@
       url: https://www.npmjs.com/package/rollup-plugin-babel
     - label: "@rollup/plugin-babel in the rollup/plugins monorepo"
       url: https://github.com/rollup/plugins/tree/master/packages/babel
+
+- from: rollup-plugin-buble
+  to: "@rollup/plugin-buble"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2019-07"
+  dropIn: true
+  alternatives:
+    - "@rollup/plugin-babel"
+    - rollup-plugin-esbuild
+    - "@rollup/plugin-swc"
+  notes: >-
+    Rollup's Bublé transpiler plugin moved into the @rollup scope in 2019;
+    rollup-plugin-buble stopped at 0.19.8 in July 2019 and npm carries a deprecation
+    notice naming @rollup/plugin-buble. The scoped plugin is the maintained wrapper.
+    Bublé itself targets an older feature set than most builds now need, so projects
+    adding a transpiler today usually reach for Babel, esbuild or SWC instead.
+  migration: >-
+    Change the dependency and the import specifier; the default export and Bublé's
+    transform options are unchanged. If the goal is only modern syntax lowering,
+    @rollup/plugin-babel or rollup-plugin-esbuild covers more of today's syntax.
+  evidence:
+    - label: "npm deprecation notice for rollup-plugin-buble (\"This module has been
+        deprecated and is no longer maintained. Please use @rollup/plugin-buble.\")"
+      url: https://www.npmjs.com/package/rollup-plugin-buble
+    - label: "@rollup/plugin-buble in the rollup/plugins monorepo"
+      url: https://github.com/rollup/plugins/tree/master/packages/buble
+
+- from: rollup-plugin-commonjs
+  to: "@rollup/plugin-commonjs"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2019-08"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Rollup consolidated its first-party plugins into the @rollup scope and the
+    rollup/plugins monorepo. rollup-plugin-commonjs stopped at 10.1.0 in August 2019 and
+    its npm page carries a deprecation notice naming @rollup/plugin-commonjs. The scoped
+    plugin is the same project continued and is still released.
+  migration: >-
+    Swap the dependency name; the default import still works. The `namedExports` option
+    is gone because the scoped plugin detects named exports itself, and
+    `requireReturnsDefault` covers the interop cases that used to need manual entries.
+  evidence:
+    - label: "npm deprecation notice for rollup-plugin-commonjs (\"This package has been
+        deprecated and is no longer maintained. Please use @rollup/plugin-commonjs.\")"
+      url: https://www.npmjs.com/package/rollup-plugin-commonjs
+    - label: "@rollup/plugin-commonjs in the rollup/plugins monorepo"
+      url: https://github.com/rollup/plugins/tree/master/packages/commonjs
+
+- from: rollup-plugin-dsv
+  to: "@rollup/plugin-dsv"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2016-07"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    rollup-plugin-dsv converts CSV and TSV files into JavaScript modules at build time
+    and was folded into the rollup/plugins monorepo. The unscoped package last shipped
+    1.2.0 in July 2016 and npm carries a deprecation notice naming @rollup/plugin-dsv.
+    The scoped plugin is the maintained version and is still released.
+  migration: >-
+    Change the dependency and the import specifier. The default export and the
+    `processRow` option behave the same way.
+  evidence:
+    - label: "npm deprecation notice for rollup-plugin-dsv (\"This module has been
+        deprecated and is no longer maintained. Please use @rollup/plugin-dsv.\")"
+      url: https://www.npmjs.com/package/rollup-plugin-dsv
+    - label: "@rollup/plugin-dsv in the rollup/plugins monorepo"
+      url: https://github.com/rollup/plugins/tree/master/packages/dsv
+
+- from: rollup-plugin-image
+  to: "@rollup/plugin-image"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2016-06"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    rollup-plugin-image imports images as base64 data URIs and was one of the plugins
+    folded into the rollup/plugins monorepo. The unscoped package last shipped 1.0.2 in
+    June 2016 and npm carries a deprecation notice naming @rollup/plugin-image. The
+    scoped plugin is the maintained continuation in that monorepo.
+  migration: >-
+    Change the dependency and the import specifier. The default export and the
+    `include`/`exclude` options are unchanged; the scoped plugin adds an optional `dom`
+    option if you would rather get an Image element than a data URI string.
+  evidence:
+    - label: "npm deprecation notice for rollup-plugin-image (\"This module has been
+        deprecated and is no longer maintained. Please use @rollup/plugin-image.\")"
+      url: https://www.npmjs.com/package/rollup-plugin-image
+    - label: "@rollup/plugin-image in the rollup/plugins monorepo"
+      url: https://github.com/rollup/plugins/tree/master/packages/image
+
+- from: rollup-plugin-inject
+  to: "@rollup/plugin-inject"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2019-10"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    rollup-plugin-inject scans modules for free variables and imports them from a chosen
+    module, and it moved into the @rollup scope in 2019. The unscoped package stopped at
+    3.0.2 in October 2019 and npm carries a deprecation notice naming
+    @rollup/plugin-inject. The scoped plugin is the maintained continuation.
+  migration: >-
+    Change the dependency and the import specifier. The default export, the module map
+    argument and the `include`/`exclude` options are unchanged.
+  evidence:
+    - label: "npm deprecation notice for rollup-plugin-inject (\"This package has been
+        deprecated and is no longer maintained. Please use @rollup/plugin-inject.\")"
+      url: https://www.npmjs.com/package/rollup-plugin-inject
+    - label: "@rollup/plugin-inject in the rollup/plugins monorepo"
+      url: https://github.com/rollup/plugins/tree/master/packages/inject
+
+- from: rollup-plugin-json
+  to: "@rollup/plugin-json"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2019-03"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    Rollup's JSON import plugin moved into the @rollup scope during the 2019 monorepo
+    consolidation. rollup-plugin-json stopped at 4.0.0 in March 2019 and is deprecated
+    on npm with a notice naming @rollup/plugin-json. The scoped plugin is the maintained
+    continuation under the new name.
+  migration: >-
+    Change the dependency and the import specifier only. The default export and the
+    `include`, `exclude`, `preferConst`, `indent` and `compact` options are unchanged.
+  evidence:
+    - label: "npm deprecation notice for rollup-plugin-json (\"This module has been
+        deprecated and is no longer maintained. Please use @rollup/plugin-json.\")"
+      url: https://www.npmjs.com/package/rollup-plugin-json
+    - label: "@rollup/plugin-json in the rollup/plugins monorepo"
+      url: https://github.com/rollup/plugins/tree/master/packages/json
+
+- from: rollup-plugin-multi-entry
+  to: "@rollup/plugin-multi-entry"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2018-12"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    This plugin combines several entry files, typically test files matched by a glob,
+    into a single bundle. rollup-plugin-multi-entry stopped at 2.1.0 in December 2018
+    and npm carries a deprecation notice naming @rollup/plugin-multi-entry. The scoped
+    plugin is the maintained continuation.
+  migration: >-
+    Change the dependency and the import specifier; the default export and glob-or-array
+    `input` handling are the same. The scoped plugin adds `entryFileName` and
+    `preserveModules` options if you need control over the generated entry.
+  evidence:
+    - label: "npm deprecation notice for rollup-plugin-multi-entry (\"This package has
+        been deprecated and is no longer maintained. Please use
+        @rollup/plugin-multi-entry.\")"
+      url: https://www.npmjs.com/package/rollup-plugin-multi-entry
+    - label: "@rollup/plugin-multi-entry in the rollup/plugins monorepo"
+      url: https://github.com/rollup/plugins/tree/master/packages/multi-entry
+
+- from: rollup-plugin-node-resolve
+  to: "@rollup/plugin-node-resolve"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2019-06"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Rollup moved its first-party plugins into the @rollup scope in 2019.
+    rollup-plugin-node-resolve stopped at 5.2.0 in June 2019 and is deprecated on npm
+    with a notice pointing at @rollup/plugin-node-resolve. The scoped plugin is the same
+    resolver, kept current with Node package `exports` support.
+  migration: >-
+    The default export was replaced by a named one: `import { nodeResolve } from
+    '@rollup/plugin-node-resolve'`. Most options carry over, but `customResolveOptions`
+    and `only` were replaced by top-level fields such as `moduleDirectories`,
+    `exportConditions` and `resolveOnly`.
+  evidence:
+    - label: "npm deprecation notice for rollup-plugin-node-resolve (\"This package has
+        been deprecated and is no longer maintained. Please use
+        @rollup/plugin-node-resolve.\")"
+      url: https://www.npmjs.com/package/rollup-plugin-node-resolve
+    - label: "@rollup/plugin-node-resolve in the rollup/plugins monorepo"
+      url: https://github.com/rollup/plugins/tree/master/packages/node-resolve
+
+- from: rollup-plugin-replace
+  to: "@rollup/plugin-replace"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2019-04"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    rollup-plugin-replace was folded into the rollup/plugins monorepo and republished as
+    @rollup/plugin-replace. Its last unscoped release was 2.2.0 in April 2019 and npm
+    carries a deprecation notice saying the module has moved. The scoped plugin is
+    actively released.
+  migration: >-
+    Keep the default import and put your substitutions under `values`. The scoped plugin
+    adds a `preventAssignment` option, default `false`; set it to `true` so patterns
+    like `process.env.NODE_ENV = ...` are not rewritten on the left-hand side of an
+    assignment.
+  evidence:
+    - label: "npm deprecation notice for rollup-plugin-replace (\"This module has moved
+        and is now available at @rollup/plugin-replace. Please update your dependencies.
+        This version is no longer maintained.\")"
+      url: https://www.npmjs.com/package/rollup-plugin-replace
+    - label: "@rollup/plugin-replace in the rollup/plugins monorepo"
+      url: https://github.com/rollup/plugins/tree/master/packages/replace
+
+- from: rollup-plugin-strip
+  to: "@rollup/plugin-strip"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2019-08"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    This plugin removes debugger statements and calls such as console.log from a bundle,
+    and it moved into the @rollup scope with the rest of Rollup's first-party plugins.
+    rollup-plugin-strip stopped at 1.2.2 in August 2019 and npm carries a deprecation
+    notice naming @rollup/plugin-strip. The scoped plugin is the maintained continuation
+    in the rollup/plugins monorepo.
+  migration: >-
+    Change the dependency and the import specifier. The default export and the
+    `functions`, `labels`, `debugger`, `sourceMap`, `include` and `exclude` options
+    carry over unchanged.
+  evidence:
+    - label: "npm deprecation notice for rollup-plugin-strip (\"This package has been
+        deprecated and is no longer maintained. Please use @rollup/plugin-strip\")"
+      url: https://www.npmjs.com/package/rollup-plugin-strip
+    - label: "@rollup/plugin-strip in the rollup/plugins monorepo"
+      url: https://github.com/rollup/plugins/tree/master/packages/strip
+
+- from: rollup-plugin-sucrase
+  to: "@rollup/plugin-sucrase"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2019-01"
+  dropIn: true
+  alternatives:
+    - rollup-plugin-esbuild
+    - "@rollup/plugin-swc"
+  notes: >-
+    rollup-plugin-sucrase wraps the Sucrase transpiler for Rollup builds and moved into
+    the @rollup scope in 2019. The unscoped package stopped at 2.1.0 in January 2019 and
+    npm carries a deprecation notice naming @rollup/plugin-sucrase. The scoped plugin is
+    still released.
+  migration: >-
+    Change the dependency and the import specifier. The default export and Sucrase's
+    `transforms`, `include` and `exclude` options are unchanged.
+  evidence:
+    - label: "npm deprecation notice for rollup-plugin-sucrase (\"This package has been
+        deprecated and is no longer maintained. Please use @rollup/plugin-sucrase.\")"
+      url: https://www.npmjs.com/package/rollup-plugin-sucrase
+    - label: "@rollup/plugin-sucrase in the rollup/plugins monorepo"
+      url: https://github.com/rollup/plugins/tree/master/packages/sucrase
+
+- from: rollup-plugin-terser
+  to: "@rollup/plugin-terser"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2020-09"
+  dropIn: false
+  alternatives:
+    - rollup-plugin-esbuild
+    - "@rollup/plugin-swc"
+  notes: >-
+    rollup-plugin-terser was adopted into the rollup/plugins monorepo and republished as
+    @rollup/plugin-terser. Its last standalone release was 7.0.2 in September 2020 and
+    npm carries a deprecation notice naming the scoped package. The scoped plugin tracks
+    current Rollup and Terser versions.
+  migration: >-
+    The export shape changed from named to default: replace `import { terser } from
+    'rollup-plugin-terser'` with `import terser from '@rollup/plugin-terser'`. The
+    options object passed straight through to Terser is unchanged.
+  evidence:
+    - label: "npm deprecation notice for rollup-plugin-terser (\"This package has been
+        deprecated and is no longer maintained. Please use @rollup/plugin-terser\")"
+      url: https://www.npmjs.com/package/rollup-plugin-terser
+    - label: "@rollup/plugin-terser in the rollup/plugins monorepo"
+      url: https://github.com/rollup/plugins/tree/master/packages/terser
+
+- from: rollup-plugin-typescript
+  to: "@rollup/plugin-typescript"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2019-03"
+  dropIn: false
+  alternatives:
+    - rollup-plugin-esbuild
+    - "@rollup/plugin-swc"
+  notes: >-
+    Rollup's TypeScript plugin moved into the @rollup scope and was substantially
+    rewritten there. rollup-plugin-typescript stopped at 1.0.1 in March 2019 and is
+    deprecated on npm with a notice naming @rollup/plugin-typescript. The scoped plugin
+    is the maintained continuation.
+  migration: >-
+    Swap the dependency and keep the default import. The scoped plugin reads
+    tsconfig.json and emits through Rollup, so align `outDir` with your Rollup output
+    directory; add `tslib` as a dev dependency if your compiler options use emit
+    helpers.
+  evidence:
+    - label: "npm deprecation notice for rollup-plugin-typescript (\"This package has
+        been deprecated and is no longer maintained. Please use
+        @rollup/plugin-typescript.\")"
+      url: https://www.npmjs.com/package/rollup-plugin-typescript
+    - label: "@rollup/plugin-typescript in the rollup/plugins monorepo"
+      url: https://github.com/rollup/plugins/tree/master/packages/typescript
+
+- from: rollup-plugin-url
+  to: "@rollup/plugin-url"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2019-11"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    This plugin inlines small files as data URIs and copies larger ones, and it moved
+    into the @rollup scope with the rest of Rollup's first-party plugins.
+    rollup-plugin-url stopped at 3.0.1 in November 2019 and npm carries a deprecation
+    notice naming @rollup/plugin-url. The scoped plugin is the maintained continuation
+    in the rollup/plugins monorepo.
+  migration: >-
+    Change the dependency and the import specifier. The default export and the `limit`,
+    `include`, `exclude`, `emitFiles`, `fileName`, `publicPath`, `sourceDir` and
+    `destDir` options carry over unchanged.
+  evidence:
+    - label: "npm deprecation notice for rollup-plugin-url (\"This module has been
+        deprecated and is no longer maintained. Please use @rollup/plugin-url.\")"
+      url: https://www.npmjs.com/package/rollup-plugin-url
+    - label: "@rollup/plugin-url in the rollup/plugins monorepo"
+      url: https://github.com/rollup/plugins/tree/master/packages/url
+
+- from: rollup-plugin-virtual
+  to: "@rollup/plugin-virtual"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2017-08"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    rollup-plugin-virtual lets a build define modules inline rather than on disk, and it
+    moved into the @rollup scope during the plugins monorepo consolidation. The unscoped
+    package last shipped 1.0.1 in August 2017 and npm carries a deprecation notice
+    naming @rollup/plugin-virtual. The scoped plugin is the maintained continuation.
+  migration: >-
+    Change the dependency and the import specifier. The default export still takes the
+    same map of module id to source string.
+  evidence:
+    - label: "npm deprecation notice for rollup-plugin-virtual (\"This package has been
+        deprecated and is no longer maintained. Please use @rollup/plugin-virtual.\")"
+      url: https://www.npmjs.com/package/rollup-plugin-virtual
+    - label: "@rollup/plugin-virtual in the rollup/plugins monorepo"
+      url: https://github.com/rollup/plugins/tree/master/packages/virtual
+
+- from: rollup-plugin-wasm
+  to: "@rollup/plugin-wasm"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2018-02"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Rollup's WebAssembly import plugin moved into the @rollup scope and the plugins
+    monorepo. rollup-plugin-wasm stopped at 3.0.0 in February 2018 and npm carries a
+    deprecation notice saying the module has moved to @rollup/plugin-wasm. The scoped
+    plugin is the maintained continuation in that monorepo.
+  migration: >-
+    The export shape changed from default to named: replace `import wasm from
+    'rollup-plugin-wasm'` with `import { wasm } from '@rollup/plugin-wasm'`. The `sync`,
+    `maxFileSize` and `targetEnv` options are documented in the scoped plugin's README.
+  evidence:
+    - label: "npm deprecation notice for rollup-plugin-wasm (\"This module has moved and
+        is now available at @rollup/plugin-wasm. Please update your dependencies. This
+        version is no longer maintained.\")"
+      url: https://www.npmjs.com/package/rollup-plugin-wasm
+    - label: "@rollup/plugin-wasm in the rollup/plugins monorepo"
+      url: https://github.com/rollup/plugins/tree/master/packages/wasm
+
+- from: rollup-plugin-yaml
+  to: "@rollup/plugin-yaml"
+  toKind: package
+  type: rename
+  confidence: high
+  since: "2019-10"
+  dropIn: true
+  alternatives: []
+  notes: >-
+    rollup-plugin-yaml converts YAML files into JavaScript modules and was folded into
+    the rollup/plugins monorepo. The unscoped package stopped at 2.0.0 in October 2019
+    and npm carries a deprecation notice naming @rollup/plugin-yaml. The scoped plugin
+    is the maintained version and is still released.
+  migration: >-
+    Change the dependency and the import specifier. The default export and the
+    `documentMode`, `safe`, `transform`, `include` and `exclude` options carry over
+    unchanged.
+  evidence:
+    - label: "npm deprecation notice for rollup-plugin-yaml (\"This module has been
+        deprecated and is no longer maintained. Please use @rollup/plugin-yaml.\")"
+      url: https://www.npmjs.com/package/rollup-plugin-yaml
+    - label: "@rollup/plugin-yaml in the rollup/plugins monorepo"
+      url: https://github.com/rollup/plugins/tree/master/packages/yaml
+
+- from: rollup-watch
+  to: rollup
+  toKind: bundled
+  type: absorbed
+  confidence: high
+  since: "2017-07"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    Watch mode moved into Rollup itself: the `--watch` CLI flag and the `watch()`
+    JavaScript API cover what this plugin used to provide. Any project using
+    rollup-watch already depends on rollup, so nothing new needs installing. Remove the
+    package and use the built-in flag.
+  migration: >-
+    Delete rollup-watch and run `rollup -c --watch`, or call rollup's `watch()` API
+    directly.
+  evidence:
+    - label: "npm deprecation: \"rollup-watch functionality is now included in Rollup
+        itself\""
+      url: https://www.npmjs.com/package/rollup-watch
+    - label: Rollup CLI documentation for the built-in --watch flag
+      url: https://rollupjs.org/command-line-interface/
 
 - from: shortid
   to: nanoid
@@ -2094,6 +4639,26 @@
     - label: WhoopInc/supertest-as-promised repository (archived)
       url: https://github.com/WhoopInc/supertest-as-promised
 
+- from: time-grunt
+  to: null
+  toKind: none
+  type: self-declared
+  confidence: high
+  since: "2018-11"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    The author deprecated time-grunt in 2018 without naming a replacement, noting that
+    it will keep working with Grunt v1 but will not receive updates. No widely adopted
+    successor offers the same per-task Grunt timing display. If the timing output is not
+    load-bearing, the practical step is to remove the dependency.
+  migration: null
+  evidence:
+    - label: "npm deprecation: \"Deprecated because Grunt is practically unmaintained.
+        Move on to something better. This package will continue to work with Grunt v1,
+        but it will not receive any updates.\""
+      url: https://www.npmjs.com/package/time-grunt
+
 - from: tslint
   to: typescript-eslint
   toKind: package
@@ -2123,6 +4688,122 @@
       url: https://typescript-eslint.io/users/what-about-tslint/
     - label: npm deprecation notice for tslint
       url: https://www.npmjs.com/package/tslint
+
+- from: tslint-config-standard
+  to: eslint-config-love
+  toKind: package
+  type: replacement
+  confidence: low
+  since: "2019-11"
+  dropIn: false
+  alternatives:
+    - eslint-config-standard
+    - typescript-eslint
+    - neostandard
+  notes: >-
+    This config brought JavaScript Standard Style to TSLint, and it was closed out when
+    TSLint was deprecated in favour of ESLint. There is no single agreed successor: the
+    closest lineage runs through eslint-config-standard-with-typescript, which has since
+    been renamed eslint-config-love. Teams that only want the JavaScript rules can use
+    eslint-config-standard, and neostandard is another active option.
+  migration: >-
+    Move the project to ESLint, then choose eslint-config-love for the Standard-derived
+    TypeScript rules, or eslint-config-standard plus typescript-eslint for a lighter
+    setup.
+  evidence:
+    - label: "npm deprecation: \"TSLint is deprecated, please move to ESLint:
+        https://github.com/blakeembrey/tslint-config-standard/issues/61\""
+      url: https://www.npmjs.com/package/tslint-config-standard
+    - label: "Issue referenced by the deprecation notice: \"How to migrate to the new
+        eslint/typescript ?\""
+      url: https://github.com/blakeembrey/tslint-config-standard/issues/61
+    - label: eslint-config-love is published and actively released
+      url: https://www.npmjs.com/package/eslint-config-love
+
+- from: tslint-microsoft-contrib
+  to: typescript-eslint
+  toKind: package
+  type: replacement
+  confidence: medium
+  since: "2019-05"
+  dropIn: false
+  alternatives:
+    - "@typescript-eslint/eslint-plugin"
+    - eslint-plugin-security
+    - eslint-plugin-jsx-a11y
+  notes: >-
+    This rule set was written for TSLint, which Palantir deprecated in favour of ESLint
+    in 2019, and its npm notice repeats that guidance. typescript-eslint is where the
+    TypeScript community consolidated its linting. Several of the security and
+    accessibility rules here have no single equivalent and are best matched by dedicated
+    ESLint plugins.
+  migration: >-
+    Adopt typescript-eslint as the base, then map the rules you relied on: security
+    rules to eslint-plugin-security and JSX accessibility rules to
+    eslint-plugin-jsx-a11y. `tslint-to-eslint-config` converts the parts of tslint.json
+    that have direct equivalents and reports the ones that do not.
+  evidence:
+    - label: "npm deprecation notice: \"TSLint has been deprecated in favor of
+        ESLint.\""
+      url: https://www.npmjs.com/package/tslint-microsoft-contrib
+    - label: "TSLint deprecation roadmap, palantir/tslint#4534 \"Roadmap: TSLint ->
+        ESLint\""
+      url: https://github.com/palantir/tslint/issues/4534
+    - label: "typescript-eslint: What about TSLint?"
+      url: https://typescript-eslint.io/users/what-about-tslint/
+
+- from: tslint-react
+  to: eslint-plugin-react
+  toKind: package
+  type: replacement
+  confidence: medium
+  since: "2020-04"
+  dropIn: false
+  alternatives:
+    - typescript-eslint
+    - eslint-plugin-react-hooks
+    - "@eslint-react/eslint-plugin"
+  notes: >-
+    TSLint was deprecated in favour of ESLint, and this rule set was retired with it;
+    the npm notice says so directly. React and JSX linting in ESLint is covered by
+    eslint-plugin-react, usually paired with typescript-eslint for the TypeScript rules
+    tslint-react relied on. The last release was 5.0.0 in April 2020.
+  migration: >-
+    Move to ESLint with typescript-eslint, then add eslint-plugin-react and
+    eslint-plugin-react-hooks; `tslint-to-eslint-config` can translate an existing
+    tslint.json as a starting point, though React-specific rule names need review by
+    hand.
+  evidence:
+    - label: "npm deprecation notice: \"tslint-react is deprecated along with TSLint\""
+      url: https://www.npmjs.com/package/tslint-react
+    - label: "typescript-eslint: What about TSLint?"
+      url: https://typescript-eslint.io/users/what-about-tslint/
+    - label: eslint-plugin-react on npm
+      url: https://www.npmjs.com/package/eslint-plugin-react
+
+- from: typings
+  to: "@types/* packages on npm"
+  toKind: platform
+  type: absorbed
+  confidence: high
+  since: "2017-04"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    TypeScript 2.0 added the ability to install declaration files straight from npm
+    under the @types scope, which removed the need for a separate typings manager. The
+    project's README says exactly that, and the repository was archived in January 2024.
+    Each typings entry maps to an @types package installed with npm.
+  migration: >-
+    Delete typings.json and the typings dependency, then run `npm install --save-dev
+    @types/<pkg>` for each declaration you were pulling in.
+  evidence:
+    - label: "npm deprecation: \"Typings is deprecated in favor of NPM @types -- see
+        README for more information\""
+      url: https://www.npmjs.com/package/typings
+    - label: "Archived typings repository README: \"Starting from TypeScript 2.0, users
+        can install typings using npm install @types/<package>\""
+      url: https://github.com/typings/typings
 
 - from: uglify-es
   to: terser
@@ -2187,6 +4868,29 @@
     - label: webpack-contrib/terser-webpack-plugin, the maintained successor
       url: https://github.com/webpack-contrib/terser-webpack-plugin
 
+- from: validate-commit-msg
+  to: "@commitlint/cli"
+  toKind: package
+  type: replacement
+  confidence: high
+  since: "2017-07"
+  dropIn: false
+  alternatives: []
+  notes: >-
+    The maintainers deprecated validate-commit-msg and pointed users at commitlint,
+    which performs the same conventional-commit checking with a configurable rule set.
+    commitlint is installed as @commitlint/cli together with a shareable config such as
+    @commitlint/config-conventional. It is the tool most commit-msg hooks use today.
+  migration: >-
+    Install @commitlint/cli and @commitlint/config-conventional, add a
+    commitlint.config.js, and run `commitlint --edit $1` from the commit-msg hook.
+  evidence:
+    - label: "npm deprecation: \"Check out CommitLint which provides the same
+        functionality with a more user-focused experience.\""
+      url: https://www.npmjs.com/package/validate-commit-msg
+    - label: "@commitlint/cli is published and actively released"
+      url: https://www.npmjs.com/package/@commitlint/cli
+
 - from: vue-resource
   to: axios
   toKind: package
@@ -2211,6 +4915,39 @@
       url: https://medium.com/the-vue-point/retiring-vue-resource-871a82880af4
     - label: Archived pagekit/vue-resource repository
       url: https://github.com/pagekit/vue-resource
+
+- from: webpack-chain
+  to: webpack-5-chain
+  toKind: package
+  type: fork
+  confidence: low
+  since: "2020-07"
+  dropIn: false
+  alternatives:
+    - rspack-chain
+  notes: >-
+    webpack-chain offered a chaining API for assembling webpack 2 to 4 configurations
+    and was widely used through Vue CLI and Neutrino. Its last release was 6.5.1 in July
+    2020, npm marks it deprecated, and it never gained webpack 5 support. Two community
+    forks carry the API forward, so the right target depends on your bundler:
+    webpack-5-chain for webpack 5, rspack-chain for Rspack. webpack-5-chain is a small,
+    stable shim rather than an actively developed project — its last release was 8.0.2
+    in May 2024 — while rspack-chain is the more actively released of the two.
+  migration: >-
+    webpack-5-chain keeps the same chaining API with webpack 5 types, so usually only
+    the dependency and import specifier change; compare the generated config object
+    before and after, since the fork jumped several major versions. Many projects
+    instead unwind the chain into a plain webpack config object, which removes the
+    dependency entirely.
+  evidence:
+    - label: "npm deprecation notice for webpack-chain (\"Package no longer supported.
+        Contact Support at https://www.npmjs.com/support for more info.\")"
+      url: https://www.npmjs.com/package/webpack-chain
+    - label: webpack-5-chain on npm, a maintained fork targeting webpack 5
+      url: https://www.npmjs.com/package/webpack-5-chain
+    - label: "rspack-chain on npm: \"rspack-chain is a fork of
+        neutrinojs/webpack-chain\""
+      url: https://www.npmjs.com/package/rspack-chain
 
 - from: wreck
   to: "@hapi/wreck"

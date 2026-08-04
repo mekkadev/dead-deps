@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-04T16:55:55.007Z",
+  "generatedAt": "2026-08-04T21:21:21.510Z",
   "partial": false,
   "corpus": {
     "path": "data/calibration.yaml",
@@ -8,7 +8,7 @@
     "evaluated": 54
   },
   "run": {
-    "durationMs": 1464,
+    "durationMs": 3687,
     "concurrency": 6,
     "cacheEnabled": true,
     "cacheTtlHours": 24,
@@ -712,7 +712,7 @@
       "topEvidence": [
         {
           "kind": "release-cadence",
-          "label": "Released 1 day ago (5.11.2).",
+          "label": "Released 2 days ago (5.11.2).",
           "weight": -20,
           "url": "https://www.npmjs.com/package/fastify"
         },
@@ -844,7 +844,7 @@
       "topEvidence": [
         {
           "kind": "release-cadence",
-          "label": "Released 14 days ago (3.9.6).",
+          "label": "Released 15 days ago (3.9.6).",
           "weight": -20,
           "url": "https://www.npmjs.com/package/prettier"
         },

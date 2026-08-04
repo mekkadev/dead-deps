@@ -62,7 +62,7 @@ const SUCCESSION_TYPES = new Set<string>([
   'reimplementation',
 ]);
 const CONFIDENCES = new Set<string>(['high', 'medium', 'low']);
-const SUCCESSOR_KINDS = new Set<string>(['package', 'platform', 'none']);
+const SUCCESSOR_KINDS = new Set<string>(['package', 'platform', 'bundled', 'none']);
 
 /** Looks like an installable npm name, used to derive `toKind` when absent. */
 const NPM_NAME = /^(?:@[a-z0-9][a-z0-9._-]*\/)?[a-z0-9][a-z0-9._-]*$/;

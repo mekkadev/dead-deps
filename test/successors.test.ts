@@ -139,6 +139,22 @@ describe('data/successors.yaml', () => {
             `${where(record)}: nothing to swap in when the successor is a platform feature`,
           );
           break;
+        case 'bundled':
+          // The typings/capability ship inside a package the project already
+          // has, so `to` names that package: installable, but not to be
+          // installed. The instruction is "delete the line".
+          assert.ok(record.to !== null, `${where(record)}: toKind "bundled" needs a "to"`);
+          assert.match(
+            record.to ?? '',
+            NPM_NAME,
+            `${where(record)}: "${record.to ?? ''}" is not an installable npm name`,
+          );
+          assert.equal(
+            record.dropIn,
+            false,
+            `${where(record)}: nothing to swap in when the successor is already bundled`,
+          );
+          break;
         case 'none':
           assert.equal(record.to, null, `${where(record)}: toKind "none" must have a null "to"`);
           assert.equal(record.dropIn, false, `${where(record)}: nothing to swap in`);

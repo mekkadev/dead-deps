@@ -6,7 +6,7 @@ find abandoned npm dependencies, and what replaced them
 
 <img src="https://raw.githubusercontent.com/mekkadev/dead-deps/main/docs/demo.svg" width="880" alt="npx dead-deps on a project: request reported as a hijack risk with three pieces of cited evidence, undici named as its successor, and eight other dependencies deliberately not flagged">
 
-[install](#install) · [use](#use) · [why this is hard](#why-this-is-hard) · [numbers](#numbers) · [mcp](#mcp) · [the dataset](#the-dataset) · [limits](#limits)
+[install](#install) · [use](#use) · [why this is hard](#why-this-is-hard) · [numbers](#numbers) · [history](#history) · [mcp](#mcp) · [the dataset](#the-dataset) · [limits](#limits)
 
 </div>
 
@@ -56,7 +56,13 @@ it reads `pnpm-lock.yaml`, `package-lock.json`, `npm-shrinkwrap.json`,
 only unless you pass `--all`, because a report about a transitive package you
 cannot upgrade is noise.
 
+`--fix` applies the mechanical renames — the scope moves where the api did not
+change — and refuses everything else. it never touches a lockfile, never
+substring-matches a module name, and will not run over uncommitted changes
+without `--force`. `--dry-run` prints the plan.
+
 flags worth knowing: `--limit` findings, `--min-state` severity floor,
+`--history` trajectories, `--fix` and `--dry-run`,
 `--contact` your email so ecosyste.ms can put you in their polite pool,
 `--concurrency`, `--no-cache`, `--cache-ttl`, `--json`, `--quiet`, `--no-color`.
 
@@ -128,6 +134,30 @@ person's opinion dressed as consensus.
 [the argument](./docs/CALIBRATION.md) is written down, including the case
 against a labelling decision made here.
 
+## history
+
+every index in this space publishes a package's state **now** and nothing else.
+ask any of them whether something is getting worse and there is no answer,
+because the question needs two observations and they keep one.
+
+so this one keeps them. `data/history/` holds a weekly snapshot of the health
+signals for the most-depended-on packages plus everything the dataset makes a
+claim about — ndjson, one file per iso week, about 360 bytes a row.
+
+```bash
+dead-deps --history      # trajectory per finding, from the local archive
+```
+
+it reports the change in score, the change in issue responsiveness, and
+**dependent flight** — the share of dependents that left. that last one is the
+earliest signal there is: the ecosystem walks away long before anyone writes a
+deprecation notice.
+
+with a young archive it will mostly say it cannot know yet, and that is correct
+rather than disappointing. history cannot be bought or backfilled, only
+accumulated, which is why the sampling started before the features that read it
+were finished.
+
 ## mcp
 
 ask a model what replaced an obscure package and it may answer with one that
@@ -137,36 +167,50 @@ does not exist. registering that name is a live attack.
 { "mcpServers": { "dead-deps": { "command": "npx", "args": ["-y", "dead-deps-mcp"] } } }
 ```
 
-three tools: `scan_lockfile`, `check_package`, `find_successor`. the last one
-returns "no curated record" rather than guessing, which is the point of it.
+four tools: `scan_lockfile`, `check_package`, `find_successor`,
+`package_trajectory`. `find_successor` returns "no curated record" rather than
+guessing, which is the point of it. `package_trajectory` answers the one thing
+a single snapshot cannot — whether a package is getting worse.
 
 ## the dataset
 
-[`data/successors.yaml`](./data/successors.yaml) is eighty-one hand-verified
-rows with a hundred and seventy-eight primary-source links, every one checked.
-a row goes in only when the succession is consensus rather than opinion, and
-finished packages are refused outright.
+[`data/successors.yaml`](./data/successors.yaml) is **187 hand-verified rows**
+with 417 primary-source links, every one checked. a row goes in only when the
+succession is consensus rather than opinion, and finished packages are refused
+outright.
+
+of the 300 most-depended-on packages on npm, 27 carry a deprecation. **26 of
+them are covered here — 96%.** the exception is `aws-sdk`, and it is in the file
+saying plainly that v3 fragmented into one client per service, so there is
+nothing to swap to one-for-one.
 
 the breakdown refutes the premise this started from — that the job is finding a
 maintained fork:
 
 | | |
 | --- | ---: |
-| rename — `koa-router` → `@koa/router` | 23 |
-| self-declared — `moment` → `luxon` | 19 |
-| absorbed — `left-pad` → `String.prototype.padStart` | 15 |
-| replacement — `request` → `undici` | 15 |
-| fork — `faker` → `@faker-js/faker` | **5** |
-| reimplementation — `node-sass` → `sass` | 4 |
+| rename — `rollup-plugin-commonjs` → `@rollup/plugin-commonjs` | 72 |
+| absorbed — `left-pad` → `String.prototype.padStart` | 53 |
+| self-declared — `moment` → `luxon` | 28 |
+| replacement — `request` → `undici` | 23 |
+| fork — `faker` → `@faker-js/faker` | **6** |
+| reimplementation — `node-sass` → `sass` | 5 |
 
-forks are the rarest outcome. six rows point at a platform feature instead of a
-package, because "delete the dependency, javascript does this now" is the
-better answer. six more have no credible successor and say so.
+forks are the rarest outcome, six of 187. thirty-three rows are `bundled` — a
+deprecated `@types/*` stub whose typings moved into the library itself, where
+the instruction is to delete the line and install nothing. eleven point at a
+platform feature. eight have no single successor and say so rather than
+inventing one.
+
+the data is published for other tools to consume rather than kept as a moat:
+[`/api/successors.json`](https://mekkadev.github.io/dead-deps/api/successors.json)
+and its [manifest](https://mekkadev.github.io/dead-deps/api/index.json),
+CC-BY-4.0.
 
 every row is a page: [request](https://mekkadev.github.io/dead-deps/p/request/),
 [moment](https://mekkadev.github.io/dead-deps/p/moment/),
 [enzyme](https://mekkadev.github.io/dead-deps/p/enzyme/), or
-[all eighty-one](https://mekkadev.github.io/dead-deps/). missing one? open a
+[all 187](https://mekkadev.github.io/dead-deps/). missing one? open a
 [successor report](https://github.com/mekkadev/dead-deps/issues/new?template=successor-report.md)
 — with a primary source, not a blog post.
 
@@ -175,8 +219,9 @@ every row is a page: [request](https://mekkadev.github.io/dead-deps/p/request/),
 - **not a vulnerability scanner.** advisories are read as evidence of neglect,
   not enumerated for triage. use `npm audit` or osv for cves.
 - **npm only.** one ecosystem done properly beat four done badly.
-- **curated coverage is finite.** eighty-one successions is a start. a dead
-  package outside the dataset still gets a verdict, just no successor.
+- **curated coverage is finite.** 187 successions covers 96% of the deprecated
+  packages people actually hit, not 96% of npm. a dead package outside the
+  dataset still gets a verdict, just no successor.
 - **upstream indexes lag.** the tool tells you when a verdict rests on old data.
 - **it will not decide for you.** a pinned, vendored, working dependency may be
   entirely rational to keep.
@@ -186,9 +231,10 @@ every row is a page: [request](https://mekkadev.github.io/dead-deps/p/request/),
 ```bash
 git clone https://github.com/mekkadev/dead-deps.git
 cd dead-deps && npm install
-npm test          # 173 tests, none touch the network
+npm test          # 193 tests, none touch the network
 npm run calibrate # score the detector against the labelled corpus
-npm run site      # generate the static site
+npm run snapshot  # add this week to the health archive
+npm run site      # generate the static site and the dataset api
 ```
 
 [architecture](./docs/ARCHITECTURE.md) · [contributing](./CONTRIBUTING.md) ·
