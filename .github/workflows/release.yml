@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Existing tag to release (e.g. v0.1.0)'
+        description: 'Tag to release, e.g. v0.1.0. Created from the current commit if it does not exist yet.'
         required: true
 
 permissions:
@@ -25,9 +25,9 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
+      # On a tag push, check out the tag. On a manual run the tag may not exist
+      # yet, so fall back to the branch the run was started from.
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.inputs.tag || github.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -53,7 +53,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.tag || github.ref }}
+          fetch-depth: 0
+
+      - name: Create the tag if this run had to make it
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            echo "tag $TAG already exists"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag -a "$TAG" -m "$TAG"
+            git push origin "refs/tags/$TAG"
+            echo "created tag $TAG at $(git rev-parse --short HEAD)"
+          fi
 
       - name: Extract this version's notes from CHANGELOG.md
         id: notes
@@ -84,12 +99,10 @@ jobs:
           fi
 
   publish:
-    needs: verify
+    needs: release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.inputs.tag || github.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
