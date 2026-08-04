@@ -6,7 +6,11 @@ name: Pages
 
 on:
   push:
-    branches: [main]
+    # Both names are listed on purpose. `main` is where this settles once the
+    # default branch is renamed; the working branch is listed so the site
+    # publishes before that happens. A Pages workflow that silently never fires
+    # because it watches a branch that does not exist is worse than no workflow.
+    branches: [main, claude/abandoned-deps-radar-5pde57]
     paths:
       - 'site/**'
       - 'data/successors.yaml'
