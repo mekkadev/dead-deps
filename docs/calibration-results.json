@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-04T13:49:34.813Z",
+  "generatedAt": "2026-08-04T16:45:54.034Z",
   "partial": false,
   "corpus": {
     "path": "data/calibration.yaml",
-    "rows": 49,
-    "evaluated": 49
+    "rows": 54,
+    "evaluated": 54
   },
   "run": {
-    "durationMs": 2225,
+    "durationMs": 1132,
     "concurrency": 6,
     "cacheEnabled": true,
     "cacheTtlHours": 24,
     "contactSupplied": true,
     "http": {
-      "cacheHits": 98,
+      "cacheHits": 108,
       "requests": 0,
       "errors": 0
     }
@@ -62,18 +62,18 @@
   },
   "accuracy": {
     "strict": {
-      "correct": 35,
-      "total": 49,
-      "rate": 0.7142857142857143
+      "correct": 45,
+      "total": 54,
+      "rate": 0.8333333333333334
     },
     "nearMiss": {
       "count": 2,
-      "rate": 0.04081632653061224
+      "rate": 0.037037037037037035
     },
     "lenient": {
-      "correct": 37,
-      "total": 49,
-      "rate": 0.7551020408163265
+      "correct": 47,
+      "total": 54,
+      "rate": 0.8703703703703703
     }
   },
   "headlineFalsePositiveRate": {
@@ -85,7 +85,7 @@
   },
   "falseAlarms": {
     "bucket": "healthy packages (active + stable-complete) reported as a finding",
-    "support": 25,
+    "support": 30,
     "hits": 0,
     "rate": 0,
     "packages": []
@@ -93,23 +93,15 @@
   "missedDead": {
     "bucket": "packages that should have been reported but were not",
     "support": 24,
-    "hits": 9,
-    "rate": 0.375,
+    "hits": 1,
+    "rate": 0.041666666666666664,
     "packages": [
-      "grunt (expected low-activity, predicted active)",
-      "handlebars (expected low-activity, predicted active)",
-      "underscore (expected low-activity, predicted active)",
-      "morgan (expected low-activity, predicted active)",
-      "ejs (expected low-activity, predicted active)",
-      "colors (expected unmaintained, predicted stable-complete)",
-      "enzyme (expected unmaintained, predicted active)",
-      "browserify (expected unmaintained, predicted active)",
       "underscore.string (expected unmaintained, predicted stable-complete)"
     ]
   },
   "confusion": {
     "active": {
-      "active": 12,
+      "active": 17,
       "stable-complete": 0,
       "low-activity": 0,
       "unmaintained": 0,
@@ -127,19 +119,19 @@
       "hijack-risk": 0
     },
     "low-activity": {
-      "active": 5,
+      "active": 0,
       "stable-complete": 0,
-      "low-activity": 0,
-      "unmaintained": 1,
+      "low-activity": 1,
+      "unmaintained": 5,
       "deprecated": 0,
       "abandoned": 0,
       "hijack-risk": 0
     },
     "unmaintained": {
-      "active": 2,
-      "stable-complete": 2,
-      "low-activity": 2,
-      "unmaintained": 2,
+      "active": 0,
+      "stable-complete": 1,
+      "low-activity": 1,
+      "unmaintained": 6,
       "deprecated": 0,
       "abandoned": 0,
       "hijack-risk": 0
@@ -157,39 +149,39 @@
   "perLabel": [
     {
       "label": "active",
-      "support": 12,
-      "predicted": 19,
-      "truePositives": 12,
-      "precision": 0.631578947368421,
+      "support": 17,
+      "predicted": 17,
+      "truePositives": 17,
+      "precision": 1,
       "recall": 1,
-      "f1": 0.7741935483870968
+      "f1": 1
     },
     {
       "label": "stable-complete",
       "support": 13,
-      "predicted": 15,
+      "predicted": 14,
       "truePositives": 13,
-      "precision": 0.8666666666666667,
+      "precision": 0.9285714285714286,
       "recall": 1,
-      "f1": 0.9285714285714286
+      "f1": 0.962962962962963
     },
     {
       "label": "low-activity",
       "support": 6,
       "predicted": 2,
-      "truePositives": 0,
-      "precision": 0,
-      "recall": 0,
-      "f1": null
+      "truePositives": 1,
+      "precision": 0.5,
+      "recall": 0.16666666666666666,
+      "f1": 0.25
     },
     {
       "label": "unmaintained",
       "support": 8,
-      "predicted": 3,
-      "truePositives": 2,
-      "precision": 0.6666666666666666,
-      "recall": 0.25,
-      "f1": 0.36363636363636365
+      "predicted": 11,
+      "truePositives": 6,
+      "precision": 0.5454545454545454,
+      "recall": 0.75,
+      "f1": 0.631578947368421
     },
     {
       "label": "deprecated",
@@ -220,7 +212,7 @@
     }
   ],
   "dataQuality": {
-    "staleRows": 29,
+    "staleRows": 33,
     "rowsWithSourceErrors": 0
   },
   "disagreements": [
@@ -230,7 +222,7 @@
       "predicted": "unmaintained",
       "nearMiss": false,
       "flagged": true,
-      "score": 56,
+      "score": 69,
       "confidence": "medium",
       "topEvidence": [
         {
@@ -254,292 +246,25 @@
       ]
     },
     {
-      "name": "grunt",
-      "expected": "low-activity",
-      "predicted": "active",
-      "nearMiss": false,
-      "flagged": false,
-      "score": 2,
-      "confidence": "low",
-      "topEvidence": [
-        {
-          "kind": "release-cadence",
-          "label": "Released 7 days ago (1.6.3).",
-          "weight": -20,
-          "url": "https://www.npmjs.com/package/grunt"
-        },
-        {
-          "kind": "maintainer-activity",
-          "label": "Upstream still sees 1 active maintainer: vladikoff.",
-          "weight": -12,
-          "url": "https://github.com/gruntjs/grunt"
-        },
-        {
-          "kind": "issue-responsiveness",
-          "label": "2 pull requests merged in the past year — someone with commit rights is still landing changes.",
-          "weight": -10,
-          "url": "https://github.com/gruntjs/grunt"
-        }
-      ]
-    },
-    {
-      "name": "handlebars",
-      "expected": "low-activity",
-      "predicted": "active",
-      "nearMiss": false,
-      "flagged": false,
-      "score": 1,
-      "confidence": "low",
-      "topEvidence": [
-        {
-          "kind": "release-cadence",
-          "label": "Released 4 months ago (4.7.9).",
-          "weight": -20,
-          "url": "https://www.npmjs.com/package/handlebars"
-        },
-        {
-          "kind": "maintainer-activity",
-          "label": "Upstream still sees 1 active maintainer: jaylinski.",
-          "weight": -12,
-          "url": "https://github.com/handlebars-lang/handlebars.js"
-        },
-        {
-          "kind": "issue-responsiveness",
-          "label": "3 pull requests merged in the past year — someone with commit rights is still landing changes.",
-          "weight": -10,
-          "url": "https://github.com/handlebars-lang/handlebars.js"
-        }
-      ]
-    },
-    {
-      "name": "underscore",
-      "expected": "low-activity",
-      "predicted": "active",
-      "nearMiss": false,
-      "flagged": false,
-      "score": 1,
-      "confidence": "medium",
-      "topEvidence": [
-        {
-          "kind": "release-cadence",
-          "label": "Released 5 months ago (1.13.8).",
-          "weight": -20,
-          "url": "https://www.npmjs.com/package/underscore"
-        },
-        {
-          "kind": "maintainer-activity",
-          "label": "Upstream still sees 1 active maintainer: jgonggrijp.",
-          "weight": -12,
-          "url": "https://github.com/jashkenas/underscore"
-        },
-        {
-          "kind": "commit-activity",
-          "label": "Commits were pushed to the repository 4 months ago.",
-          "weight": -10,
-          "url": "https://github.com/jashkenas/underscore"
-        }
-      ]
-    },
-    {
-      "name": "morgan",
-      "expected": "low-activity",
-      "predicted": "active",
-      "nearMiss": false,
-      "flagged": false,
-      "score": 2,
-      "confidence": "low",
-      "topEvidence": [
-        {
-          "kind": "release-cadence",
-          "label": "Released 2 months ago (1.11.0).",
-          "weight": -20,
-          "url": "https://www.npmjs.com/package/morgan"
-        },
-        {
-          "kind": "maintainer-activity",
-          "label": "Upstream still sees 1 active maintainer: inigomarquinez.",
-          "weight": -12,
-          "url": "https://github.com/expressjs/morgan"
-        },
-        {
-          "kind": "issue-responsiveness",
-          "label": "2 pull requests merged in the past year — someone with commit rights is still landing changes.",
-          "weight": -10,
-          "url": "https://github.com/expressjs/morgan"
-        }
-      ]
-    },
-    {
-      "name": "ejs",
-      "expected": "low-activity",
-      "predicted": "active",
-      "nearMiss": false,
-      "flagged": false,
-      "score": 5,
-      "confidence": "medium",
-      "topEvidence": [
-        {
-          "kind": "release-cadence",
-          "label": "Released 2 months ago (6.0.1).",
-          "weight": -20,
-          "url": "https://www.npmjs.com/package/ejs"
-        },
-        {
-          "kind": "commit-activity",
-          "label": "Commits were pushed to the repository 2 months ago.",
-          "weight": -10,
-          "url": "https://github.com/mde/ejs"
-        },
-        {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 15,041 packages depend on it, 1,532,080 repositories use it, 149,132,110 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/ejs"
-        }
-      ]
-    },
-    {
-      "name": "colors",
-      "expected": "unmaintained",
-      "predicted": "stable-complete",
-      "nearMiss": false,
-      "flagged": false,
-      "score": 8,
-      "confidence": "low",
-      "topEvidence": [
-        {
-          "kind": "stability-heuristic",
-          "label": "Not flagged: this looks finished rather than abandoned — not deprecated; repository not archived; no open advisories; only 2 unanswered issues from the past year; 29,121 packages depend on it, 535,834 repositories use it, 106,772,025 downloads last month.",
-          "weight": -25,
-          "url": "https://github.com/Marak/colors.js"
-        },
-        {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 29,121 packages depend on it, 535,834 repositories use it, 106,772,025 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/colors"
-        },
-        {
-          "kind": "bus-factor",
-          "label": "Commits are spread across several people (distribution score 0.66 of 1.00, 47 committers in total).",
-          "weight": -6,
-          "url": "https://github.com/Marak/colors.js"
-        }
-      ]
-    },
-    {
-      "name": "enzyme",
-      "expected": "unmaintained",
-      "predicted": "active",
-      "nearMiss": false,
-      "flagged": false,
-      "score": 9,
-      "confidence": "low",
-      "topEvidence": [
-        {
-          "kind": "issue-responsiveness",
-          "label": "5 issues opened in the past year, 5 closed (100%), averaging 3.6 comments each — somebody is triaging.",
-          "weight": -14,
-          "url": "https://github.com/airbnb/enzyme"
-        },
-        {
-          "kind": "issue-responsiveness",
-          "label": "1 pull request merged in the past year — someone with commit rights is still landing changes.",
-          "weight": -10,
-          "url": "https://github.com/airbnb/enzyme"
-        },
-        {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 29,834 packages depend on it, 161,126 repositories use it, 5,139,536 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/enzyme"
-        }
-      ]
-    },
-    {
-      "name": "jshint",
-      "expected": "unmaintained",
-      "predicted": "low-activity",
-      "nearMiss": false,
-      "flagged": true,
-      "score": 34,
-      "confidence": "low",
-      "topEvidence": [
-        {
-          "kind": "release-cadence",
-          "label": "No release in 3.7 years — 63x longer than this package has ever gone quiet before (its own median gap between releases is 22 days).",
-          "weight": 16,
-          "url": "https://www.npmjs.com/package/jshint"
-        },
-        {
-          "kind": "maintainer-activity",
-          "label": "No maintainer has commented, closed an issue or merged a pull request in the past year.",
-          "weight": 12,
-          "url": "https://github.com/jshint/jshint"
-        },
-        {
-          "kind": "commit-activity",
-          "label": "No commits pushed to the repository in 2.9 years.",
-          "weight": 6,
-          "url": "https://github.com/jshint/jshint"
-        }
-      ]
-    },
-    {
       "name": "browserify",
       "expected": "unmaintained",
-      "predicted": "active",
-      "nearMiss": false,
-      "flagged": false,
-      "score": 10,
-      "confidence": "low",
-      "topEvidence": [
-        {
-          "kind": "maintainer-activity",
-          "label": "Upstream still sees 1 active maintainer: goto-bus-stop.",
-          "weight": -12,
-          "url": "https://github.com/browserify/browserify"
-        },
-        {
-          "kind": "issue-responsiveness",
-          "label": "1 pull request merged in the past year — someone with commit rights is still landing changes.",
-          "weight": -10,
-          "url": "https://github.com/browserify/browserify"
-        },
-        {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 31,322 packages depend on it, 365,847 repositories use it, 6,884,059 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/browserify"
-        }
-      ]
-    },
-    {
-      "name": "coffeescript",
-      "expected": "unmaintained",
       "predicted": "low-activity",
       "nearMiss": false,
       "flagged": true,
-      "score": 44,
-      "confidence": "medium",
+      "score": 39,
+      "confidence": "low",
       "topEvidence": [
         {
-          "kind": "maintainer-activity",
-          "label": "No maintainer has commented, closed an issue or merged a pull request in the past year.",
-          "weight": 12,
-          "url": "https://github.com/jashkenas/coffeescript"
-        },
-        {
           "kind": "release-cadence",
-          "label": "No release in 12.4 years; too few releases exist to know what this package’s normal gap is.",
-          "weight": 10,
-          "url": "https://www.npmjs.com/package/coffeescript"
+          "label": "No release in 22 months — 48x longer than this package has ever gone quiet before (its own median gap between releases is 1 day).",
+          "weight": 16,
+          "url": "https://www.npmjs.com/package/browserify"
         },
         {
-          "kind": "issue-responsiveness",
-          "label": "5 pull requests opened in the past year and none merged — contributors are offering fixes that nobody lands.",
-          "weight": 10,
-          "url": "https://github.com/jashkenas/coffeescript"
+          "kind": "commit-activity",
+          "label": "No commits pushed to the repository in 2.4 years.",
+          "weight": 6,
+          "url": "https://github.com/browserify/browserify"
         }
       ]
     },
@@ -549,7 +274,7 @@
       "predicted": "stable-complete",
       "nearMiss": false,
       "flagged": false,
-      "score": 7,
+      "score": 13,
       "confidence": "low",
       "topEvidence": [
         {
@@ -565,10 +290,10 @@
           "url": "https://github.com/epeli/underscore.string"
         },
         {
-          "kind": "bus-factor",
-          "label": "Commits are spread across several people (distribution score 0.80 of 1.00, 103 committers in total).",
+          "kind": "stability-heuristic",
+          "label": "32 versions in 14.7 years (2.2 per year): the API converged long ago and the silence is the expected end state.",
           "weight": -6,
-          "url": "https://github.com/epeli/underscore.string"
+          "url": "https://www.npmjs.com/package/underscore.string"
         }
       ]
     },
@@ -607,7 +332,7 @@
       "predicted": "abandoned",
       "nearMiss": true,
       "flagged": true,
-      "score": 82,
+      "score": 84,
       "confidence": "low",
       "topEvidence": [
         {
@@ -629,6 +354,116 @@
           "url": "https://github.com/shouldjs/should.js"
         }
       ]
+    },
+    {
+      "name": "stylus",
+      "expected": "low-activity",
+      "predicted": "unmaintained",
+      "nearMiss": false,
+      "flagged": true,
+      "score": 50,
+      "confidence": "low",
+      "topEvidence": [
+        {
+          "kind": "release-cadence",
+          "label": "No release in 21 months — 47x longer than this package has ever gone quiet before (its own median gap between releases is 4 days).",
+          "weight": 16,
+          "url": "https://www.npmjs.com/package/stylus"
+        },
+        {
+          "kind": "issue-responsiveness",
+          "label": "15 issues opened in the past year, 3 closed (20%), averaging 1.5 comments each — most reports go unanswered.",
+          "weight": 8,
+          "url": "https://github.com/stylus/stylus"
+        },
+        {
+          "kind": "commit-activity",
+          "label": "No commits pushed to the repository in 2.3 years.",
+          "weight": 6,
+          "url": "https://github.com/stylus/stylus"
+        }
+      ]
+    },
+    {
+      "name": "async",
+      "expected": "low-activity",
+      "predicted": "unmaintained",
+      "nearMiss": false,
+      "flagged": true,
+      "score": 47,
+      "confidence": "low",
+      "topEvidence": [
+        {
+          "kind": "release-cadence",
+          "label": "No release in 23 months — 35x longer than this package has ever gone quiet before (its own median gap between releases is 20 days).",
+          "weight": 16,
+          "url": "https://www.npmjs.com/package/async"
+        },
+        {
+          "kind": "maintainer-activity",
+          "label": "No maintainer has commented, closed an issue or merged a pull request in the past year.",
+          "weight": 12,
+          "url": "https://github.com/caolan/async"
+        }
+      ]
+    },
+    {
+      "name": "passport",
+      "expected": "low-activity",
+      "predicted": "unmaintained",
+      "nearMiss": false,
+      "flagged": true,
+      "score": 69,
+      "confidence": "medium",
+      "topEvidence": [
+        {
+          "kind": "issue-responsiveness",
+          "label": "5 issues opened in the past year, 0 closed (0%), averaging 0.4 comments each — people are asking and nobody is answering.",
+          "weight": 22,
+          "url": "https://github.com/jaredhanson/passport"
+        },
+        {
+          "kind": "release-cadence",
+          "label": "No release in 2.7 years — 21x longer than this package has ever gone quiet before (its own median gap between releases is 2 months).",
+          "weight": 16,
+          "url": "https://www.npmjs.com/package/passport"
+        },
+        {
+          "kind": "maintainer-activity",
+          "label": "No maintainer has commented, closed an issue or merged a pull request in the past year.",
+          "weight": 12,
+          "url": "https://github.com/jaredhanson/passport"
+        }
+      ]
+    },
+    {
+      "name": "node-fetch",
+      "expected": "low-activity",
+      "predicted": "unmaintained",
+      "nearMiss": false,
+      "flagged": true,
+      "score": 69,
+      "confidence": "low",
+      "topEvidence": [
+        {
+          "kind": "release-cadence",
+          "label": "No release in 3.0 years — 75x longer than this package has ever gone quiet before (its own median gap between releases is 15 days).",
+          "weight": 16,
+          "url": "https://www.npmjs.com/package/node-fetch"
+        },
+        {
+          "kind": "maintainer-activity",
+          "label": "No maintainer has commented, closed an issue or merged a pull request in the past year.",
+          "weight": 12,
+          "url": "https://github.com/bitinn/node-fetch"
+        },
+        {
+          "kind": "issue-responsiveness",
+          "label": "16 pull requests opened in the past year and none merged — contributors are offering fixes that nobody lands.",
+          "weight": 10,
+          "url": "https://github.com/bitinn/node-fetch"
+        }
+      ]
     }
   ],
   "results": [
@@ -639,7 +474,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 2,
+      "score": 4,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -672,7 +507,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 0,
+      "score": 1,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -705,7 +540,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 1,
+      "score": 2,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -738,7 +573,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 2,
+      "score": 3,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -771,7 +606,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 2,
+      "score": 3,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -804,7 +639,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 0,
+      "score": 1,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -837,7 +672,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 0,
+      "score": 1,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -870,7 +705,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 0,
+      "score": 1,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -903,7 +738,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 0,
+      "score": 1,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -969,7 +804,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 1,
+      "score": 2,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1002,7 +837,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 0,
+      "score": 1,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -1021,7 +856,7 @@
         },
         {
           "kind": "commit-activity",
-          "label": "Commits were pushed to the repository 7 days ago.",
+          "label": "Commits were pushed to the repository 8 days ago.",
           "weight": -10,
           "url": "https://github.com/prettier/prettier"
         }
@@ -1035,7 +870,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 2,
+      "score": 11,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1047,15 +882,15 @@
           "url": "https://github.com/vercel/ms"
         },
         {
-          "kind": "maintainer-activity",
-          "label": "Upstream still sees 1 active maintainer: styfle.",
-          "weight": -12,
-          "url": "https://github.com/vercel/ms"
+          "kind": "stability-heuristic",
+          "label": "32 versions in 14.6 years (2.2 per year): the API converged long ago and the silence is the expected end state.",
+          "weight": -6,
+          "url": "https://www.npmjs.com/package/ms"
         },
         {
           "kind": "issue-responsiveness",
-          "label": "2 pull requests merged in the past year — someone with commit rights is still landing changes.",
-          "weight": -10,
+          "label": "10 issues opened in the past year, 4 closed (40%), averaging 1.7 comments each — most reports go unanswered.",
+          "weight": 8,
           "url": "https://github.com/vercel/ms"
         }
       ],
@@ -1068,7 +903,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 8,
+      "score": 14,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -1080,16 +915,16 @@
           "url": "https://github.com/isaacs/inherits"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 6,194 packages depend on it, 2,323,492 repositories use it, 768,910,266 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/inherits"
-        },
-        {
           "kind": "stability-heuristic",
           "label": "7 versions in 15.3 years (0.5 per year): the API converged long ago and the silence is the expected end state.",
           "weight": -6,
           "url": "https://www.npmjs.com/package/inherits"
+        },
+        {
+          "kind": "maintainer-activity",
+          "label": "No maintainer has commented, closed an issue or merged a pull request in the past year.",
+          "weight": 12,
+          "url": "https://github.com/isaacs/inherits"
         }
       ],
       "rationale": "Twenty lines wrapping `Object.setPrototypeOf` for old Node, last released 2.0.4 in June 2019 with no deprecation and a repository that is still touched — quiet because the API it shims is frozen."
@@ -1101,7 +936,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 6,
+      "score": 9,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -1113,16 +948,16 @@
           "url": "https://github.com/isaacs/once"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 3,665 packages depend on it, 2,121,111 repositories use it, 516,257,386 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/once"
-        },
-        {
           "kind": "issue-responsiveness",
           "label": "Nobody opened an issue in the past year. For a widely used package that usually means it works, not that it is unwatched.",
           "weight": -8,
           "url": "https://github.com/isaacs/once"
+        },
+        {
+          "kind": "stability-heuristic",
+          "label": "7 versions in 14.0 years (0.5 per year): the API converged long ago and the silence is the expected end state.",
+          "weight": -6,
+          "url": "https://www.npmjs.com/package/once"
         }
       ],
       "rationale": "Last released 1.4.0 in September 2016 and still correct: wrapping a function so it runs once is a finished problem, and the repository is neither archived nor deprecated."
@@ -1134,7 +969,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 6,
+      "score": 13,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1146,154 +981,22 @@
           "url": "https://github.com/npm/wrappy"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 2,464 packages depend on it, 2,102,639 repositories use it, 541,969,345 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/wrappy"
-        },
-        {
           "kind": "issue-responsiveness",
           "label": "Nobody opened an issue in the past year. For a widely used package that usually means it works, not that it is unwatched.",
           "weight": -8,
           "url": "https://github.com/npm/wrappy"
+        },
+        {
+          "kind": "stability-heuristic",
+          "label": "4 versions in 5.3 years (0.8 per year): the API converged long ago and the silence is the expected end state.",
+          "weight": -6,
+          "url": "https://www.npmjs.com/package/wrappy"
         }
       ],
       "rationale": "A single function-wrapping helper last released 1.0.2 in May 2016; ten years without a release reflects completeness, not abandonment, and there is no deprecation notice."
     },
     {
       "name": "isarray",
-      "expected": "stable-complete",
-      "predicted": "stable-complete",
-      "exact": true,
-      "nearMiss": false,
-      "flagged": false,
-      "score": 1,
-      "confidence": "low",
-      "stale": true,
-      "sourceErrors": [],
-      "topEvidence": [
-        {
-          "kind": "stability-heuristic",
-          "label": "Not flagged: this looks finished rather than abandoned — not deprecated; repository not archived; no open advisories; no unanswered issues from the past year; 2,086 packages depend on it, 2,097,979 repositories use it, 985,826,731 downloads last month.",
-          "weight": -25,
-          "url": "https://github.com/juliangruber/isarray"
-        },
-        {
-          "kind": "maintainer-activity",
-          "label": "Upstream still sees 1 active maintainer: juliangruber.",
-          "weight": -12,
-          "url": "https://github.com/juliangruber/isarray"
-        },
-        {
-          "kind": "issue-responsiveness",
-          "label": "9 pull requests merged in the past year — someone with commit rights is still landing changes.",
-          "weight": -10,
-          "url": "https://github.com/juliangruber/isarray"
-        }
-      ],
-      "rationale": "An `Array.isArray` shim last released 2.0.5 in July 2019, with no deprecation and a repository that still saw commits in the past year."
-    },
-    {
-      "name": "concat-map",
-      "expected": "stable-complete",
-      "predicted": "stable-complete",
-      "exact": true,
-      "nearMiss": false,
-      "flagged": false,
-      "score": 2,
-      "confidence": "low",
-      "stale": true,
-      "sourceErrors": [],
-      "topEvidence": [
-        {
-          "kind": "stability-heuristic",
-          "label": "Not flagged: this looks finished rather than abandoned — not deprecated; repository not archived; no open advisories; no unanswered issues from the past year; 2,498 packages depend on it, 1,298,661 repositories use it, 572,336,085 downloads last month.",
-          "weight": -25,
-          "url": "https://github.com/ljharb/concat-map"
-        },
-        {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 2,498 packages depend on it, 1,298,661 repositories use it, 572,336,085 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/concat-map"
-        },
-        {
-          "kind": "release-cadence",
-          "label": "Quiet for 3.8 years, but its own median gap between releases is 5.2 years — that is within this package’s normal rhythm.",
-          "weight": -8,
-          "url": "https://www.npmjs.com/package/concat-map"
-        }
-      ],
-      "rationale": "A one-line flat-map helper whose only release since 2013 was a 0.0.2 housekeeping publish in October 2022 after ljharb adopted it; no deprecation and the repository is live."
-    },
-    {
-      "name": "safe-buffer",
-      "expected": "stable-complete",
-      "predicted": "stable-complete",
-      "exact": true,
-      "nearMiss": false,
-      "flagged": false,
-      "score": 11,
-      "confidence": "low",
-      "stale": true,
-      "sourceErrors": [],
-      "topEvidence": [
-        {
-          "kind": "stability-heuristic",
-          "label": "Not flagged: this looks finished rather than abandoned — not deprecated; repository not archived; no open advisories; only 1 unanswered issues from the past year; 4,055 packages depend on it, 1,261,649 repositories use it, 1,130,301,054 downloads last month.",
-          "weight": -25,
-          "url": "https://github.com/feross/safe-buffer"
-        },
-        {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 4,055 packages depend on it, 1,261,649 repositories use it, 1,130,301,054 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/safe-buffer"
-        },
-        {
-          "kind": "stability-heuristic",
-          "label": "11 versions in 10.6 years (1.0 per year): the API converged long ago and the silence is the expected end state.",
-          "weight": -6,
-          "url": "https://www.npmjs.com/package/safe-buffer"
-        }
-      ],
-      "rationale": "A Buffer-constructor shim last released 5.2.1 in May 2020 with no deprecation; the Node API it wraps is stable, so the package is finished."
-    },
-    {
-      "name": "util-deprecate",
-      "expected": "stable-complete",
-      "predicted": "stable-complete",
-      "exact": true,
-      "nearMiss": false,
-      "flagged": false,
-      "score": 8,
-      "confidence": "low",
-      "stale": true,
-      "sourceErrors": [],
-      "topEvidence": [
-        {
-          "kind": "stability-heuristic",
-          "label": "Not flagged: this looks finished rather than abandoned — not deprecated; repository not archived; no open advisories; no unanswered issues from the past year; 1,985 packages depend on it, 2,198,932 repositories use it, 629,901,951 downloads last month.",
-          "weight": -25,
-          "url": "https://github.com/TooTallNate/util-deprecate"
-        },
-        {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 1,985 packages depend on it, 2,198,932 repositories use it, 629,901,951 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/util-deprecate"
-        },
-        {
-          "kind": "issue-responsiveness",
-          "label": "Nobody opened an issue in the past year. For a widely used package that usually means it works, not that it is unwatched.",
-          "weight": -8,
-          "url": "https://github.com/TooTallNate/util-deprecate"
-        }
-      ],
-      "rationale": "Last released 1.0.2 in October 2015 and last committed in 2018, yet carries no deprecation notice and still does its one job in both Node and browsers."
-    },
-    {
-      "name": "escape-string-regexp",
       "expected": "stable-complete",
       "predicted": "stable-complete",
       "exact": true,
@@ -1306,21 +1009,153 @@
       "topEvidence": [
         {
           "kind": "stability-heuristic",
+          "label": "Not flagged: this looks finished rather than abandoned — not deprecated; repository not archived; no open advisories; no unanswered issues from the past year; 2,086 packages depend on it, 2,097,979 repositories use it, 985,826,731 downloads last month.",
+          "weight": -25,
+          "url": "https://github.com/juliangruber/isarray"
+        },
+        {
+          "kind": "issue-responsiveness",
+          "label": "Nobody opened an issue in the past year. For a widely used package that usually means it works, not that it is unwatched.",
+          "weight": -8,
+          "url": "https://github.com/juliangruber/isarray"
+        },
+        {
+          "kind": "stability-heuristic",
+          "label": "9 versions in 13.2 years (0.7 per year): the API converged long ago and the silence is the expected end state.",
+          "weight": -6,
+          "url": "https://www.npmjs.com/package/isarray"
+        }
+      ],
+      "rationale": "An `Array.isArray` shim last released 2.0.5 in July 2019, with no deprecation and a repository that still saw commits in the past year."
+    },
+    {
+      "name": "concat-map",
+      "expected": "stable-complete",
+      "predicted": "stable-complete",
+      "exact": true,
+      "nearMiss": false,
+      "flagged": false,
+      "score": 4,
+      "confidence": "low",
+      "stale": true,
+      "sourceErrors": [],
+      "topEvidence": [
+        {
+          "kind": "stability-heuristic",
+          "label": "Not flagged: this looks finished rather than abandoned — not deprecated; repository not archived; no open advisories; no unanswered issues from the past year; 2,498 packages depend on it, 1,298,661 repositories use it, 572,336,085 downloads last month.",
+          "weight": -25,
+          "url": "https://github.com/ljharb/concat-map"
+        },
+        {
+          "kind": "release-cadence",
+          "label": "Quiet for 3.8 years, but its own median gap between releases is 5.2 years — that is within this package’s normal rhythm.",
+          "weight": -8,
+          "url": "https://www.npmjs.com/package/concat-map"
+        },
+        {
+          "kind": "issue-responsiveness",
+          "label": "Nobody opened an issue in the past year. For a widely used package that usually means it works, not that it is unwatched.",
+          "weight": -8,
+          "url": "https://github.com/ljharb/concat-map"
+        }
+      ],
+      "rationale": "A one-line flat-map helper whose only release since 2013 was a 0.0.2 housekeeping publish in October 2022 after ljharb adopted it; no deprecation and the repository is live."
+    },
+    {
+      "name": "safe-buffer",
+      "expected": "stable-complete",
+      "predicted": "stable-complete",
+      "exact": true,
+      "nearMiss": false,
+      "flagged": false,
+      "score": 18,
+      "confidence": "low",
+      "stale": true,
+      "sourceErrors": [],
+      "topEvidence": [
+        {
+          "kind": "stability-heuristic",
+          "label": "Not flagged: this looks finished rather than abandoned — not deprecated; repository not archived; no open advisories; only 1 unanswered issues from the past year; 4,055 packages depend on it, 1,261,649 repositories use it, 1,130,301,054 downloads last month.",
+          "weight": -25,
+          "url": "https://github.com/feross/safe-buffer"
+        },
+        {
+          "kind": "stability-heuristic",
+          "label": "11 versions in 10.6 years (1.0 per year): the API converged long ago and the silence is the expected end state.",
+          "weight": -6,
+          "url": "https://www.npmjs.com/package/safe-buffer"
+        },
+        {
+          "kind": "commit-activity",
+          "label": "No commits pushed to the repository in 3.2 years.",
+          "weight": 6,
+          "url": "https://github.com/feross/safe-buffer"
+        }
+      ],
+      "rationale": "A Buffer-constructor shim last released 5.2.1 in May 2020 with no deprecation; the Node API it wraps is stable, so the package is finished."
+    },
+    {
+      "name": "util-deprecate",
+      "expected": "stable-complete",
+      "predicted": "stable-complete",
+      "exact": true,
+      "nearMiss": false,
+      "flagged": false,
+      "score": 13,
+      "confidence": "low",
+      "stale": true,
+      "sourceErrors": [],
+      "topEvidence": [
+        {
+          "kind": "stability-heuristic",
+          "label": "Not flagged: this looks finished rather than abandoned — not deprecated; repository not archived; no open advisories; no unanswered issues from the past year; 1,985 packages depend on it, 2,198,932 repositories use it, 629,901,951 downloads last month.",
+          "weight": -25,
+          "url": "https://github.com/TooTallNate/util-deprecate"
+        },
+        {
+          "kind": "issue-responsiveness",
+          "label": "Nobody opened an issue in the past year. For a widely used package that usually means it works, not that it is unwatched.",
+          "weight": -8,
+          "url": "https://github.com/TooTallNate/util-deprecate"
+        },
+        {
+          "kind": "stability-heuristic",
+          "label": "3 versions in 12.3 years (0.2 per year): the API converged long ago and the silence is the expected end state.",
+          "weight": -6,
+          "url": "https://www.npmjs.com/package/util-deprecate"
+        }
+      ],
+      "rationale": "Last released 1.0.2 in October 2015 and last committed in 2018, yet carries no deprecation notice and still does its one job in both Node and browsers."
+    },
+    {
+      "name": "escape-string-regexp",
+      "expected": "stable-complete",
+      "predicted": "stable-complete",
+      "exact": true,
+      "nearMiss": false,
+      "flagged": false,
+      "score": 18,
+      "confidence": "low",
+      "stale": true,
+      "sourceErrors": [],
+      "topEvidence": [
+        {
+          "kind": "stability-heuristic",
           "label": "Not flagged: this looks finished rather than abandoned — not deprecated; repository not archived; no open advisories; no unanswered issues from the past year; 5,200 packages depend on it, 2,044,639 repositories use it, 1,271,755,495 downloads last month.",
           "weight": -25,
           "url": "https://github.com/sindresorhus/escape-string-regexp"
         },
         {
-          "kind": "issue-responsiveness",
-          "label": "1 pull request merged in the past year — someone with commit rights is still landing changes.",
-          "weight": -10,
-          "url": "https://github.com/sindresorhus/escape-string-regexp"
+          "kind": "stability-heuristic",
+          "label": "10 versions in 12.1 years (0.8 per year): the API converged long ago and the silence is the expected end state.",
+          "weight": -6,
+          "url": "https://www.npmjs.com/package/escape-string-regexp"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 5,200 packages depend on it, 2,044,639 repositories use it, 1,271,755,495 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/escape-string-regexp"
+          "kind": "commit-activity",
+          "label": "No commits pushed to the repository in 4.2 years.",
+          "weight": 6,
+          "url": "https://github.com/sindresorhus/escape-string-regexp"
         }
       ],
       "rationale": "Last released 5.0.0 in April 2021; the regex metacharacter set it escapes is fixed by the language spec, and the package is neither deprecated nor archived."
@@ -1332,7 +1167,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 8,
+      "score": 13,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1344,16 +1179,16 @@
           "url": "https://github.com/isaacs/fs.realpath"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 2,476 packages depend on it, 5,532,257 repositories use it, 365,749,494 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/fs.realpath"
-        },
-        {
           "kind": "issue-responsiveness",
           "label": "Nobody opened an issue in the past year. For a widely used package that usually means it works, not that it is unwatched.",
           "weight": -8,
           "url": "https://github.com/isaacs/fs.realpath"
+        },
+        {
+          "kind": "stability-heuristic",
+          "label": "2 versions in 10.1 years (0.2 per year): the API converged long ago and the silence is the expected end state.",
+          "weight": -6,
+          "url": "https://www.npmjs.com/package/fs.realpath"
         }
       ],
       "rationale": "A frozen copy of an old Node `fs.realpath` implementation, released 1.0.0 in June 2016 and deliberately never changed since; not deprecated, repository still touched."
@@ -1365,7 +1200,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 8,
+      "score": 13,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -1377,16 +1212,16 @@
           "url": "https://github.com/sindresorhus/object-assign"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 12,624 packages depend on it, 2,052,350 repositories use it, 611,935,258 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/object-assign"
-        },
-        {
           "kind": "issue-responsiveness",
           "label": "Nobody opened an issue in the past year. For a widely used package that usually means it works, not that it is unwatched.",
           "weight": -8,
           "url": "https://github.com/sindresorhus/object-assign"
+        },
+        {
+          "kind": "stability-heuristic",
+          "label": "17 versions in 12.5 years (1.4 per year): the API converged long ago and the silence is the expected end state.",
+          "weight": -6,
+          "url": "https://www.npmjs.com/package/object-assign"
         }
       ],
       "rationale": "An `Object.assign` ponyfill last released 4.1.1 in January 2017 with no deprecation and an unarchived repository, still depended on by over twelve thousand packages."
@@ -1398,7 +1233,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 11,
+      "score": 18,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -1410,16 +1245,16 @@
           "url": "https://github.com/component/escape-html"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 3,043 packages depend on it, 2,500,873 repositories use it, 422,237,011 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/escape-html"
-        },
-        {
           "kind": "stability-heuristic",
           "label": "5 versions in 14.0 years (0.4 per year): the API converged long ago and the silence is the expected end state.",
           "weight": -6,
           "url": "https://www.npmjs.com/package/escape-html"
+        },
+        {
+          "kind": "commit-activity",
+          "label": "No commits pushed to the repository in 3.9 years.",
+          "weight": 6,
+          "url": "https://github.com/component/escape-html"
         }
       ],
       "rationale": "Escapes five HTML characters; last released 1.0.3 in September 2015, carries no deprecation, and the set of characters requiring escaping has not changed."
@@ -1431,7 +1266,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 11,
+      "score": 18,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -1443,16 +1278,16 @@
           "url": "https://github.com/jensyt/imurmurhash-js"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 1,815 packages depend on it, 5,719 repositories use it, 625,320,471 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/imurmurhash"
-        },
-        {
           "kind": "stability-heuristic",
           "label": "5 versions in 13.0 years (0.4 per year): the API converged long ago and the silence is the expected end state.",
           "weight": -6,
           "url": "https://www.npmjs.com/package/imurmurhash"
+        },
+        {
+          "kind": "commit-activity",
+          "label": "No commits pushed to the repository in 12.9 years.",
+          "weight": 6,
+          "url": "https://github.com/jensyt/imurmurhash-js"
         }
       ],
       "rationale": "An incremental MurmurHash3 implementation last released 0.1.4 in August 2013 with no commits since — the algorithm is a fixed published specification, and the package remains undeprecated with hundreds of millions of downloads."
@@ -1464,7 +1299,7 @@
       "exact": false,
       "nearMiss": false,
       "flagged": true,
-      "score": 56,
+      "score": 69,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -1492,12 +1327,12 @@
     },
     {
       "name": "grunt",
-      "expected": "low-activity",
+      "expected": "active",
       "predicted": "active",
-      "exact": false,
+      "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 2,
+      "score": 4,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1521,13 +1356,13 @@
           "url": "https://github.com/gruntjs/grunt"
         }
       ],
-      "rationale": "Released 1.6.3 in July 2026 but only took nine commits in the past year — still shipping, at a fraction of its former pace."
+      "rationale": "Released 1.6.3 on 2026-07-28, seven days before this corpus was verified. Only nine commits in the trailing year, but a package that shipped last week is being maintained; low commit volume is a pace, not a state."
     },
     {
       "name": "handlebars",
-      "expected": "low-activity",
+      "expected": "active",
       "predicted": "active",
-      "exact": false,
+      "exact": true,
       "nearMiss": false,
       "flagged": false,
       "score": 1,
@@ -1554,13 +1389,13 @@
           "url": "https://github.com/handlebars-lang/handlebars.js"
         }
       ],
-      "rationale": "Released 4.7.9 in March 2026 on the back of 33 commits in the past year, which is real maintenance at a low volume for a package with 15k dependents."
+      "rationale": "Released 4.7.9 on 2026-03-26 with 33 commits in the trailing year. Real maintenance at a low volume for a package with 15k dependents."
     },
     {
       "name": "underscore",
-      "expected": "low-activity",
+      "expected": "active",
       "predicted": "active",
-      "exact": false,
+      "exact": true,
       "nearMiss": false,
       "flagged": false,
       "score": 1,
@@ -1587,16 +1422,16 @@
           "url": "https://github.com/jashkenas/underscore"
         }
       ],
-      "rationale": "Released 1.13.8 in February 2026 with 23 commits from three people in the trailing year — maintained, but essentially in upkeep mode now that its API is in the language."
+      "rationale": "Released 1.13.8 on 2026-02-19 with 23 commits from three people in the trailing year. In upkeep mode now that its API is largely in the language, but unambiguously maintained."
     },
     {
       "name": "morgan",
-      "expected": "low-activity",
+      "expected": "active",
       "predicted": "active",
-      "exact": false,
+      "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 2,
+      "score": 3,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1620,16 +1455,16 @@
           "url": "https://github.com/expressjs/morgan"
         }
       ],
-      "rationale": "Released 1.11.0 in June 2026 with 15 commits in the past year, typical of the Express middleware packages that get security and compatibility fixes but no new features."
+      "rationale": "Released 1.11.0 on 2026-06-02 with 15 commits in the trailing year, typical of Express middleware that receives security and compatibility fixes but no new features."
     },
     {
       "name": "ejs",
-      "expected": "low-activity",
+      "expected": "active",
       "predicted": "active",
-      "exact": false,
+      "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 5,
+      "score": 8,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -1647,13 +1482,13 @@
           "url": "https://github.com/mde/ejs"
         },
         {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 15,041 packages depend on it, 1,532,080 repositories use it, 149,132,110 downloads last month.",
-          "weight": -10,
-          "url": "https://www.npmjs.com/package/ejs"
+          "kind": "bus-factor",
+          "label": "Commits are spread across several people (distribution score 0.60 of 1.00, 162 committers in total).",
+          "weight": -6,
+          "url": "https://github.com/mde/ejs"
         }
       ],
-      "rationale": "Released 6.0.1 in May 2026, but all 26 commits in the past year came from a single committer, making it a maintained project with a bus factor of one."
+      "rationale": "Released 6.0.1 on 2026-05-26. All 26 commits in the trailing year came from a single committer, so the bus factor is one — a risk attribute, not a maintenance state, and the tool reports it as such."
     },
     {
       "name": "bluebird",
@@ -1691,31 +1526,31 @@
     {
       "name": "colors",
       "expected": "unmaintained",
-      "predicted": "stable-complete",
-      "exact": false,
+      "predicted": "unmaintained",
+      "exact": true,
       "nearMiss": false,
-      "flagged": false,
-      "score": 8,
+      "flagged": true,
+      "score": 56,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
       "topEvidence": [
         {
-          "kind": "stability-heuristic",
-          "label": "Not flagged: this looks finished rather than abandoned — not deprecated; repository not archived; no open advisories; only 2 unanswered issues from the past year; 29,121 packages depend on it, 535,834 repositories use it, 106,772,025 downloads last month.",
-          "weight": -25,
-          "url": "https://github.com/Marak/colors.js"
-        },
-        {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 29,121 packages depend on it, 535,834 repositories use it, 106,772,025 downloads last month.",
-          "weight": -10,
+          "kind": "release-cadence",
+          "label": "No release in 6.9 years — 81x longer than this package has ever gone quiet before (its own median gap between releases is 31 days).",
+          "weight": 16,
           "url": "https://www.npmjs.com/package/colors"
         },
         {
-          "kind": "bus-factor",
-          "label": "Commits are spread across several people (distribution score 0.66 of 1.00, 47 committers in total).",
-          "weight": -6,
+          "kind": "maintainer-activity",
+          "label": "No maintainer has commented, closed an issue or merged a pull request in the past year.",
+          "weight": 12,
+          "url": "https://github.com/Marak/colors.js"
+        },
+        {
+          "kind": "commit-activity",
+          "label": "No commits pushed to the repository in 3.1 years.",
+          "weight": 6,
           "url": "https://github.com/Marak/colors.js"
         }
       ],
@@ -1724,32 +1559,26 @@
     {
       "name": "enzyme",
       "expected": "unmaintained",
-      "predicted": "active",
-      "exact": false,
+      "predicted": "unmaintained",
+      "exact": true,
       "nearMiss": false,
-      "flagged": false,
-      "score": 9,
+      "flagged": true,
+      "score": 47,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
       "topEvidence": [
         {
-          "kind": "issue-responsiveness",
-          "label": "5 issues opened in the past year, 5 closed (100%), averaging 3.6 comments each — somebody is triaging.",
-          "weight": -14,
-          "url": "https://github.com/airbnb/enzyme"
-        },
-        {
-          "kind": "issue-responsiveness",
-          "label": "1 pull request merged in the past year — someone with commit rights is still landing changes.",
-          "weight": -10,
-          "url": "https://github.com/airbnb/enzyme"
-        },
-        {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 29,834 packages depend on it, 161,126 repositories use it, 5,139,536 downloads last month.",
-          "weight": -10,
+          "kind": "release-cadence",
+          "label": "No release in 6.6 years — 173x longer than this package has ever gone quiet before (its own median gap between releases is 10 days).",
+          "weight": 16,
           "url": "https://www.npmjs.com/package/enzyme"
+        },
+        {
+          "kind": "maintainer-activity",
+          "label": "No maintainer has commented, closed an issue or merged a pull request in the past year.",
+          "weight": 12,
+          "url": "https://github.com/airbnb/enzyme"
         }
       ],
       "rationale": "Last released 3.11.0 in December 2019 and never shipped an adapter for React 18 or later, so it cannot be used with supported React versions, but it carries no npm deprecation."
@@ -1757,11 +1586,11 @@
     {
       "name": "jshint",
       "expected": "unmaintained",
-      "predicted": "low-activity",
-      "exact": false,
+      "predicted": "unmaintained",
+      "exact": true,
       "nearMiss": false,
       "flagged": true,
-      "score": 34,
+      "score": 56,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1790,32 +1619,26 @@
     {
       "name": "browserify",
       "expected": "unmaintained",
-      "predicted": "active",
+      "predicted": "low-activity",
       "exact": false,
       "nearMiss": false,
-      "flagged": false,
-      "score": 10,
+      "flagged": true,
+      "score": 39,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
       "topEvidence": [
         {
-          "kind": "maintainer-activity",
-          "label": "Upstream still sees 1 active maintainer: goto-bus-stop.",
-          "weight": -12,
-          "url": "https://github.com/browserify/browserify"
-        },
-        {
-          "kind": "issue-responsiveness",
-          "label": "1 pull request merged in the past year — someone with commit rights is still landing changes.",
-          "weight": -10,
-          "url": "https://github.com/browserify/browserify"
-        },
-        {
-          "kind": "dependent-flight",
-          "label": "Still widely relied on: 31,322 packages depend on it, 365,847 repositories use it, 6,884,059 downloads last month.",
-          "weight": -10,
+          "kind": "release-cadence",
+          "label": "No release in 22 months — 48x longer than this package has ever gone quiet before (its own median gap between releases is 1 day).",
+          "weight": 16,
           "url": "https://www.npmjs.com/package/browserify"
+        },
+        {
+          "kind": "commit-activity",
+          "label": "No commits pushed to the repository in 2.4 years.",
+          "weight": 6,
+          "url": "https://github.com/browserify/browserify"
         }
       ],
       "rationale": "Released 17.0.1 in October 2024 as a one-off after four years of silence, and has taken zero commits in the trailing year despite thirty thousand dependent packages."
@@ -1823,11 +1646,11 @@
     {
       "name": "coffeescript",
       "expected": "unmaintained",
-      "predicted": "low-activity",
-      "exact": false,
+      "predicted": "unmaintained",
+      "exact": true,
       "nearMiss": false,
       "flagged": true,
-      "score": 44,
+      "score": 61,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -1860,7 +1683,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": true,
-      "score": 61,
+      "score": 69,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1893,7 +1716,7 @@
       "exact": false,
       "nearMiss": false,
       "flagged": false,
-      "score": 7,
+      "score": 13,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1911,10 +1734,10 @@
           "url": "https://github.com/epeli/underscore.string"
         },
         {
-          "kind": "bus-factor",
-          "label": "Commits are spread across several people (distribution score 0.80 of 1.00, 103 committers in total).",
+          "kind": "stability-heuristic",
+          "label": "32 versions in 14.7 years (2.2 per year): the API converged long ago and the silence is the expected end state.",
           "weight": -6,
-          "url": "https://github.com/epeli/underscore.string"
+          "url": "https://www.npmjs.com/package/underscore.string"
         }
       ],
       "rationale": "Last released 3.3.6 in January 2022 with one commit in the trailing year and 121 open issues; effectively stopped, but not deprecated."
@@ -1959,7 +1782,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": true,
-      "score": 86,
+      "score": 89,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -2223,7 +2046,7 @@
       "exact": false,
       "nearMiss": true,
       "flagged": true,
-      "score": 82,
+      "score": 84,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -2248,6 +2071,159 @@
         }
       ],
       "rationale": "Deprecated by the archived-repository rule rather than the registry one: shouldjs/should.js is archived and has taken no commits since 2019, but npm shows no deprecation field on 13.2.3, so a registry-only detector sees nothing."
+    },
+    {
+      "name": "gulp",
+      "expected": "low-activity",
+      "predicted": "low-activity",
+      "exact": true,
+      "nearMiss": false,
+      "flagged": true,
+      "score": 39,
+      "confidence": "low",
+      "stale": true,
+      "sourceErrors": [],
+      "topEvidence": [
+        {
+          "kind": "release-cadence",
+          "label": "No release in 14 months — 31x longer than this package has ever gone quiet before (its own median gap between releases is 4 days).",
+          "weight": 16,
+          "url": "https://www.npmjs.com/package/gulp"
+        },
+        {
+          "kind": "commit-activity",
+          "label": "No commits pushed to the repository in 2.3 years.",
+          "weight": 6,
+          "url": "https://github.com/gulpjs/gulp"
+        }
+      ],
+      "rationale": "Released 5.0.1 on 2025-06-01 and last pushed in April 2024 — 14 months of release silence against a history of steady output, with 81k dependent packages still relying on it. Slowing, not stopped."
+    },
+    {
+      "name": "stylus",
+      "expected": "low-activity",
+      "predicted": "unmaintained",
+      "exact": false,
+      "nearMiss": false,
+      "flagged": true,
+      "score": 50,
+      "confidence": "low",
+      "stale": true,
+      "sourceErrors": [],
+      "topEvidence": [
+        {
+          "kind": "release-cadence",
+          "label": "No release in 21 months — 47x longer than this package has ever gone quiet before (its own median gap between releases is 4 days).",
+          "weight": 16,
+          "url": "https://www.npmjs.com/package/stylus"
+        },
+        {
+          "kind": "issue-responsiveness",
+          "label": "15 issues opened in the past year, 3 closed (20%), averaging 1.5 comments each — most reports go unanswered.",
+          "weight": 8,
+          "url": "https://github.com/stylus/stylus"
+        },
+        {
+          "kind": "commit-activity",
+          "label": "No commits pushed to the repository in 2.3 years.",
+          "weight": 6,
+          "url": "https://github.com/stylus/stylus"
+        }
+      ],
+      "rationale": "Released 0.64.0 on 2024-10-20, 21 months before verification, with no deprecation and an active repository. Long gaps are normal for this project, which is why it belongs here rather than in the unmaintained bucket."
+    },
+    {
+      "name": "async",
+      "expected": "low-activity",
+      "predicted": "unmaintained",
+      "exact": false,
+      "nearMiss": false,
+      "flagged": true,
+      "score": 47,
+      "confidence": "low",
+      "stale": true,
+      "sourceErrors": [],
+      "topEvidence": [
+        {
+          "kind": "release-cadence",
+          "label": "No release in 23 months — 35x longer than this package has ever gone quiet before (its own median gap between releases is 20 days).",
+          "weight": 16,
+          "url": "https://www.npmjs.com/package/async"
+        },
+        {
+          "kind": "maintainer-activity",
+          "label": "No maintainer has commented, closed an issue or merged a pull request in the past year.",
+          "weight": 12,
+          "url": "https://github.com/caolan/async"
+        }
+      ],
+      "rationale": "Released 3.2.6 on 2024-08-19 with the repository last pushed in September 2024. Two years of quiet across 36k dependent packages, but no deprecation notice and no archive — the classic watch-it case."
+    },
+    {
+      "name": "passport",
+      "expected": "low-activity",
+      "predicted": "unmaintained",
+      "exact": false,
+      "nearMiss": false,
+      "flagged": true,
+      "score": 69,
+      "confidence": "medium",
+      "stale": false,
+      "sourceErrors": [],
+      "topEvidence": [
+        {
+          "kind": "issue-responsiveness",
+          "label": "5 issues opened in the past year, 0 closed (0%), averaging 0.4 comments each — people are asking and nobody is answering.",
+          "weight": 22,
+          "url": "https://github.com/jaredhanson/passport"
+        },
+        {
+          "kind": "release-cadence",
+          "label": "No release in 2.7 years — 21x longer than this package has ever gone quiet before (its own median gap between releases is 2 months).",
+          "weight": 16,
+          "url": "https://www.npmjs.com/package/passport"
+        },
+        {
+          "kind": "maintainer-activity",
+          "label": "No maintainer has commented, closed an issue or merged a pull request in the past year.",
+          "weight": 12,
+          "url": "https://github.com/jaredhanson/passport"
+        }
+      ],
+      "rationale": "Released 0.7.0 on 2023-11-27, pushed as recently as August 2024. A widely used authentication middleware in slow upkeep, neither deprecated nor archived."
+    },
+    {
+      "name": "node-fetch",
+      "expected": "low-activity",
+      "predicted": "unmaintained",
+      "exact": false,
+      "nearMiss": false,
+      "flagged": true,
+      "score": 69,
+      "confidence": "low",
+      "stale": true,
+      "sourceErrors": [],
+      "topEvidence": [
+        {
+          "kind": "release-cadence",
+          "label": "No release in 3.0 years — 75x longer than this package has ever gone quiet before (its own median gap between releases is 15 days).",
+          "weight": 16,
+          "url": "https://www.npmjs.com/package/node-fetch"
+        },
+        {
+          "kind": "maintainer-activity",
+          "label": "No maintainer has commented, closed an issue or merged a pull request in the past year.",
+          "weight": 12,
+          "url": "https://github.com/bitinn/node-fetch"
+        },
+        {
+          "kind": "issue-responsiveness",
+          "label": "16 pull requests opened in the past year and none merged — contributors are offering fixes that nobody lands.",
+          "weight": 10,
+          "url": "https://github.com/bitinn/node-fetch"
+        }
+      ],
+      "rationale": "Released 3.3.2 on 2023-07-25, three years before verification. Superseded in practice by the global fetch built into Node 18+, but never deprecated and the repository is not archived, so the honest state is quiet rather than dead."
     }
   ]
 }

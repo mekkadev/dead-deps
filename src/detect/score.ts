@@ -82,6 +82,8 @@ export const CADENCE_FLOOR_DAYS = 14;
 export const SILENCE_MILD_MULTIPLE = 3;
 /** Silence that is hard to explain as normal rhythm. */
 export const SILENCE_SEVERE_MULTIPLE = 6;
+/** Silence this many times the package's own cadence: signs of life stop counting. */
+export const SILENCE_CREDIT_ZERO_MULTIPLE = 20;
 
 // ---------------------------------------------------------------------------
 // Repository
@@ -96,6 +98,8 @@ export const STALE_PUSH_DAYS = 730;
 
 /** Fewer issues than this in a year is too small a sample to judge. */
 export const ISSUE_SAMPLE_MIN = 5;
+/** Issues in a year needed before triage earns its full "alive" credit. */
+export const ISSUE_CREDIT_FULL_SAMPLE = 20;
 export const ISSUE_CLOSE_RATE_DEAD = 0.15;
 export const ISSUE_CLOSE_RATE_WEAK = 0.4;
 export const ISSUE_CLOSE_RATE_HEALTHY = 0.6;
@@ -153,6 +157,8 @@ export const STABLE_COMPLETE_MIN_AGE_DAYS = 1825;
 export const STABLE_COMPLETE_MAX_VERSIONS_PER_YEAR = 4;
 /** Open issues from the trailing year that nobody closed. */
 export const STABLE_COMPLETE_MAX_UNANSWERED_ISSUES = 6;
+/** Issues in a year that, with zero of them closed, rule out "finished". */
+export const STABLE_COMPLETE_MIN_SILENT_ISSUES = 2;
 
 // ---------------------------------------------------------------------------
 // Coverage
@@ -545,6 +551,46 @@ function collectRepositoryEvidence(
  * determine (`null`) keeps counting, because understating risk is worse than
  * overstating it.
  */
+/**
+ * How much weight signs of life still deserve, given how long it has been since
+ * anything shipped.
+ *
+ * 1 while releases are recent, tapering to 0 once silence passes the very-long
+ * threshold. Repository activity that never turns into a release does not help
+ * the person who installed the package, so it should stop counting in their
+ * favour.
+ */
+function releaseCredibility(silenceDays: number | null, cadenceDays: number | null): number {
+  if (silenceDays === null) return 1;
+  // Below a year, silence is never held against a package at all.
+  if (silenceDays < MIN_SILENCE_DAYS) return 1;
+
+  const absolute =
+    silenceDays >= VERY_LONG_SILENCE_DAYS
+      ? 0
+      : silenceDays <= LONG_SILENCE_DAYS
+        ? 1
+        : 1 - (silenceDays - LONG_SILENCE_DAYS) / (VERY_LONG_SILENCE_DAYS - LONG_SILENCE_DAYS);
+
+  // Absolute duration alone is not enough. `browserify` released roughly daily
+  // for years and then stopped for 22 months — short of any fixed threshold,
+  // but 48x its own rhythm. Measured against its own history the silence is
+  // unambiguous, so the relative view has to be able to override the clock.
+  let relative = 1;
+  if (cadenceDays !== null) {
+    const multiple = silenceDays / Math.max(cadenceDays, CADENCE_FLOOR_DAYS);
+    if (multiple >= SILENCE_CREDIT_ZERO_MULTIPLE) relative = 0;
+    else if (multiple > SILENCE_SEVERE_MULTIPLE) {
+      relative =
+        1 -
+        (multiple - SILENCE_SEVERE_MULTIPLE) /
+          (SILENCE_CREDIT_ZERO_MULTIPLE - SILENCE_SEVERE_MULTIPLE);
+    }
+  }
+
+  return Math.min(absolute, relative);
+}
+
 function applicableAdvisories(signals: PackageSignals): readonly AdvisorySummary[] {
   return signals.openAdvisories.filter((advisory) => advisory.affectsLatest !== false);
 }
@@ -772,11 +818,22 @@ function collectIssueEvidence(
           ),
         );
       } else if (rate >= ISSUE_CLOSE_RATE_HEALTHY) {
+        // Triage only counts as maintenance if fixes actually reach users. A
+        // repository that closes issues but has shipped nothing for years is
+        // tidying its tracker, not maintaining the package — `enzyme` closed
+        // every issue it received while its last release stayed six years old.
+        // A small sample earns proportionally less credit, so five closed
+        // issues cannot outweigh a decade of silence.
+        const shipped = releaseCredibility(facts.silenceDays, signals.historicalReleaseCadenceDays);
+        const sample = Math.min(1, issues / ISSUE_CREDIT_FULL_SAMPLE);
+        const credit = Math.round(WEIGHTS.issuesResponsive * shipped * sample);
         out.push(
           evidence(
             'issue-responsiveness',
-            `${summary} — somebody is triaging.`,
-            WEIGHTS.issuesResponsive,
+            shipped === 0
+              ? `${summary} — but nothing has been released in that time, so the fixes are not reaching anyone.`
+              : `${summary} — somebody is triaging.`,
+            credit,
             url,
             observed,
           ),
@@ -794,7 +851,7 @@ function collectIssueEvidence(
       evidence(
         'issue-responsiveness',
         `${count(merged)} pull request${merged === 1 ? '' : 's'} merged in the past year — someone with commit rights is still landing changes.`,
-        WEIGHTS.prsMerged,
+        Math.round(WEIGHTS.prsMerged * releaseCredibility(facts.silenceDays, signals.historicalReleaseCadenceDays)),
         url,
         observed,
       ),
@@ -827,7 +884,7 @@ function collectPeopleEvidence(
       evidence(
         'maintainer-activity',
         `Upstream still sees ${count(signals.activeMaintainers.length)} active maintainer${signals.activeMaintainers.length === 1 ? '' : 's'}: ${names}${rest > 0 ? ` and ${count(rest)} more` : ''}.`,
-        WEIGHTS.maintainersActive,
+        Math.round(WEIGHTS.maintainersActive * releaseCredibility(facts.silenceDays, signals.historicalReleaseCadenceDays)),
         url,
         observed,
       ),
@@ -868,7 +925,7 @@ function collectPeopleEvidence(
       evidence(
         'bus-factor',
         `Commits are spread across several people (distribution score ${dds.toFixed(2)} of 1.00${committers}).`,
-        WEIGHTS.busFactorDistributed,
+        Math.round(WEIGHTS.busFactorDistributed * releaseCredibility(facts.silenceDays, signals.historicalReleaseCadenceDays)),
         url,
         signals.freshness.repoSyncedAt,
       ),
@@ -900,7 +957,12 @@ function collectAdoptionEvidence(
     evidence(
       'dependent-flight',
       `Still widely relied on: ${adoptionLabel(signals)}.`,
-      facts.adoption === 'strong' ? WEIGHTS.adoptionStrong : WEIGHTS.adoption,
+      // Adoption is blast radius, not health. `enzyme` has ~30,000 dependent
+      // packages precisely because it was popular before it died; counting that
+      // as a sign of life is how a six-year-dead package scores as active. The
+      // same number feeds the hijack-risk rule, where large reach is a reason
+      // for concern rather than comfort.
+      0,
       npmPackageUrl(signals.name),
       signals.freshness.packageSyncedAt,
     ),
@@ -936,6 +998,17 @@ function isStableComplete(signals: PackageSignals, facts: DerivedFacts): boolean
       ? facts.adoption === 'strong'
       : facts.unansweredIssues <= STABLE_COMPLETE_MAX_UNANSWERED_ISSUES;
   if (!demandIsSatisfied) return false;
+
+  // A finished package either receives no questions or still gets answers.
+  // Several questions and not one reply is the line between "nothing left to
+  // do" and "nobody left to do it" — it is what separates `colors`, sabotaged
+  // and abandoned in 2022, from `ms`, which answers what little it is asked.
+  // The sample floor keeps a single unanswered drive-by from disqualifying a
+  // genuinely finished micro-package.
+  const issues = signals.pastYearIssues ?? 0;
+  if (issues >= STABLE_COMPLETE_MIN_SILENT_ISSUES && (signals.pastYearIssuesClosed ?? 0) === 0) {
+    return false;
+  }
 
   // Contributors must not be queueing up unmerged fixes either.
   const prs = signals.pastYearPullRequests ?? 0;

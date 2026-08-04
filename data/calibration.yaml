@@ -386,10 +386,11 @@
       url: https://commits.ecosyste.ms/api/v1/hosts/GitHub/repositories/moment/moment
 
 - name: grunt
-  label: low-activity
+  label: active
   rationale: >-
-    Released 1.6.3 in July 2026 but only took nine commits in the past year —
-    still shipping, at a fraction of its former pace.
+    Released 1.6.3 on 2026-07-28, seven days before this corpus was verified.
+    Only nine commits in the trailing year, but a package that shipped last week
+    is being maintained; low commit volume is a pace, not a state.
   evidence:
     - label: "npm registry: grunt@1.6.3 published 2026-07-28, no deprecation"
       url: https://registry.npmjs.org/grunt
@@ -397,10 +398,10 @@
       url: https://commits.ecosyste.ms/api/v1/hosts/GitHub/repositories/gruntjs/grunt
 
 - name: handlebars
-  label: low-activity
+  label: active
   rationale: >-
-    Released 4.7.9 in March 2026 on the back of 33 commits in the past year,
-    which is real maintenance at a low volume for a package with 15k dependents.
+    Released 4.7.9 on 2026-03-26 with 33 commits in the trailing year. Real
+    maintenance at a low volume for a package with 15k dependents.
   evidence:
     - label: "npm registry: handlebars@4.7.9 published 2026-03-26, no deprecation"
       url: https://registry.npmjs.org/handlebars
@@ -408,11 +409,11 @@
       url: https://commits.ecosyste.ms/api/v1/hosts/GitHub/repositories/handlebars-lang/handlebars.js
 
 - name: underscore
-  label: low-activity
+  label: active
   rationale: >-
-    Released 1.13.8 in February 2026 with 23 commits from three people in the
-    trailing year — maintained, but essentially in upkeep mode now that its API
-    is in the language.
+    Released 1.13.8 on 2026-02-19 with 23 commits from three people in the
+    trailing year. In upkeep mode now that its API is largely in the language,
+    but unambiguously maintained.
   evidence:
     - label: "npm registry: underscore@1.13.8 published 2026-02-19, no deprecation"
       url: https://registry.npmjs.org/underscore
@@ -420,11 +421,11 @@
       url: https://commits.ecosyste.ms/api/v1/hosts/GitHub/repositories/jashkenas/underscore
 
 - name: morgan
-  label: low-activity
+  label: active
   rationale: >-
-    Released 1.11.0 in June 2026 with 15 commits in the past year, typical of
-    the Express middleware packages that get security and compatibility fixes
-    but no new features.
+    Released 1.11.0 on 2026-06-02 with 15 commits in the trailing year, typical
+    of Express middleware that receives security and compatibility fixes but no
+    new features.
   evidence:
     - label: "npm registry: morgan@1.11.0 published 2026-06-02, no deprecation"
       url: https://registry.npmjs.org/morgan
@@ -432,10 +433,11 @@
       url: https://commits.ecosyste.ms/api/v1/hosts/GitHub/repositories/expressjs/morgan
 
 - name: ejs
-  label: low-activity
+  label: active
   rationale: >-
-    Released 6.0.1 in May 2026, but all 26 commits in the past year came from a
-    single committer, making it a maintained project with a bus factor of one.
+    Released 6.0.1 on 2026-05-26. All 26 commits in the trailing year came from
+    a single committer, so the bus factor is one — a risk attribute, not a
+    maintenance state, and the tool reports it as such.
   evidence:
     - label: "npm registry: ejs@6.0.1 published 2026-05-26, no deprecation"
       url: https://registry.npmjs.org/ejs
@@ -666,3 +668,59 @@
       url: https://registry.npmjs.org/should
     - label: "shouldjs/should.js repository, archived, last push 2019-10-29"
       url: https://github.com/shouldjs/should.js
+- name: gulp
+  label: low-activity
+  rationale: >-
+    Released 5.0.1 on 2025-06-01 and last pushed in April 2024 — 14 months of
+    release silence against a history of steady output, with 81k dependent
+    packages still relying on it. Slowing, not stopped.
+  evidence:
+    - label: "npm registry: gulp@5.0.1 published 2025-06-01, no deprecation"
+      url: https://registry.npmjs.org/gulp
+    - label: "Repository is not archived"
+      url: https://github.com/gulpjs/gulp
+- name: stylus
+  label: low-activity
+  rationale: >-
+    Released 0.64.0 on 2024-10-20, 21 months before verification, with no
+    deprecation and an active repository. Long gaps are normal for this project,
+    which is why it belongs here rather than in the unmaintained bucket.
+  evidence:
+    - label: "npm registry: stylus@0.64.0 published 2024-10-20, no deprecation"
+      url: https://registry.npmjs.org/stylus
+    - label: "Repository is not archived"
+      url: https://github.com/stylus/stylus
+- name: async
+  label: low-activity
+  rationale: >-
+    Released 3.2.6 on 2024-08-19 with the repository last pushed in September
+    2024. Two years of quiet across 36k dependent packages, but no deprecation
+    notice and no archive — the classic watch-it case.
+  evidence:
+    - label: "npm registry: async@3.2.6 published 2024-08-19, no deprecation"
+      url: https://registry.npmjs.org/async
+    - label: "Repository is not archived"
+      url: https://github.com/caolan/async
+- name: passport
+  label: low-activity
+  rationale: >-
+    Released 0.7.0 on 2023-11-27, pushed as recently as August 2024. A widely
+    used authentication middleware in slow upkeep, neither deprecated nor
+    archived.
+  evidence:
+    - label: "npm registry: passport@0.7.0 published 2023-11-27, no deprecation"
+      url: https://registry.npmjs.org/passport
+    - label: "Repository is not archived"
+      url: https://github.com/jaredhanson/passport
+- name: node-fetch
+  label: low-activity
+  rationale: >-
+    Released 3.3.2 on 2023-07-25, three years before verification. Superseded in
+    practice by the global fetch built into Node 18+, but never deprecated and
+    the repository is not archived, so the honest state is quiet rather than
+    dead.
+  evidence:
+    - label: "npm registry: node-fetch@3.3.2 published 2023-07-25, no deprecation"
+      url: https://registry.npmjs.org/node-fetch
+    - label: "Repository is not archived"
+      url: https://github.com/bitinn/node-fetch
