@@ -1,0 +1,117 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      '@octokit/rest':
+        specifier: ^19.0.13
+        version: 19.0.13
+      moment:
+        specifier: ^2.29.4
+        version: 2.29.4
+      request:
+        specifier: ^2.88.2
+        version: 2.88.2
+    devDependencies:
+      '@babel/core':
+        specifier: ^7.24.0
+        version: 7.24.0
+      istanbul:
+        specifier: ^0.4.5
+        version: 0.4.5
+    optionalDependencies:
+      fsevents:
+        specifier: ^2.3.3
+        version: 2.3.3
+
+packages:
+
+  '@babel/core@7.24.0':
+    resolution: {integrity: sha512-fQfkg0Gjkza3nf0c7/w6Xf34BW4YvzNfACRLmmb7XRLa6XHdR+K9AlJlxneFfWYf6uhOzuzZVTjF/8KfndZANw==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/parser@7.24.0':
+    resolution: {integrity: sha512-QuP/FxEAzMSjXygs8v4N9dvdXzEHN4W1oF3PxuWAtPo08UdM17u89RDMgjLn/mlc56iM0HlLmVkO/wgR+rDgHg==}
+    engines: {node: '>=6.0.0'}
+    hasBin: true
+
+  '@babel/plugin-syntax-jsx@7.24.0':
+    resolution: {integrity: sha512-QCPmDCLLwmqOHRJzXomIrhLxbSjbHVzMCkiVnI3xLc8HZ5W7bZmVMHUcU5eFVHhOZ2Y2h5xJQlpjrKPQ3wKgQg==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+
+  '@octokit/rest@19.0.13':
+    resolution: {integrity: sha512-/EzVox5V9gYGdbAI+ovYj3nXQT1TtTHRT+0eZPcuC05UFSWO3mdO9UY1C0i2eLF9Un1ONJkAk+IEtYGAC+TahA==}
+    engines: {node: '>= 14'}
+
+  escape-string-regexp@1.0.5:
+    resolution: {integrity: sha512-vbRorB5FUQWvla16U8R/qgaFIya2qGzwDrNmCZuYKrbdSUMG6I1ZCGQRefkRVhuOkIGVne7BQ35DSfo1qvJqFg==}
+    engines: {node: '>=0.8.0'}
+
+  fsevents@2.3.3:
+    resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
+
+  istanbul@0.4.5:
+    resolution: {integrity: sha512-nMtdn4hvK0HjUlzr1DrKSUY8ychprt8dzHOgY2KXsIhHu5PuQQEOTM27gV9Xblyon7aUH/TSFIjRHEODF/FRPg==}
+    deprecated: 'This module is no longer maintained, try this instead: npm i nyc'
+    hasBin: true
+
+  moment@2.29.4:
+    resolution: {integrity: sha512-5LC9SOxjSc2HF6vO2CyJTg17n5v1d/wjoz3PxDdT3+SUZBLwbEHqNZrMs6h4EFPfz5ZLMdOvv5UFyM/oCbGkNQ==}
+
+  request@2.88.2:
+    resolution: {integrity: sha512-MsvtOrfG9ZcrOwAW+Qi+F6HbD0CWXEh9ou77uOb7FM2WPhwT7smM833PzanhJLsgXjN89Ir6V2PczXNnMpwKhw==}
+    engines: {node: '>= 6'}
+    deprecated: request has been deprecated, see https://github.com/request/request/issues/3142
+
+  tough-cookie@2.5.0:
+    resolution: {integrity: sha512-nlLsUzgm1kfLXSXfRZMc1KLAugd4hqJHDTvc2hDIwS3mZAfMEuMbc03SujMF+GEcpaX/qboeycw6iO8JwVv2+g==}
+    engines: {node: '>=0.8'}
+
+  uuid@3.4.0:
+    resolution: {integrity: sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==}
+    deprecated: Please upgrade to version 7 or higher.
+    hasBin: true
+
+snapshots:
+
+  '@babel/core@7.24.0':
+    dependencies:
+      '@babel/parser': 7.24.0
+      '@babel/plugin-syntax-jsx': 7.24.0(@babel/core@7.24.0)
+
+  '@babel/parser@7.24.0': {}
+
+  '@babel/plugin-syntax-jsx@7.24.0(@babel/core@7.24.0)':
+    dependencies:
+      '@babel/core': 7.24.0
+
+  '@octokit/rest@19.0.13': {}
+
+  escape-string-regexp@1.0.5: {}
+
+  fsevents@2.3.3:
+    optional: true
+
+  istanbul@0.4.5:
+    dependencies:
+      escape-string-regexp: 1.0.5
+
+  moment@2.29.4: {}
+
+  request@2.88.2:
+    dependencies:
+      tough-cookie: 2.5.0
+      uuid: 3.4.0
+
+  tough-cookie@2.5.0: {}
+
+  uuid@3.4.0: {}

@@ -1,0 +1,151 @@
+{
+  "name": "example-app",
+  "version": "1.0.0",
+  "lockfileVersion": 2,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "example-app",
+      "version": "1.0.0",
+      "license": "MIT",
+      "dependencies": {
+        "@octokit/rest": "^19.0.13",
+        "moment": "^2.29.4",
+        "request": "^2.88.2"
+      },
+      "devDependencies": {
+        "@babel/core": "^7.24.0",
+        "istanbul": "^0.4.5"
+      },
+      "optionalDependencies": {
+        "fsevents": "^2.3.3"
+      }
+    },
+    "node_modules/@babel/core": {
+      "version": "7.24.0",
+      "resolved": "https://registry.npmjs.org/@babel/core/-/core-7.24.0.tgz",
+      "integrity": "sha512-fQfkg0Gjkza3nf0c7/w6Xf34BW4YvzNfACRLmmb7XRLa6XHdR+K9AlJlxneFfWYf6uhOzuzZVTjF/8KfndZANw==",
+      "dev": true,
+      "dependencies": {
+        "@babel/parser": "^7.24.0"
+      }
+    },
+    "node_modules/@babel/parser": {
+      "version": "7.24.0",
+      "resolved": "https://registry.npmjs.org/@babel/parser/-/parser-7.24.0.tgz",
+      "integrity": "sha512-QuP/FxEAzMSjXygs8v4N9dvdXzEHN4W1oF3PxuWAtPo08UdM17u89RDMgjLn/mlc56iM0HlLmVkO/wgR+rDgHg==",
+      "dev": true
+    },
+    "node_modules/@octokit/rest": {
+      "version": "19.0.13",
+      "resolved": "https://registry.npmjs.org/@octokit/rest/-/rest-19.0.13.tgz",
+      "integrity": "sha512-/EzVox5V9gYGdbAI+ovYj3nXQT1TtTHRT+0eZPcuC05UFSWO3mdO9UY1C0i2eLF9Un1ONJkAk+IEtYGAC+TahA=="
+    },
+    "node_modules/escape-string-regexp": {
+      "version": "1.0.5",
+      "resolved": "https://registry.npmjs.org/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz",
+      "integrity": "sha512-vbRorB5FUQWvla16U8R/qgaFIya2qGzwDrNmCZuYKrbdSUMG6I1ZCGQRefkRVhuOkIGVne7BQ35DSfo1qvJqFg==",
+      "dev": true
+    },
+    "node_modules/fsevents": {
+      "version": "2.3.3",
+      "resolved": "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz",
+      "integrity": "sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==",
+      "hasInstallScript": true,
+      "optional": true
+    },
+    "node_modules/istanbul": {
+      "version": "0.4.5",
+      "resolved": "https://registry.npmjs.org/istanbul/-/istanbul-0.4.5.tgz",
+      "integrity": "sha512-nMtdn4hvK0HjUlzr1DrKSUY8ychprt8dzHOgY2KXsIhHu5PuQQEOTM27gV9Xblyon7aUH/TSFIjRHEODF/FRPg==",
+      "deprecated": "This module is no longer maintained, try this instead:\n  npm i nyc",
+      "dev": true
+    },
+    "node_modules/moment": {
+      "version": "2.29.4",
+      "resolved": "https://registry.npmjs.org/moment/-/moment-2.29.4.tgz",
+      "integrity": "sha512-5LC9SOxjSc2HF6vO2CyJTg17n5v1d/wjoz3PxDdT3+SUZBLwbEHqNZrMs6h4EFPfz5ZLMdOvv5UFyM/oCbGkNQ=="
+    },
+    "node_modules/request": {
+      "version": "2.88.2",
+      "resolved": "https://registry.npmjs.org/request/-/request-2.88.2.tgz",
+      "integrity": "sha512-MsvtOrfG9ZcrOwAW+Qi+F6HbD0CWXEh9ou77uOb7FM2WPhwT7smM833PzanhJLsgXjN89Ir6V2PczXNnMpwKhw==",
+      "deprecated": "request has been deprecated, see https://github.com/request/request/issues/3142"
+    },
+    "node_modules/tough-cookie": {
+      "version": "2.5.0",
+      "resolved": "https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.5.0.tgz",
+      "integrity": "sha512-nlLsUzgm1kfLXSXfRZMc1KLAugd4hqJHDTvc2hDIwS3mZAfMEuMbc03SujMF+GEcpaX/qboeycw6iO8JwVv2+g=="
+    },
+    "node_modules/uuid": {
+      "version": "3.4.0",
+      "resolved": "https://registry.npmjs.org/uuid/-/uuid-3.4.0.tgz",
+      "integrity": "sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==",
+      "deprecated": "Please upgrade  to version 7 or higher."
+    }
+  },
+  "dependencies": {
+    "@babel/core": {
+      "version": "7.24.0",
+      "resolved": "https://registry.npmjs.org/@babel/core/-/core-7.24.0.tgz",
+      "integrity": "sha512-fQfkg0Gjkza3nf0c7/w6Xf34BW4YvzNfACRLmmb7XRLa6XHdR+K9AlJlxneFfWYf6uhOzuzZVTjF/8KfndZANw==",
+      "dev": true,
+      "requires": {
+        "@babel/parser": "^7.24.0"
+      }
+    },
+    "@babel/parser": {
+      "version": "7.24.0",
+      "resolved": "https://registry.npmjs.org/@babel/parser/-/parser-7.24.0.tgz",
+      "integrity": "sha512-QuP/FxEAzMSjXygs8v4N9dvdXzEHN4W1oF3PxuWAtPo08UdM17u89RDMgjLn/mlc56iM0HlLmVkO/wgR+rDgHg==",
+      "dev": true
+    },
+    "@octokit/rest": {
+      "version": "19.0.13",
+      "resolved": "https://registry.npmjs.org/@octokit/rest/-/rest-19.0.13.tgz",
+      "integrity": "sha512-/EzVox5V9gYGdbAI+ovYj3nXQT1TtTHRT+0eZPcuC05UFSWO3mdO9UY1C0i2eLF9Un1ONJkAk+IEtYGAC+TahA=="
+    },
+    "escape-string-regexp": {
+      "version": "1.0.5",
+      "resolved": "https://registry.npmjs.org/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz",
+      "integrity": "sha512-vbRorB5FUQWvla16U8R/qgaFIya2qGzwDrNmCZuYKrbdSUMG6I1ZCGQRefkRVhuOkIGVne7BQ35DSfo1qvJqFg==",
+      "dev": true
+    },
+    "fsevents": {
+      "version": "2.3.3",
+      "resolved": "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz",
+      "integrity": "sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==",
+      "optional": true
+    },
+    "istanbul": {
+      "version": "0.4.5",
+      "resolved": "https://registry.npmjs.org/istanbul/-/istanbul-0.4.5.tgz",
+      "integrity": "sha512-nMtdn4hvK0HjUlzr1DrKSUY8ychprt8dzHOgY2KXsIhHu5PuQQEOTM27gV9Xblyon7aUH/TSFIjRHEODF/FRPg==",
+      "dev": true
+    },
+    "moment": {
+      "version": "2.29.4",
+      "resolved": "https://registry.npmjs.org/moment/-/moment-2.29.4.tgz",
+      "integrity": "sha512-5LC9SOxjSc2HF6vO2CyJTg17n5v1d/wjoz3PxDdT3+SUZBLwbEHqNZrMs6h4EFPfz5ZLMdOvv5UFyM/oCbGkNQ=="
+    },
+    "request": {
+      "version": "2.88.2",
+      "resolved": "https://registry.npmjs.org/request/-/request-2.88.2.tgz",
+      "integrity": "sha512-MsvtOrfG9ZcrOwAW+Qi+F6HbD0CWXEh9ou77uOb7FM2WPhwT7smM833PzanhJLsgXjN89Ir6V2PczXNnMpwKhw==",
+      "requires": {
+        "tough-cookie": "~2.5.0",
+        "uuid": "^3.3.2"
+      }
+    },
+    "tough-cookie": {
+      "version": "2.5.0",
+      "resolved": "https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.5.0.tgz",
+      "integrity": "sha512-nlLsUzgm1kfLXSXfRZMc1KLAugd4hqJHDTvc2hDIwS3mZAfMEuMbc03SujMF+GEcpaX/qboeycw6iO8JwVv2+g=="
+    },
+    "uuid": {
+      "version": "3.4.0",
+      "resolved": "https://registry.npmjs.org/uuid/-/uuid-3.4.0.tgz",
+      "integrity": "sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A=="
+    }
+  }
+}

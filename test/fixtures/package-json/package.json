@@ -1,0 +1,22 @@
+{
+  "name": "bare-project",
+  "version": "0.3.1",
+  "description": "A project with no lockfile at all.",
+  "license": "MIT",
+  "dependencies": {
+    "@octokit/rest": "^19.0.13",
+    "moment": "^2.29.4",
+    "request": "^2.88.2",
+    "local-helper": "file:./vendor/local-helper"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.0",
+    "istanbul": "^0.4.5"
+  },
+  "optionalDependencies": {
+    "fsevents": "^2.3.3"
+  },
+  "peerDependencies": {
+    "react": ">=17"
+  }
+}

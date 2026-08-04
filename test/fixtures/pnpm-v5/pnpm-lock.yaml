@@ -1,0 +1,97 @@
+lockfileVersion: 5.4
+
+importers:
+
+  .:
+    specifiers:
+      '@babel/core': ^7.24.0
+      '@example/tools': workspace:*
+      '@octokit/rest': ^19.0.13
+      fsevents: ^2.3.3
+      istanbul: ^0.4.5
+      moment: ^2.29.4
+      request: ^2.88.2
+    dependencies:
+      '@octokit/rest': 19.0.13
+      moment: 2.29.4
+      request: 2.88.2
+    optionalDependencies:
+      fsevents: 2.3.3
+    devDependencies:
+      '@babel/core': 7.24.0
+      '@example/tools': link:packages/tools
+      istanbul: 0.4.5
+
+  packages/tools:
+    specifiers:
+      escape-string-regexp: ^1.0.5
+    dependencies:
+      escape-string-regexp: 1.0.5
+
+packages:
+
+  /@babel/core/7.24.0:
+    resolution: {integrity: sha512-fQfkg0Gjkza3nf0c7/w6Xf34BW4YvzNfACRLmmb7XRLa6XHdR+K9AlJlxneFfWYf6uhOzuzZVTjF/8KfndZANw==}
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      '@babel/parser': 7.24.0
+      '@babel/plugin-syntax-jsx': 7.24.0_@babel+core@7.24.0
+    dev: true
+
+  /@babel/parser/7.24.0:
+    resolution: {integrity: sha512-QuP/FxEAzMSjXygs8v4N9dvdXzEHN4W1oF3PxuWAtPo08UdM17u89RDMgjLn/mlc56iM0HlLmVkO/wgR+rDgHg==}
+    engines: {node: '>=6.0.0'}
+    hasBin: true
+    dev: true
+
+  /@babel/plugin-syntax-jsx/7.24.0_@babel+core@7.24.0:
+    resolution: {integrity: sha512-QCPmDCLLwmqOHRJzXomIrhLxbSjbHVzMCkiVnI3xLc8HZ5W7bZmVMHUcU5eFVHhOZ2Y2h5xJQlpjrKPQ3wKgQg==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dev: true
+
+  /@octokit/rest/19.0.13:
+    resolution: {integrity: sha512-/EzVox5V9gYGdbAI+ovYj3nXQT1TtTHRT+0eZPcuC05UFSWO3mdO9UY1C0i2eLF9Un1ONJkAk+IEtYGAC+TahA==}
+    engines: {node: '>= 14'}
+    dev: false
+
+  /escape-string-regexp/1.0.5:
+    resolution: {integrity: sha512-vbRorB5FUQWvla16U8R/qgaFIya2qGzwDrNmCZuYKrbdSUMG6I1ZCGQRefkRVhuOkIGVne7BQ35DSfo1qvJqFg==}
+    engines: {node: '>=0.8.0'}
+    dev: false
+
+  /fsevents/2.3.3:
+    resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /istanbul/0.4.5:
+    resolution: {integrity: sha512-nMtdn4hvK0HjUlzr1DrKSUY8ychprt8dzHOgY2KXsIhHu5PuQQEOTM27gV9Xblyon7aUH/TSFIjRHEODF/FRPg==}
+    deprecated: 'This module is no longer maintained, try this instead: npm i nyc'
+    hasBin: true
+    dev: true
+
+  /moment/2.29.4:
+    resolution: {integrity: sha512-5LC9SOxjSc2HF6vO2CyJTg17n5v1d/wjoz3PxDdT3+SUZBLwbEHqNZrMs6h4EFPfz5ZLMdOvv5UFyM/oCbGkNQ==}
+    dev: false
+
+  /request/2.88.2:
+    resolution: {integrity: sha512-MsvtOrfG9ZcrOwAW+Qi+F6HbD0CWXEh9ou77uOb7FM2WPhwT7smM833PzanhJLsgXjN89Ir6V2PczXNnMpwKhw==}
+    engines: {node: '>= 6'}
+    deprecated: request has been deprecated, see https://github.com/request/request/issues/3142
+    dev: false
+
+  /tough-cookie/2.5.0:
+    resolution: {integrity: sha512-nlLsUzgm1kfLXSXfRZMc1KLAugd4hqJHDTvc2hDIwS3mZAfMEuMbc03SujMF+GEcpaX/qboeycw6iO8JwVv2+g==}
+    engines: {node: '>=0.8'}
+    dev: false
+
+  /uuid/3.4.0:
+    resolution: {integrity: sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==}
+    deprecated: Please upgrade to version 7 or higher.
+    hasBin: true
+    dev: false

@@ -1,0 +1,19 @@
+{
+  "name": "example-app",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "@octokit/rest": "^19.0.13",
+    "moment": "^2.29.4",
+    "request": "^2.88.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.0",
+    "@example/tools": "workspace:*",
+    "istanbul": "^0.4.5"
+  },
+  "optionalDependencies": {
+    "fsevents": "^2.3.3"
+  }
+}

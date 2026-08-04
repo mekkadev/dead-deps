@@ -1,0 +1,12 @@
+{
+  "name": "malformed-example",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "moment": "^2.29.4",
+    "request": "^2.88.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.0"
+  }
+}
