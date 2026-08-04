@@ -52,7 +52,7 @@ First release.
 - **Static site** generated from the dataset — one page per succession, plus a
   methodology page whose calibration figures are read from the harness output
   rather than written by hand.
-- **163 tests**, none of which touch the network, and CI across Node 20 and 22.
+- **173 tests**, none of which touch the network, and CI across Node 20 and 22.
 
 ### Notes
 
