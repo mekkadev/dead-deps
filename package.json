@@ -1,0 +1,72 @@
+{
+  "name": "dead-deps",
+  "version": "0.1.0",
+  "description": "Find abandoned and unmaintained npm dependencies in your lockfile — and the maintained fork or replacement that succeeded them. Evidence-backed CLI + MCP server.",
+  "keywords": [
+    "abandoned",
+    "unmaintained",
+    "deprecated",
+    "dependencies",
+    "lockfile",
+    "npm",
+    "supply-chain",
+    "supply-chain-security",
+    "dependency-management",
+    "sca",
+    "mcp",
+    "mcp-server",
+    "cli",
+    "devtools",
+    "maintenance"
+  ],
+  "license": "MIT",
+  "author": "mekkadev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mekkadev/dead-deps.git"
+  },
+  "homepage": "https://mekkadev.github.io/dead-deps/",
+  "bugs": {
+    "url": "https://github.com/mekkadev/dead-deps/issues"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=20.10.0"
+  },
+  "bin": {
+    "dead-deps": "dist/cli.js",
+    "dead-deps-mcp": "dist/mcp.js"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "data/successors.yaml",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --import tsx --test test/**/*.test.ts",
+    "dev": "node --import tsx src/cli.ts",
+    "site": "node --import tsx site/build.ts",
+    "calibrate": "node --import tsx scripts/calibrate.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "yaml": "^2.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
