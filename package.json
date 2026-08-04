@@ -58,6 +58,7 @@
     "dev": "node --import tsx src/cli.ts",
     "site": "node --import tsx site/build.ts",
     "calibrate": "node --import tsx scripts/calibrate.ts",
+    "snapshot": "node --import tsx scripts/snapshot.ts",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {

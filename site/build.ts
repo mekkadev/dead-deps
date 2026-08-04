@@ -27,6 +27,8 @@ import type {
   SuccessorRecord,
 } from '../src/types.js';
 
+import { exportDataset } from '../scripts/export-dataset.js';
+
 import { esc, plain, safeUrl } from './templates/html.js';
 import { renderLandingPage } from './templates/landing.js';
 import { renderPage, type SiteContext } from './templates/layout.js';
@@ -411,6 +413,20 @@ async function main(): Promise<void> {
   await emit(written, 'robots.txt', robots(site));
   await emit(written, '.nojekyll', '');
 
+  // The same rows, as an API other tools can consume. Kept out of the sitemap
+  // on purpose: JSON endpoints are for programs, and crawlers index the pages.
+  const api = await exportDataset({
+    records: pages.map((page) => page.record),
+    outDir: OUT_DIR,
+    baseUrl: BASE_URL,
+    sourcePath: DATASET,
+    pageUrl: (record) => {
+      const page = byName.get(record.from.toLowerCase());
+      return page === undefined ? null : site.baseUrl + page.path;
+    },
+  });
+  for (const file of api.files) written.push({ path: file.path, bytes: file.bytes });
+
   for (const warning of warnings) process.stderr.write(`  warn  ${warning}\n`);
 
   const bytes = written.reduce((total, file) => total + file.bytes, 0);
@@ -418,6 +434,10 @@ async function main(): Promise<void> {
     `dead-deps site: ${written.length} files, ${pages.length} package pages, ${(bytes / 1024).toFixed(
       0,
     )} kB -> ${OUT_DIR} (${Date.now() - started} ms)\n`,
+  );
+  process.stdout.write(
+    `  api: ${api.count} records in ${api.files.length} files under ${BASE_URL}api/ ` +
+      `(generated ${api.generatedAt})\n`,
   );
   if (pages.length === 0) {
     process.stdout.write('  no dataset rows yet; landing and methodology pages were still generated.\n');

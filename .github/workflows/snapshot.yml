@@ -1,0 +1,135 @@
+name: Snapshot
+
+# Weekly longitudinal sampling.
+#
+# Every index in this space publishes a package's current state and nothing
+# else, so "is this getting worse?" is unanswerable from outside. History
+# cannot be bought or backfilled — only accumulated. A Monday that is not
+# sampled is a Monday gone for good, which is why this job runs on its own
+# schedule rather than hanging off a release, and why a handful of packages
+# failing must never stop the rest of the week's rows from landing.
+
+on:
+  schedule:
+    # 06:00 UTC every Monday. Early enough that the week's file exists before
+    # anyone looks at it, late enough to sit outside the top-of-hour rush.
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      top:
+        description: 'How many of the most-depended-on npm packages to sample.'
+        required: false
+        default: '500'
+
+permissions:
+  contents: write
+
+# One snapshot at a time, and never cancelled. Two runs would append to the
+# same week's file and race each other's push; a queued run is harmless.
+concurrency:
+  group: snapshot
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    name: Sample and archive
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          # Commit onto the default branch, not the detached ref a schedule
+          # would otherwise hand us. Full history so the rebase below has
+          # something to rebase onto.
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      # The script exits non-zero only when it could not write anything at all.
+      # Individual packages that fail upstream are counted, printed and skipped:
+      # losing thirty rows out of five hundred is a bad week, not a broken run.
+      - name: Sample
+        id: sample
+        env:
+          DEAD_DEPS_CONTACT: ${{ vars.DEAD_DEPS_CONTACT }}
+          TOP: ${{ github.event.inputs.top || '500' }}
+        run: |
+          set -euo pipefail
+          export SUMMARY="$RUNNER_TEMP/snapshot-summary.json"
+
+          # stdout is the machine-readable summary; the human-readable progress
+          # and the list of packages that failed go to stderr, i.e. this log.
+          node --import tsx scripts/snapshot.ts --top "$TOP" > "$SUMMARY"
+
+          node -e '
+            const fs = require("fs");
+            const summary = JSON.parse(fs.readFileSync(process.env.SUMMARY, "utf8"));
+            const fields = ["week", "rows", "bytes", "sampled", "failures", "file"];
+            fs.appendFileSync(
+              process.env.GITHUB_OUTPUT,
+              fields.map((key) => `${key}=${summary[key]}\n`).join(""),
+            );
+          '
+
+      - name: Commit the week's rows
+        env:
+          WEEK: ${{ steps.sample.outputs.week }}
+          ROWS: ${{ steps.sample.outputs.rows }}
+          SAMPLED: ${{ steps.sample.outputs.sampled }}
+          FAILURES: ${{ steps.sample.outputs.failures }}
+          BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+
+          # -A, because the normal week creates a file rather than editing one,
+          # and `git diff` alone does not see an untracked path.
+          git add -A data/history
+          if git diff --cached --quiet; then
+            echo "data/history is unchanged — nothing to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          BODY="$SAMPLED packages sampled this run."
+          if [ "${FAILURES:-0}" != "0" ]; then
+            BODY="$BODY $FAILURES could not be reached; their rows are absent rather than guessed — see the run log for the names."
+          fi
+          git commit -m "Archive $WEEK health snapshots ($ROWS rows)" -m "$BODY"
+
+          # Rebase rather than merge: the archive is one file per week, sorted
+          # by package, so a commit that landed while we were sampling is
+          # somebody else's file and never conflicts with ours.
+          git pull --rebase --autostash origin "$BRANCH"
+          git push origin "HEAD:$BRANCH"
+
+      - name: Summarise
+        if: always()
+        env:
+          WEEK: ${{ steps.sample.outputs.week }}
+          ROWS: ${{ steps.sample.outputs.rows }}
+          FAILURES: ${{ steps.sample.outputs.failures }}
+          FILE: ${{ steps.sample.outputs.file }}
+          BYTES: ${{ steps.sample.outputs.bytes }}
+        run: |
+          {
+            echo "### Snapshot ${WEEK:-(not reached)}"
+            echo
+            echo "| | |"
+            echo "| --- | --- |"
+            echo "| Rows written | ${ROWS:-0} |"
+            echo "| Packages that failed | ${FAILURES:-0} |"
+            echo "| File | \`${FILE:-none}\` |"
+            echo "| Bytes | ${BYTES:-0} |"
+          } >> "$GITHUB_STEP_SUMMARY"

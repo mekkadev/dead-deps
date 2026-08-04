@@ -19,6 +19,8 @@
 import '../no-network.js';
 
 import '../cache.test.js';
+import '../fix.test.js';
+import '../history.test.js';
 import '../lockfile.test.js';
 import '../report.test.js';
 import '../robustness.test.js';

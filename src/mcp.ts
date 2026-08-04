@@ -2,9 +2,14 @@
 /**
  * dead-deps — MCP server (stdio).
  *
- * Three tools, one job: make a model's claim about a package traceable to
+ * Four tools, one job: make a model's claim about a package traceable to
  * something a human can open in a browser. Every response carries evidence
  * URLs, and `find_successor` refuses to name a package it cannot source.
+ *
+ * Three of the four answer questions about *now*. `package_trajectory` is the
+ * exception, and the reason the snapshot archive exists: no index in this
+ * space publishes history, so "is this getting worse?" can only be answered
+ * from readings somebody took week after week and wrote down.
  *
  * ## Configuring an MCP client
  *
@@ -53,6 +58,8 @@ import { CallToolRequestSchema, ErrorCode, ListToolsRequestSchema, McpError } fr
 import type { CallToolResult, Tool } from '@modelcontextprotocol/sdk/types.js';
 
 import { assess } from './detect/score.js';
+import { HISTORY_DIR, readSnapshotsFor } from './history/index.js';
+import { MIN_SAMPLES_FOR_TRAJECTORY, computeTrajectory, summarise } from './history/trajectory.js';
 import { renderJson } from './report/json.js';
 import { scan } from './scan.js';
 import { HttpClient, gatherSignals } from './sources/index.js';
@@ -62,10 +69,13 @@ import type {
   Assessment,
   Evidence,
   Finding,
+  HealthSnapshot,
   MaintenanceState,
   ScanResult,
   SuccessorDataset,
   SuccessorRecord,
+  Trajectory,
+  TrendDirection,
 } from './types.js';
 
 const SERVER_NAME = 'dead-deps';
@@ -95,6 +105,21 @@ const STATE_MEANING: Record<MaintenanceState, string> = {
   abandoned: 'Maintenance has stopped and the evidence says it is not coming back.',
   'hijack-risk':
     'Abandoned AND attractive to an attacker (still widely depended on, few or no active maintainers). Prioritise this one.',
+};
+
+/**
+ * What each direction licenses a model to say. `steady` and `unknown` are the
+ * common answers and both mean "do not tell the user this package is sliding".
+ */
+const TREND_MEANING: Record<TrendDirection, string> = {
+  improving: 'Every measurable signal moved the right way across the window. It is recovering, not decaying.',
+  steady:
+    'Nothing moved materially, or the evidence pointed both ways. This is the usual answer and it is a real one: no trend is not the same as a bad trend.',
+  declining: 'Every signal that moved, moved the wrong way. Worth telling the user about; not yet an emergency.',
+  collapsing:
+    'A formal deprecation, a verdict crossing into unmaintained or worse, or a fifth of its dependents gone. Say so plainly and prioritise it.',
+  unknown:
+    'Not enough was known at one or both ends of the window to compare. That is a gap in our coverage, NOT evidence the package is fine or failing.',
 };
 
 // ---------------------------------------------------------------------------
@@ -644,6 +669,146 @@ async function runFindSuccessor(args: Record<string, unknown>): Promise<CallTool
 }
 
 // ---------------------------------------------------------------------------
+// Tool: package_trajectory
+// ---------------------------------------------------------------------------
+
+/**
+ * The sentence every trajectory answer ends with.
+ *
+ * A model that treats this like the other tools will assume upstream can
+ * confirm it. Nothing upstream can: the numbers exist only because somebody
+ * sampled the package on a schedule and kept the readings.
+ */
+const TRAJECTORY_PROVENANCE =
+  'This did not come from an index. Every registry and index in this space publishes a package\'s ' +
+  'current state and nothing else, so a trajectory exists only where readings were taken week ' +
+  'after week and kept. Do not expect another tool to corroborate it, and do not extrapolate ' +
+  'beyond the window given.';
+
+function signedPoints(value: number): string {
+  const rounded = Math.round(value);
+  return `${rounded > 0 ? '+' : ''}${rounded}`;
+}
+
+function renderTrajectoryText(trajectory: Trajectory): string {
+  const lines: string[] = [];
+  const thin = trajectory.samples < MIN_SAMPLES_FOR_TRAJECTORY;
+
+  lines.push(summarise(trajectory));
+  lines.push('');
+  lines.push(
+    `Window: ${trajectory.from} to ${trajectory.to}, ${trajectory.samples} ` +
+      `${trajectory.samples === 1 ? 'sample' : 'samples'}.`,
+  );
+  lines.push(`Direction: ${trajectory.direction} — ${TREND_MEANING[trajectory.direction]}`);
+
+  if (thin) {
+    lines.push('');
+    lines.push(
+      `Only ${trajectory.samples} ${trajectory.samples === 1 ? 'reading has' : 'readings have'} been ` +
+        `recorded, and a direction needs ${MIN_SAMPLES_FOR_TRAJECTORY}. Report that this package has ` +
+        'started being watched, not that it is stable.',
+    );
+  }
+
+  lines.push('');
+  lines.push('What moved:');
+  for (const note of trajectory.notes) lines.push(`- ${note}`);
+
+  const measured: string[] = [];
+  measured.push(`abandonment score ${signedPoints(trajectory.scoreDelta)} points (higher is worse)`);
+  if (trajectory.dependentFlight !== null) {
+    const flight = trajectory.dependentFlight;
+    measured.push(
+      flight >= 0
+        ? `${Math.round(flight * 100)}% of dependent packages gone`
+        : `${Math.round(-flight * 100)}% more dependent packages`,
+    );
+  }
+  if (trajectory.responsivenessDelta !== null) {
+    measured.push(
+      `share of trailing-year issues closed ${signedPoints(trajectory.responsivenessDelta * 100)} percentage points`,
+    );
+  }
+  lines.push('');
+  lines.push(`Measured across the window: ${measured.join('; ')}.`);
+
+  lines.push('');
+  lines.push(TRAJECTORY_PROVENANCE);
+  return lines.join('\n');
+}
+
+function renderNoHistoryText(name: string): string {
+  return [
+    `No snapshots have been recorded for "${name}", so there is no trajectory to report.`,
+    '',
+    'What this means and does not mean:',
+    '- It does NOT mean the package is stable. A missing history is a missing measurement.',
+    '- It does NOT mean the package is failing either. Nothing at all is being claimed here.',
+    '- It means this installation\'s archive has never sampled it.',
+    '',
+    `The archive lives at ${HISTORY_DIR} and holds one reading per package per ISO week. History ` +
+      'cannot be bought or backfilled — a week nobody sampled is gone for good — so a package only ' +
+      'appears here once it has been watched for at least two weeks.',
+    '',
+    `Next step: call check_package("${name}") for a sourced verdict on where it stands today, and ` +
+      'say plainly that the direction of travel is unknown.',
+  ].join('\n');
+}
+
+async function runPackageTrajectory(args: Record<string, unknown>): Promise<CallToolResult> {
+  const name = requirePackageName(args);
+
+  // Reading the archive never throws: a missing directory is an empty history.
+  let rows: HealthSnapshot[];
+  try {
+    rows = await readSnapshotsFor(name);
+  } catch (error) {
+    return errorResult(
+      `The snapshot archive could not be read (${describeError(error)}), so no trajectory was ` +
+        `computed for "${name}". This is not a "no change" answer — it is no answer at all.`,
+      { name, sampled: false, archive: HISTORY_DIR },
+    );
+  }
+
+  const trajectory = rows.length === 0 ? null : computeTrajectory(rows);
+  if (trajectory === null) {
+    return textResult(renderNoHistoryText(name), {
+      name,
+      sampled: false,
+      samples: 0,
+      comparable: false,
+      trajectory: null,
+      archive: HISTORY_DIR,
+      guidance:
+        'No history exists for this package here. State that the direction of travel is unknown. ' +
+        'Do not infer a trend from a single current reading, and do not describe the package as ' +
+        'stable on the strength of missing data.',
+    });
+  }
+
+  const comparable = trajectory.samples >= MIN_SAMPLES_FOR_TRAJECTORY;
+  return textResult(renderTrajectoryText(trajectory), {
+    name: trajectory.name,
+    sampled: true,
+    samples: trajectory.samples,
+    // False means the archive is too young here, not that the package is quiet.
+    comparable,
+    from: trajectory.from,
+    to: trajectory.to,
+    direction: trajectory.direction,
+    directionMeaning: TREND_MEANING[trajectory.direction],
+    scoreDelta: trajectory.scoreDelta,
+    dependentFlight: trajectory.dependentFlight,
+    responsivenessDelta: trajectory.responsivenessDelta,
+    notes: [...trajectory.notes],
+    summary: summarise(trajectory),
+    archive: HISTORY_DIR,
+    provenance: TRAJECTORY_PROVENANCE,
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Tool table
 // ---------------------------------------------------------------------------
 
@@ -809,6 +974,72 @@ const TOOLS: ReadonlyArray<{ definition: Tool; handler: ToolHandler }> = [
       annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     },
     handler: runFindSuccessor,
+  },
+  {
+    definition: {
+      name: 'package_trajectory',
+      title: 'How a package\'s health has changed over time',
+      description:
+        'Reports how this package\'s health has changed over time — the one question a single ' +
+        'snapshot cannot answer. Returns the direction it is moving (improving, steady, declining, ' +
+        'collapsing, or unknown), the window and number of samples behind that verdict, the change ' +
+        'in its 0-100 abandonment score, the share of dependent packages it has lost, the change in ' +
+        'how many issues get closed, and one plain sentence per observation. ' +
+        'WHY THIS IS NOT check_package: every registry and index in this space, ecosyste.ms ' +
+        'included, publishes only a package\'s current state, so "is this getting worse?" is ' +
+        'unanswerable from any single fetch. This reads a local archive of weekly snapshots — the ' +
+        'only place that answer exists. ' +
+        'USE THIS when the user asks whether a dependency is deteriorating, whether a migration can ' +
+        'wait another quarter, or which of several aging dependencies to deal with first: a package ' +
+        'that has been quietly finished for six years and one that shed a third of its dependents ' +
+        'last month score similarly today and are completely different problems. ' +
+        'IT DOES NOT KNOW anything about a package nobody has sampled here, and it cannot backfill: ' +
+        'a week that was not sampled is gone. An empty or thin history is reported as such and means ' +
+        'the direction is unknown — never that the package is stable. Runs entirely offline against ' +
+        'local data.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          name: {
+            type: 'string',
+            description: 'Bare npm package name, e.g. "request" or "@babel/core". No version range, URL or path.',
+          },
+        },
+        required: ['name'],
+        additionalProperties: false,
+      },
+      outputSchema: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          sampled: { type: 'boolean', description: 'False means the archive holds no readings for this package.' },
+          samples: { type: 'number', description: 'Readings behind the window.' },
+          comparable: {
+            type: 'boolean',
+            description: `False means fewer than ${MIN_SAMPLES_FOR_TRAJECTORY} samples: the archive is too young here, which is not a fact about the package.`,
+          },
+          from: { type: 'string', description: 'ISO timestamp of the earliest reading in the window.' },
+          to: { type: 'string', description: 'ISO timestamp of the latest reading in the window.' },
+          direction: { type: 'string', description: 'improving | steady | declining | collapsing | unknown' },
+          directionMeaning: { type: 'string' },
+          scoreDelta: { type: 'number', description: 'Change in the 0-100 abandonment score. Positive means it moved toward abandonment.' },
+          dependentFlight: {
+            type: ['number', 'null'],
+            description: 'Share of dependent packages lost across the window, 0-1; negative means gained. The earliest warning there is — the ecosystem leaves long before anyone writes a deprecation notice.',
+          },
+          responsivenessDelta: {
+            type: ['number', 'null'],
+            description: 'Change in the share of trailing-year issues closed, as a fraction.',
+          },
+          notes: { type: 'array', description: 'One sentence per observation, safe to show a user verbatim.' },
+          summary: { type: 'string' },
+          archive: { type: 'string', description: 'Directory the snapshots were read from.' },
+        },
+        required: ['name', 'sampled', 'samples', 'comparable'],
+      },
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+    },
+    handler: runPackageTrajectory,
   },
 ];
 

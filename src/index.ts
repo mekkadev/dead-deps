@@ -24,6 +24,31 @@ export { assess } from './detect/score.js';
 // The curated succession dataset.
 export { DEFAULT_DATASET_PATH, loadSuccessors, lookupSuccessor } from './successors/index.js';
 
+// The snapshot archive: one `HealthSnapshot` per package per ISO week, on disk.
+// It exists because no upstream index publishes history, and history cannot be
+// bought or backfilled — only accumulated.
+export {
+  HISTORY_DIR,
+  appendSnapshots,
+  isoWeekKey,
+  readAllSnapshots,
+  readSnapshotsFor,
+  snapshotPath,
+} from './history/index.js';
+
+// What the archive buys: the direction a package is moving. Imported from the
+// module rather than the `history` barrel, which does not re-export it yet.
+export {
+  MIN_SAMPLES_FOR_TRAJECTORY,
+  computeTrajectory,
+  summarise,
+} from './history/trajectory.js';
+
+// The codemod. `planFixes` is pure — it reads, decides and returns; `applyFixes`
+// is the only thing in this package that writes to a caller's files.
+export { REINSTALL_NOTICE, applyFixes, planFixes } from './fix.js';
+export type { FixEdit, FixPlan } from './fix.js';
+
 // Reporters.
 export { renderTerminal } from './report/terminal.js';
 export { renderJson, SCHEMA_VERSION } from './report/json.js';

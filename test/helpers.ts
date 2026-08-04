@@ -12,6 +12,7 @@ import type {
   DataFreshness,
   Evidence,
   Finding,
+  HealthSnapshot,
   ParsedDependency,
   ParsedLockfile,
   PackageSignals,
@@ -156,6 +157,33 @@ export function lockfile(overrides: Partial<ParsedLockfile> = {}): ParsedLockfil
     path: '/projects/example/package-lock.json',
     dependencies: [dependency()],
     warnings: [],
+    ...overrides,
+  };
+}
+
+/**
+ * One archive row in which nothing is known but the load-bearing fields.
+ *
+ * The defaults are deliberately the *quiet* ones — no dependents, no issues, no
+ * advisories, a maintainer who is still there — so a trajectory test only moves
+ * the field it is actually about and every other comparison in
+ * `computeTrajectory` stays silent. A test that wants a signal asks for it.
+ */
+export function snapshot(overrides: Partial<HealthSnapshot> = {}): HealthSnapshot {
+  return {
+    name: 'example',
+    observedAt: '2026-08-04T00:00:00.000Z',
+    state: 'low-activity',
+    score: 40,
+    latestReleaseAt: null,
+    dependentPackagesCount: null,
+    dependentReposCount: null,
+    downloadsLastMonth: null,
+    pastYearIssues: null,
+    pastYearIssuesClosed: null,
+    activeMaintainers: 1,
+    openAdvisories: 0,
+    developmentDistributionScore: null,
     ...overrides,
   };
 }

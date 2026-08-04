@@ -3,14 +3,19 @@ name: Pages
 # Builds the static site from data/successors.yaml and publishes it to
 # GitHub Pages. The build is dependency-free beyond the project's own runtime
 # deps, so this is just: install, generate, upload the directory.
+#
+# `npm run site` also emits the public dataset API under site/dist/api/, so the
+# JSON endpoints other tools consume are published by this same deployment.
 
 on:
   push:
     branches: [main]
     paths:
       - 'site/**'
+      - 'scripts/export-dataset.ts'
       - 'data/successors.yaml'
       - 'src/types.ts'
+      - 'src/successors/**'
       - 'package.json'
       - 'package-lock.json'
       - '.github/workflows/pages.yml'
@@ -52,11 +57,29 @@ jobs:
 
       - name: Build site
         # base_url carries the real deployment origin and sub-path, so canonical
-        # URLs, the sitemap and every internal link stay correct even on a
-        # custom domain or a renamed repository.
+        # URLs, the sitemap, every internal link and every URL inside the
+        # dataset API stay correct even on a custom domain or a renamed
+        # repository. This step also writes site/dist/api/.
         env:
           DEAD_DEPS_SITE_URL: ${{ steps.pages.outputs.base_url }}
         run: npm run site
+
+      - name: Check the dataset API was exported
+        # The API is what makes this project consumable by other tools, and a
+        # silently missing endpoint is worse than a failed deploy: consumers get
+        # a 404 that looks like the dataset was withdrawn.
+        run: |
+          node --input-type=commonjs -e "
+            const fs = require('node:fs');
+            for (const name of ['index.json', 'successors.json', 'successors.min.json']) {
+              const path = 'site/dist/api/' + name;
+              const text = fs.readFileSync(path, 'utf8');
+              if (text.trim() === '') throw new Error('empty: ' + path);
+              JSON.parse(text);
+            }
+            const manifest = JSON.parse(fs.readFileSync('site/dist/api/index.json', 'utf8'));
+            console.log('api: ' + manifest.count + ' records, schema v' + manifest.schemaVersion);
+          "
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
