@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="668" height="743" viewBox="0 0 668 743" role="img" aria-label="dead-deps scanning a project: request is reported as a hijack risk with evidence, and undici is named as its successor">
+<title>npx dead-deps</title>
+<style>
+  .t { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace; font-size: 13px; }
+  /* Resting state is the finished frame: if animation is dropped, the
+     reader still sees the whole session instead of an empty panel. */
+  .ln { opacity: 1; animation: reveal 7.325s steps(1, end) infinite; }
+  @keyframes reveal { 0% { opacity: 0 } 100% { opacity: 1 } }
+  .cmd-clip rect { animation: type 7.325s linear infinite; }
+  @keyframes type {
+    0% { width: 0 }
+    12.29% { width: 101.39999999999999px }
+    100% { width: 101.39999999999999px }
+  }
+  .cursor { animation: blink 1s steps(1, end) infinite; }
+  @keyframes blink { 0%, 50% { opacity: 1 } 50.01%, 100% { opacity: 0 } }
+  @media (prefers-reduced-motion: reduce) {
+    .ln, .cmd-clip rect, .cursor { animation: none }
+    .cmd-clip rect { width: 101.39999999999999px }
+  }
+</style>
+<rect width="668" height="743" rx="10" fill="#0d1117"/>
+<rect x="0.5" y="0.5" width="667" height="742" rx="10" fill="none" stroke="#21262d"/>
+<g class="t">
+  <text x="22" y="39" fill="#57606a">$</text>
+  <clipPath id="cmd" class="cmd-clip"><rect x="37.6" y="26" width="101.39999999999999" height="19"/></clipPath>
+  <text x="37.6" y="39" fill="#c9d1d9" clip-path="url(#cmd)" xml:space="preserve">npx dead-deps</text>
+  <rect class="cursor" x="141.0" y="27" width="7.8" height="15" fill="#57606a"/>
+<text class="ln" style="animation-delay:1.250s" x="22" y="77"><tspan fill="#a371f7" xml:space="preserve">  dead-deps  ·  ~/projects/checkout-api</tspan></text>
+<text class="ln" style="animation-delay:1.295s" x="22" y="96"><tspan fill="#21262d" xml:space="preserve">  ──────────────────────────────────────────────────────────────────────────────</tspan></text>
+<text class="ln" style="animation-delay:1.340s" x="22" y="115"><tspan fill="#6e7681" xml:space="preserve">  package-lock.json (npm lockfile v3) · 9 of 423 dependencies examined ·</tspan></text>
+<text class="ln" style="animation-delay:1.385s" x="22" y="134"><tspan fill="#6e7681" xml:space="preserve">  1 flagged · 414 skipped · 228ms</tspan></text>
+<text class="ln" style="animation-delay:1.430s" x="22" y="153"></text>
+<text class="ln" style="animation-delay:1.475s" x="22" y="172"><tspan fill="#f85149" xml:space="preserve">  HIJACK RISK</tspan><tspan fill="#c9d1d9" xml:space="preserve"> request 2.88.2</tspan><tspan fill="#6e7681" xml:space="preserve">                                       score 100/100</tspan></text>
+<text class="ln" style="animation-delay:1.520s" x="22" y="191"><tspan fill="#c9d1d9" xml:space="preserve">    Unattended, still widely installed, and carrying open advisories —</tspan></text>
+<text class="ln" style="animation-delay:1.565s" x="22" y="210"><tspan fill="#c9d1d9" xml:space="preserve">    deprecated on npm, no release in 6.5 years. This is the profile supply-chain</tspan></text>
+<text class="ln" style="animation-delay:1.610s" x="22" y="229"><tspan fill="#c9d1d9" xml:space="preserve">    attackers look for.</tspan></text>
+<text class="ln" style="animation-delay:1.655s" x="22" y="248"></text>
+<text class="ln" style="animation-delay:1.700s" x="22" y="267"><tspan fill="#21262d" xml:space="preserve">    ├─ </tspan><tspan fill="#c9d1d9" xml:space="preserve">Deprecated on npm: &quot;request has been deprecated, see</tspan></text>
+<text class="ln" style="animation-delay:1.745s" x="22" y="286"><tspan fill="#21262d" xml:space="preserve">    │  </tspan><tspan fill="#c9d1d9" xml:space="preserve">https://github.com/request/request/issues/3142&quot;</tspan></text>
+<text class="ln" style="animation-delay:1.790s" x="22" y="305"><tspan fill="#21262d" xml:space="preserve">    │  ↳ </tspan><tspan fill="#58a6ff" xml:space="preserve">https://www.npmjs.com/package/request</tspan></text>
+<text class="ln" style="animation-delay:1.835s" x="22" y="324"><tspan fill="#21262d" xml:space="preserve">    ├─ </tspan><tspan fill="#c9d1d9" xml:space="preserve">No release in 6.5 years — 169x longer than this package has ever gone</tspan></text>
+<text class="ln" style="animation-delay:1.880s" x="22" y="343"><tspan fill="#21262d" xml:space="preserve">    │  </tspan><tspan fill="#c9d1d9" xml:space="preserve">quiet before (its own median gap between releases is 8 days).</tspan></text>
+<text class="ln" style="animation-delay:1.925s" x="22" y="362"><tspan fill="#21262d" xml:space="preserve">    │  ↳ </tspan><tspan fill="#58a6ff" xml:space="preserve">https://www.npmjs.com/package/request</tspan></text>
+<text class="ln" style="animation-delay:1.970s" x="22" y="381"><tspan fill="#21262d" xml:space="preserve">    └─ </tspan><tspan fill="#c9d1d9" xml:space="preserve">26 issues opened in the past year, 3 closed (12%), averaging 0.3 comments</tspan></text>
+<text class="ln" style="animation-delay:2.015s" x="22" y="400"><tspan fill="#c9d1d9" xml:space="preserve">       each — people are asking and nobody is answering.</tspan></text>
+<text class="ln" style="animation-delay:2.060s" x="22" y="419"><tspan fill="#21262d" xml:space="preserve">       ↳ </tspan><tspan fill="#58a6ff" xml:space="preserve">https://github.com/request/request</tspan></text>
+<text class="ln" style="animation-delay:2.105s" x="22" y="438"></text>
+<text class="ln" style="animation-delay:2.150s" x="22" y="457"><tspan fill="#c9d1d9" xml:space="preserve">    </tspan><tspan fill="#3fb950" xml:space="preserve">→ </tspan><tspan fill="#3fb950" xml:space="preserve">undici</tspan></text>
+<text class="ln" style="animation-delay:2.195s" x="22" y="476"><tspan fill="#c9d1d9" xml:space="preserve">      what the ecosystem moved to · needs code changes · dead since 2020-02</tspan></text>
+<text class="ln" style="animation-delay:2.240s" x="22" y="495"><tspan fill="#c9d1d9" xml:space="preserve">      Node 18+ ships a global `fetch()` backed by undici, so most simple call</tspan></text>
+<text class="ln" style="animation-delay:2.285s" x="22" y="514"><tspan fill="#c9d1d9" xml:space="preserve">      sites need no dependency at all; reach for `got` when you want retries,</tspan></text>
+<text class="ln" style="animation-delay:2.330s" x="22" y="533"><tspan fill="#c9d1d9" xml:space="preserve">      hooks and streams in one package.</tspan></text>
+<text class="ln" style="animation-delay:2.375s" x="22" y="552"><tspan fill="#6e7681" xml:space="preserve">      alternatives: got · axios · node-fetch · postman-request</tspan></text>
+<text class="ln" style="animation-delay:2.420s" x="22" y="571"></text>
+<text class="ln" style="animation-delay:2.465s" x="22" y="590"><tspan fill="#6e7681" xml:space="preserve">    confidence ●○○ low</tspan></text>
+<text class="ln" style="animation-delay:2.510s" x="22" y="609"><tspan fill="#6e7681" xml:space="preserve">      data may be stale: upstream last synced this on 2024-10-28</tspan></text>
+<text class="ln" style="animation-delay:2.555s" x="22" y="628"></text>
+<text class="ln" style="animation-delay:2.600s" x="22" y="647"><tspan fill="#21262d" xml:space="preserve">  ──────────────────────────────────────────────────────────────────────────────</tspan></text>
+<text class="ln" style="animation-delay:2.645s" x="22" y="666"><tspan fill="#c9d1d9" xml:space="preserve">  1 dependency needs attention. Start with request → undici (needs code</tspan></text>
+<text class="ln" style="animation-delay:2.690s" x="22" y="685"><tspan fill="#c9d1d9" xml:space="preserve">  changes).</tspan></text>
+<text class="ln" style="animation-delay:2.735s" x="22" y="704"><tspan fill="#6e7681" xml:space="preserve">  8 other dependencies were examined and deliberately not flagged — quiet is not</tspan></text>
+<text class="ln" style="animation-delay:2.780s" x="22" y="723"><tspan fill="#c9d1d9" xml:space="preserve">  the same as dead.</tspan></text>
+</g>
+</svg>

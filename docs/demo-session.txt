@@ -1,0 +1,36 @@
+  dead-deps  ·  ~/projects/checkout-api
+  ──────────────────────────────────────────────────────────────────────────────
+  package-lock.json (npm lockfile v3) · 9 of 423 dependencies examined ·
+  1 flagged · 414 skipped · 228ms
+
+  HIJACK RISK request 2.88.2                                       score 100/100
+    Unattended, still widely installed, and carrying open advisories —
+    deprecated on npm, no release in 6.5 years. This is the profile supply-chain
+    attackers look for.
+
+    ├─ Deprecated on npm: "request has been deprecated, see
+    │  https://github.com/request/request/issues/3142"
+    │  ↳ https://www.npmjs.com/package/request
+    ├─ No release in 6.5 years — 169x longer than this package has ever gone
+    │  quiet before (its own median gap between releases is 8 days).
+    │  ↳ https://www.npmjs.com/package/request
+    └─ 26 issues opened in the past year, 3 closed (12%), averaging 0.3 comments
+       each — people are asking and nobody is answering.
+       ↳ https://github.com/request/request
+
+    → undici
+      what the ecosystem moved to · needs code changes · dead since 2020-02
+      Node 18+ ships a global `fetch()` backed by undici, so most simple call
+      sites need no dependency at all; reach for `got` when you want retries,
+      hooks and streams in one package.
+      alternatives: got · axios · node-fetch · postman-request
+
+    confidence ●○○ low
+      data may be stale: upstream last synced this on 2024-10-28
+
+  ──────────────────────────────────────────────────────────────────────────────
+  1 dependency needs attention. Start with request → undici (needs code
+  changes).
+  8 other dependencies were examined and deliberately not flagged — quiet is not
+  the same as dead.
+
