@@ -1,0 +1,28 @@
+# A tool about stale dependencies has no excuse for carrying its own.
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      # Routine bumps arrive as one reviewable PR; majors stay separate.
+      minor-and-patch:
+        update-types: [minor, patch]
+    commit-message:
+      prefix: 'deps'
+      prefix-development: 'deps(dev)'
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      actions:
+        update-types: [minor, patch]
+    commit-message:
+      prefix: 'ci'

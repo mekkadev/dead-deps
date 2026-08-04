@@ -1,0 +1,9 @@
+blank_issues_enabled: true
+
+contact_links:
+  - name: Why was my package given this verdict?
+    url: https://mekkadev.github.io/dead-deps/methodology/
+    about: The methodology page explains every state, every signal and the guard that keeps finished packages out of the report.
+  - name: Adding a succession row
+    url: https://github.com/mekkadev/dead-deps/blob/main/data/SCHEMA.md
+    about: The schema and the evidence bar for contributing to data/successors.yaml.
