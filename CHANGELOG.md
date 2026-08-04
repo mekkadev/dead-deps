@@ -37,11 +37,12 @@ First release.
   forks and reimplementations are modelled as distinct succession types, and
   `toKind` distinguishes a successor package from a platform feature that
   removes the dependency entirely.
-- **Calibration harness** (`npm run calibrate`) scoring the detector against 49
+- **Calibration harness** (`npm run calibrate`) scoring the detector against 54
   hand-labelled packages, reporting the false-positive rate on finished
   packages separately from overall accuracy, plus a confusion matrix, per-label
   precision and recall, and every disagreement with the evidence behind it.
-  Initial run: 0% false positives on finished packages, 75.5% strict accuracy.
+  Initial run: 0% false positives on finished packages, 0% false alarms on any
+  healthy package, 83.3% strict accuracy and 4.2% missed.
 - **MCP server** (`dead-deps-mcp`) exposing `scan_lockfile`, `check_package`
   and `find_successor` over stdio. `find_successor` declines to guess when no
   curated record exists, which is the point of it — a hallucinated package name
