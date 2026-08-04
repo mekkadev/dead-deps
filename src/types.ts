@@ -144,6 +144,19 @@ export interface AdvisorySummary {
   severity: string | null;
   url: string;
   publishedAt: string | null;
+  /** Affected range as published, e.g. `< 2.0.0`. Null when not stated. */
+  vulnerableRange: string | null;
+  /** Version that first carried the fix, when the advisory names one. */
+  firstPatchedVersion: string | null;
+  /**
+   * Whether the newest published version is still exposed.
+   *
+   * This is what makes an advisory evidence of abandonment: a fixed advisory
+   * means the maintainer showed up, and counting it would flag healthy
+   * packages. `null` means the range could not be evaluated, in which case the
+   * advisory keeps counting — understating risk is the worse error.
+   */
+  affectsLatest: boolean | null;
 }
 
 /**
@@ -192,12 +205,30 @@ export interface SuccessorEvidence {
   url: string;
 }
 
+/**
+ * What kind of thing the successor is.
+ *
+ * Roughly a fifth of real successions are not packages at all: `left-pad` was
+ * absorbed by `String.prototype.padStart`, `q` by native promises. "Delete the
+ * dependency, the platform does this now" is a better answer than any package
+ * name, so the model has to be able to express it rather than forcing a fake
+ * package into `to`.
+ */
+export type SuccessorKind = 'package' | 'platform' | 'none';
+
 /** One curated row of `data/successors.yaml`. */
 export interface SuccessorRecord {
   /** Package that is dead, deprecated or superseded. */
   from: string;
-  /** Primary recommended successor. `null` when none is credible. */
+  /**
+   * Primary recommended successor. An npm package name when `toKind` is
+   * `package`; a human-readable platform feature (e.g.
+   * `String.prototype.padStart`) when `toKind` is `platform`; `null` when no
+   * credible successor exists.
+   */
   to: string | null;
+  /** Disambiguates what `to` holds. Derived from `to` when absent in YAML. */
+  toKind: SuccessorKind;
   type: SuccessionType;
   confidence: Confidence;
   /** Approximate month the `from` package stopped being maintained, `YYYY-MM`. */
