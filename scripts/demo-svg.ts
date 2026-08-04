@@ -49,11 +49,19 @@ const COLOR = {
 
 const COMMAND = 'npx dead-deps';
 
-/** Typing speed and the gap before output starts, in seconds. */
-const TYPE_DURATION = 0.9;
-const OUTPUT_START = TYPE_DURATION + 0.35;
-const LINE_STAGGER = 0.045;
-const HOLD = 4.5;
+/**
+ * Timing, as fractions of one loop.
+ *
+ * The reveal is a single clip rectangle whose height grows in `steps(n)`, one
+ * step per line — not one animation per line. An earlier version gave every
+ * line its own full-length animation with `steps(1, end)`, which held each at
+ * opacity 0 for the whole cycle and flashed it at the very end: the panel sat
+ * empty except for the command. One animation cannot drift out of sync with
+ * itself.
+ */
+const TYPE_END = 0.1;
+const REVEAL_END = 0.42;
+const LOOP_SECONDS = 9;
 
 // ---------------------------------------------------------------------------
 // Colouring
@@ -165,7 +173,6 @@ export function renderDemoSvg(session: string): string {
   const columns = Math.max(COMMAND.length + 2, ...lines.map((line) => line.length));
   const width = Math.round(columns * CHAR_W + PAD_X * 2);
   const height = Math.round((lines.length + 2) * LINE_H + PAD_Y * 2);
-  const total = OUTPUT_START + lines.length * LINE_STAGGER + HOLD;
 
   const promptY = PAD_Y + LINE_H;
   const commandX = PAD_X + CHAR_W * 2;
@@ -174,41 +181,58 @@ export function renderDemoSvg(session: string): string {
   const body = lines
     .map((line, index) => {
       const y = promptY + LINE_H * (index + 2);
-      const delay = (OUTPUT_START + index * LINE_STAGGER).toFixed(3);
-      return `<text class="ln" style="animation-delay:${delay}s" x="${PAD_X}" y="${y}">${spanMarkup(colourise(line))}</text>`;
+      return `<text x="${PAD_X}" y="${y}">${spanMarkup(colourise(line))}</text>`;
     })
     .join('\n');
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="dead-deps scanning a project: request is reported as a hijack risk with evidence, and undici is named as its successor">
+  // The window the reveal mask sweeps: from just above the first output line to
+  // the bottom of the last one.
+  const outputTop = promptY + LINE_H * 1.4;
+  const outputHeight = Math.ceil(height - outputTop);
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="dead-deps scanning a project: request is reported as a hijack risk with three cited pieces of evidence, undici is named as its successor, and eight other dependencies are examined and deliberately not flagged">
 <title>npx dead-deps</title>
 <style>
   .t { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace; font-size: ${FONT_SIZE}px; }
-  /* Resting state is the finished frame: if animation is dropped, the
-     reader still sees the whole session instead of an empty panel. */
-  .ln { opacity: 1; animation: reveal ${total}s steps(1, end) infinite; }
-  @keyframes reveal { 0% { opacity: 0 } 100% { opacity: 1 } }
-  .cmd-clip rect { animation: type ${total}s linear infinite; }
-  @keyframes type {
-    0% { width: 0 }
-    ${((TYPE_DURATION / total) * 100).toFixed(2)}% { width: ${commandW}px }
-    100% { width: ${commandW}px }
+
+  /* Playback is two background-coloured covers sliding off the content,
+     stepped once per line so the session appears at reading speed.
+     Only \`transform\` is animated — the one property every renderer that
+     honours CSS in SVG animates reliably.
+     Each cover's resting position is off the content, so a renderer that
+     drops animation shows the finished frame rather than an empty panel. */
+  .cover-out { transform: translateY(${outputHeight}px); animation: sweep ${LOOP_SECONDS}s steps(${lines.length}, end) infinite; }
+  @keyframes sweep {
+    0%, ${(TYPE_END * 100).toFixed(1)}% { transform: translateY(0) }
+    ${(REVEAL_END * 100).toFixed(1)}%, 100% { transform: translateY(${outputHeight}px) }
   }
-  .cursor { animation: blink 1s steps(1, end) infinite; }
-  @keyframes blink { 0%, 50% { opacity: 1 } 50.01%, 100% { opacity: 0 } }
+
+  .cover-cmd, .caret { transform: translateX(${commandW.toFixed(1)}px); animation: type ${LOOP_SECONDS}s steps(${COMMAND.length}, end) infinite; }
+  @keyframes type {
+    0% { transform: translateX(0) }
+    ${(TYPE_END * 100).toFixed(1)}%, 100% { transform: translateX(${commandW.toFixed(1)}px) }
+  }
+
+  .caret { animation-name: type, blink; animation-duration: ${LOOP_SECONDS}s, 1.06s; animation-timing-function: steps(${COMMAND.length}, end), steps(1, end); }
+  @keyframes blink { 0%, 55% { opacity: 1 } 55.01%, 100% { opacity: 0 } }
+
   @media (prefers-reduced-motion: reduce) {
-    .ln, .cmd-clip rect, .cursor { animation: none }
-    .cmd-clip rect { width: ${commandW}px }
+    .cover-out, .cover-cmd, .caret { animation: none }
   }
 </style>
+<clipPath id="panel"><rect width="${width}" height="${height}" rx="${RADIUS}"/></clipPath>
 <rect width="${width}" height="${height}" rx="${RADIUS}" fill="${COLOR.bg}"/>
-<rect x="0.5" y="0.5" width="${width - 1}" height="${height - 1}" rx="${RADIUS}" fill="none" stroke="${COLOR.border}"/>
-<g class="t">
-  <text x="${PAD_X}" y="${promptY}" fill="${COLOR.prompt}">$</text>
-  <clipPath id="cmd" class="cmd-clip"><rect x="${commandX}" y="${promptY - FONT_SIZE}" width="${commandW}" height="${LINE_H}"/></clipPath>
-  <text x="${commandX}" y="${promptY}" fill="${COLOR.text}" clip-path="url(#cmd)" xml:space="preserve">${escapeXml(COMMAND)}</text>
-  <rect class="cursor" x="${(commandX + commandW + 2).toFixed(1)}" y="${promptY - FONT_SIZE + 1}" width="${CHAR_W.toFixed(1)}" height="${FONT_SIZE + 2}" fill="${COLOR.prompt}"/>
+<g clip-path="url(#panel)">
+  <g class="t">
+    <text x="${PAD_X}" y="${promptY}" fill="${COLOR.prompt}">$</text>
+    <text x="${commandX.toFixed(1)}" y="${promptY}" fill="${COLOR.text}" xml:space="preserve">${escapeXml(COMMAND)}</text>
 ${body}
+  </g>
+  <rect class="cover-cmd" x="${commandX.toFixed(1)}" y="${promptY - FONT_SIZE - 3}" width="${(commandW + 2).toFixed(1)}" height="${LINE_H + 4}" fill="${COLOR.bg}"/>
+  <rect class="caret" x="${commandX.toFixed(1)}" y="${promptY - FONT_SIZE + 1}" width="${CHAR_W.toFixed(1)}" height="${FONT_SIZE + 2}" fill="${COLOR.prompt}"/>
+  <rect class="cover-out" x="0" y="${outputTop.toFixed(1)}" width="${width}" height="${outputHeight}" fill="${COLOR.bg}"/>
 </g>
+<rect x="0.5" y="0.5" width="${width - 1}" height="${height - 1}" rx="${RADIUS}" fill="none" stroke="${COLOR.border}"/>
 </svg>
 `;
 }
