@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-04T16:45:54.034Z",
+  "generatedAt": "2026-08-04T16:55:55.007Z",
   "partial": false,
   "corpus": {
     "path": "data/calibration.yaml",
@@ -8,7 +8,7 @@
     "evaluated": 54
   },
   "run": {
-    "durationMs": 1132,
+    "durationMs": 1464,
     "concurrency": 6,
     "cacheEnabled": true,
     "cacheTtlHours": 24,
@@ -228,7 +228,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 2.6 years — 38x longer than this package has ever gone quiet before (its own median gap between releases is 25 days).",
-          "weight": 16,
+          "weight": 22,
           "url": "https://www.npmjs.com/package/moment"
         },
         {
@@ -251,13 +251,13 @@
       "predicted": "low-activity",
       "nearMiss": false,
       "flagged": true,
-      "score": 39,
+      "score": 42,
       "confidence": "low",
       "topEvidence": [
         {
           "kind": "release-cadence",
           "label": "No release in 22 months — 48x longer than this package has ever gone quiet before (its own median gap between releases is 1 day).",
-          "weight": 16,
+          "weight": 18,
           "url": "https://www.npmjs.com/package/browserify"
         },
         {
@@ -274,7 +274,7 @@
       "predicted": "stable-complete",
       "nearMiss": false,
       "flagged": false,
-      "score": 13,
+      "score": 17,
       "confidence": "low",
       "topEvidence": [
         {
@@ -313,16 +313,16 @@
           "url": "https://www.npmjs.com/package/request"
         },
         {
+          "kind": "release-cadence",
+          "label": "No release in 6.5 years — 169x longer than this package has ever gone quiet before (its own median gap between releases is 8 days).",
+          "weight": 26,
+          "url": "https://www.npmjs.com/package/request"
+        },
+        {
           "kind": "issue-responsiveness",
           "label": "26 issues opened in the past year, 3 closed (12%), averaging 0.3 comments each — people are asking and nobody is answering.",
           "weight": 22,
           "url": "https://github.com/request/request"
-        },
-        {
-          "kind": "security-advisory",
-          "label": "Open moderate advisory GHSA-p8p7-x288-28g6: Server-Side Request Forgery in Request — published 3.4 years ago with no release since.",
-          "weight": 18,
-          "url": "https://github.com/advisories/GHSA-p8p7-x288-28g6"
         }
       ]
     },
@@ -332,7 +332,7 @@
       "predicted": "abandoned",
       "nearMiss": true,
       "flagged": true,
-      "score": 84,
+      "score": 90,
       "confidence": "low",
       "topEvidence": [
         {
@@ -344,7 +344,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 8.0 years — 209x longer than this package has ever gone quiet before (its own median gap between releases is 11 days).",
-          "weight": 16,
+          "weight": 26,
           "url": "https://www.npmjs.com/package/should"
         },
         {
@@ -361,13 +361,13 @@
       "predicted": "unmaintained",
       "nearMiss": false,
       "flagged": true,
-      "score": 50,
+      "score": 53,
       "confidence": "low",
       "topEvidence": [
         {
           "kind": "release-cadence",
           "label": "No release in 21 months — 47x longer than this package has ever gone quiet before (its own median gap between releases is 4 days).",
-          "weight": 16,
+          "weight": 18,
           "url": "https://www.npmjs.com/package/stylus"
         },
         {
@@ -390,13 +390,13 @@
       "predicted": "unmaintained",
       "nearMiss": false,
       "flagged": true,
-      "score": 47,
+      "score": 50,
       "confidence": "low",
       "topEvidence": [
         {
           "kind": "release-cadence",
           "label": "No release in 23 months — 35x longer than this package has ever gone quiet before (its own median gap between releases is 20 days).",
-          "weight": 16,
+          "weight": 18,
           "url": "https://www.npmjs.com/package/async"
         },
         {
@@ -417,16 +417,16 @@
       "confidence": "medium",
       "topEvidence": [
         {
+          "kind": "release-cadence",
+          "label": "No release in 2.7 years — 21x longer than this package has ever gone quiet before (its own median gap between releases is 2 months).",
+          "weight": 22,
+          "url": "https://www.npmjs.com/package/passport"
+        },
+        {
           "kind": "issue-responsiveness",
           "label": "5 issues opened in the past year, 0 closed (0%), averaging 0.4 comments each — people are asking and nobody is answering.",
           "weight": 22,
           "url": "https://github.com/jaredhanson/passport"
-        },
-        {
-          "kind": "release-cadence",
-          "label": "No release in 2.7 years — 21x longer than this package has ever gone quiet before (its own median gap between releases is 2 months).",
-          "weight": 16,
-          "url": "https://www.npmjs.com/package/passport"
         },
         {
           "kind": "maintainer-activity",
@@ -448,7 +448,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 3.0 years — 75x longer than this package has ever gone quiet before (its own median gap between releases is 15 days).",
-          "weight": 16,
+          "weight": 22,
           "url": "https://www.npmjs.com/package/node-fetch"
         },
         {
@@ -870,7 +870,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 11,
+      "score": 18,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -903,7 +903,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 14,
+      "score": 20,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -936,7 +936,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 9,
+      "score": 15,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -969,7 +969,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 13,
+      "score": 20,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1002,7 +1002,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 7,
+      "score": 11,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1068,7 +1068,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 18,
+      "score": 20,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1101,7 +1101,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 13,
+      "score": 20,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1134,7 +1134,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 18,
+      "score": 20,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1200,7 +1200,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 13,
+      "score": 20,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -1233,7 +1233,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 18,
+      "score": 20,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -1266,7 +1266,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": false,
-      "score": 18,
+      "score": 20,
       "confidence": "medium",
       "stale": false,
       "sourceErrors": [],
@@ -1307,7 +1307,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 2.6 years — 38x longer than this package has ever gone quiet before (its own median gap between releases is 25 days).",
-          "weight": 16,
+          "weight": 22,
           "url": "https://www.npmjs.com/package/moment"
         },
         {
@@ -1503,16 +1503,16 @@
       "sourceErrors": [],
       "topEvidence": [
         {
+          "kind": "release-cadence",
+          "label": "No release in 6.7 years — 174x longer than this package has ever gone quiet before (its own median gap between releases is 3 days).",
+          "weight": 26,
+          "url": "https://www.npmjs.com/package/bluebird"
+        },
+        {
           "kind": "issue-responsiveness",
           "label": "7 issues opened in the past year, 0 closed (0%), averaging 0.9 comments each — people are asking and nobody is answering.",
           "weight": 18,
           "url": "https://github.com/petkaantonov/bluebird"
-        },
-        {
-          "kind": "release-cadence",
-          "label": "No release in 6.7 years — 174x longer than this package has ever gone quiet before (its own median gap between releases is 3 days).",
-          "weight": 16,
-          "url": "https://www.npmjs.com/package/bluebird"
         },
         {
           "kind": "maintainer-activity",
@@ -1530,7 +1530,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": true,
-      "score": 56,
+      "score": 69,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1538,7 +1538,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 6.9 years — 81x longer than this package has ever gone quiet before (its own median gap between releases is 31 days).",
-          "weight": 16,
+          "weight": 26,
           "url": "https://www.npmjs.com/package/colors"
         },
         {
@@ -1563,7 +1563,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": true,
-      "score": 47,
+      "score": 61,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1571,7 +1571,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 6.6 years — 173x longer than this package has ever gone quiet before (its own median gap between releases is 10 days).",
-          "weight": 16,
+          "weight": 26,
           "url": "https://www.npmjs.com/package/enzyme"
         },
         {
@@ -1590,7 +1590,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": true,
-      "score": 56,
+      "score": 64,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1598,7 +1598,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 3.7 years — 63x longer than this package has ever gone quiet before (its own median gap between releases is 22 days).",
-          "weight": 16,
+          "weight": 22,
           "url": "https://www.npmjs.com/package/jshint"
         },
         {
@@ -1623,7 +1623,7 @@
       "exact": false,
       "nearMiss": false,
       "flagged": true,
-      "score": 39,
+      "score": 42,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1631,7 +1631,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 22 months — 48x longer than this package has ever gone quiet before (its own median gap between releases is 1 day).",
-          "weight": 16,
+          "weight": 18,
           "url": "https://www.npmjs.com/package/browserify"
         },
         {
@@ -1691,7 +1691,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 7.3 years — 190x longer than this package has ever gone quiet before (its own median gap between releases is 4 days).",
-          "weight": 16,
+          "weight": 26,
           "url": "https://www.npmjs.com/package/nightmare"
         },
         {
@@ -1716,7 +1716,7 @@
       "exact": false,
       "nearMiss": false,
       "flagged": false,
-      "score": 13,
+      "score": 17,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -1761,16 +1761,16 @@
           "url": "https://www.npmjs.com/package/request"
         },
         {
+          "kind": "release-cadence",
+          "label": "No release in 6.5 years — 169x longer than this package has ever gone quiet before (its own median gap between releases is 8 days).",
+          "weight": 26,
+          "url": "https://www.npmjs.com/package/request"
+        },
+        {
           "kind": "issue-responsiveness",
           "label": "26 issues opened in the past year, 3 closed (12%), averaging 0.3 comments each — people are asking and nobody is answering.",
           "weight": 22,
           "url": "https://github.com/request/request"
-        },
-        {
-          "kind": "security-advisory",
-          "label": "Open moderate advisory GHSA-p8p7-x288-28g6: Server-Side Request Forgery in Request — published 3.4 years ago with no release since.",
-          "weight": 18,
-          "url": "https://github.com/advisories/GHSA-p8p7-x288-28g6"
         }
       ],
       "rationale": "Carries an explicit npm deprecation notice on 2.88.2 pointing at the maintainers' announcement issue, and has had no release since February 2020."
@@ -1796,7 +1796,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 3.2 years — 84x longer than this package has ever gone quiet before (its own median gap between releases is 8 days).",
-          "weight": 16,
+          "weight": 22,
           "url": "https://www.npmjs.com/package/node-sass"
         },
         {
@@ -1835,7 +1835,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 6.0 years — 157x longer than this package has ever gone quiet before (its own median gap between releases is 10 days).",
-          "weight": 16,
+          "weight": 26,
           "url": "https://www.npmjs.com/package/tslint"
         }
       ],
@@ -1866,10 +1866,10 @@
           "url": "https://github.com/angular/protractor"
         },
         {
-          "kind": "issue-responsiveness",
-          "label": "6 issues opened in the past year, 0 closed (0%), averaging 0.5 comments each — people are asking and nobody is answering.",
-          "weight": 22,
-          "url": "https://github.com/angular/protractor"
+          "kind": "release-cadence",
+          "label": "No release in 6.2 years — 151x longer than this package has ever gone quiet before (its own median gap between releases is 15 days).",
+          "weight": 26,
+          "url": "https://www.npmjs.com/package/protractor"
         }
       ],
       "rationale": "The Angular team deprecated Protractor with an end-of-life date of summer 2023; the npm deprecation notice is on 7.0.0 and the repository is archived."
@@ -1895,7 +1895,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 10.0 years — 260x longer than this package has ever gone quiet before (its own median gap between releases is 8 days).",
-          "weight": 16,
+          "weight": 26,
           "url": "https://www.npmjs.com/package/istanbul"
         },
         {
@@ -1934,7 +1934,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 6.4 years — 168x longer than this package has ever gone quiet before (its own median gap between releases is 2 days).",
-          "weight": 16,
+          "weight": 26,
           "url": "https://www.npmjs.com/package/babel-eslint"
         }
       ],
@@ -1961,7 +1961,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 11.5 years — 300x longer than this package has ever gone quiet before (its own median gap between releases is 8 days).",
-          "weight": 16,
+          "weight": 26,
           "url": "https://www.npmjs.com/package/q"
         },
         {
@@ -1998,10 +1998,10 @@
           "url": "https://github.com/sindresorhus/code-point-at"
         },
         {
-          "kind": "maintainer-activity",
-          "label": "No maintainer has commented, closed an issue or merged a pull request in the past year.",
-          "weight": 12,
-          "url": "https://github.com/sindresorhus/code-point-at"
+          "kind": "release-cadence",
+          "label": "No release in 4.8 years, about 4.0x its usual gap (its own median gap between releases is 15 months).",
+          "weight": 14,
+          "url": "https://www.npmjs.com/package/code-point-at"
         }
       ],
       "rationale": "The stable-complete trap inverted — a tiny, ancient, heavily depended-on micro-library that looks exactly like `once` or `isarray`, but 2.0.0 carries an npm deprecation in favour of `String#codePointAt()` and the repository is archived."
@@ -2031,10 +2031,10 @@
           "url": "https://github.com/sindresorhus/path-is-absolute"
         },
         {
-          "kind": "maintainer-activity",
-          "label": "No maintainer has commented, closed an issue or merged a pull request in the past year.",
-          "weight": 12,
-          "url": "https://github.com/sindresorhus/path-is-absolute"
+          "kind": "release-cadence",
+          "label": "No release in 7.7 years, about 4.2x its usual gap (its own median gap between releases is 22 months).",
+          "weight": 18,
+          "url": "https://www.npmjs.com/package/path-is-absolute"
         }
       ],
       "rationale": "Same inverted trap as code-point-at: a micro-library with nearly three thousand dependents whose 2.0.0 is formally deprecated ('no longer relevant as Node.js 0.12 is unmaintained') and whose repository is archived."
@@ -2046,7 +2046,7 @@
       "exact": false,
       "nearMiss": true,
       "flagged": true,
-      "score": 84,
+      "score": 90,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -2060,7 +2060,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 8.0 years — 209x longer than this package has ever gone quiet before (its own median gap between releases is 11 days).",
-          "weight": 16,
+          "weight": 26,
           "url": "https://www.npmjs.com/package/should"
         },
         {
@@ -2079,7 +2079,7 @@
       "exact": true,
       "nearMiss": false,
       "flagged": true,
-      "score": 39,
+      "score": 42,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -2087,7 +2087,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 14 months — 31x longer than this package has ever gone quiet before (its own median gap between releases is 4 days).",
-          "weight": 16,
+          "weight": 18,
           "url": "https://www.npmjs.com/package/gulp"
         },
         {
@@ -2106,7 +2106,7 @@
       "exact": false,
       "nearMiss": false,
       "flagged": true,
-      "score": 50,
+      "score": 53,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -2114,7 +2114,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 21 months — 47x longer than this package has ever gone quiet before (its own median gap between releases is 4 days).",
-          "weight": 16,
+          "weight": 18,
           "url": "https://www.npmjs.com/package/stylus"
         },
         {
@@ -2139,7 +2139,7 @@
       "exact": false,
       "nearMiss": false,
       "flagged": true,
-      "score": 47,
+      "score": 50,
       "confidence": "low",
       "stale": true,
       "sourceErrors": [],
@@ -2147,7 +2147,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 23 months — 35x longer than this package has ever gone quiet before (its own median gap between releases is 20 days).",
-          "weight": 16,
+          "weight": 18,
           "url": "https://www.npmjs.com/package/async"
         },
         {
@@ -2172,16 +2172,16 @@
       "sourceErrors": [],
       "topEvidence": [
         {
+          "kind": "release-cadence",
+          "label": "No release in 2.7 years — 21x longer than this package has ever gone quiet before (its own median gap between releases is 2 months).",
+          "weight": 22,
+          "url": "https://www.npmjs.com/package/passport"
+        },
+        {
           "kind": "issue-responsiveness",
           "label": "5 issues opened in the past year, 0 closed (0%), averaging 0.4 comments each — people are asking and nobody is answering.",
           "weight": 22,
           "url": "https://github.com/jaredhanson/passport"
-        },
-        {
-          "kind": "release-cadence",
-          "label": "No release in 2.7 years — 21x longer than this package has ever gone quiet before (its own median gap between releases is 2 months).",
-          "weight": 16,
-          "url": "https://www.npmjs.com/package/passport"
         },
         {
           "kind": "maintainer-activity",
@@ -2207,7 +2207,7 @@
         {
           "kind": "release-cadence",
           "label": "No release in 3.0 years — 75x longer than this package has ever gone quiet before (its own median gap between releases is 15 days).",
-          "weight": 16,
+          "weight": 22,
           "url": "https://www.npmjs.com/package/node-fetch"
         },
         {

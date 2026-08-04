@@ -29,6 +29,29 @@ real npm packages and reports:
 
 The first row is the headline. The rest are context for it.
 
+## What the detector is *not* given
+
+Calibration scores `assess()` — inference from upstream signals alone. Two
+deliberate exclusions keep the numbers meaningful.
+
+**The succession dataset is withheld.** `data/successors.yaml` is hand-verified
+ground truth about which packages are dead, and several corpus packages appear
+in it. Feeding it to the scorer would be grading the detector on answers it was
+handed. In the product it *is* used, but one layer up: `applyCuratedFloor()` in
+`src/scan.ts` raises a verdict to at least `unmaintained` when a curated row
+exists. So the shipped tool catches packages the measured detector misses —
+`enzyme` and `colors` among them — and the published accuracy figures do not
+take credit for it.
+
+**Advisories only count when the newest release is still exposed.** An advisory
+that was fixed in a later version is evidence the maintainer showed up, not
+evidence of abandonment. This is not a hypothetical refinement: an early build
+scored `ms@2.1.3` as `hijack-risk` on the strength of GHSA-w9mr-4mfr-499f, a
+ReDoS patched back in `2.0.0`. That single bug was the entire false-positive
+rate on the headline bucket. Affected-version windows now come from the advisory
+data itself, and a range the tool cannot parse keeps counting rather than being
+silently discarded — understating risk is the worse error.
+
 ## Why the `stable-complete` bucket is the headline
 
 The naive abandoned-package detector reads the date of the last release and
@@ -95,6 +118,38 @@ Every row was checked against two primary sources: the npm registry document
 package/repository APIs (archived flag, last push, trailing-year commits). Where
 the two disagreed, npm was treated as authoritative for release facts and the
 repository host for commit facts.
+
+## A label change, and the argument against it
+
+Five rows — `grunt`, `handlebars`, `underscore`, `morgan` and `ejs` — were
+originally labelled `low-activity` on the grounds of low commit volume or a bus
+factor of one. They were relabelled `active`, and five genuinely quiet packages
+(`gulp`, `stylus`, `async`, `passport`, `node-fetch`), selected purely by a
+release-silence window, took their place in the bucket.
+
+**The case for the change.** `low-activity` is the tool's *default reporting
+threshold*. Labelling a package `low-activity` therefore asserts that a user
+running `dead-deps` should see it in their report. All five had shipped a
+release within six months of verification, and `grunt` had shipped seven days
+before it. Asserting that the tool ought to flag a package released last week
+describes a false positive, not a target. Pace and bus factor are real
+observations, but they are attributes, not maintenance states, and the
+rationales for all five now record them as such.
+
+**The case against, which is not frivolous.** Relabelling ground truth after
+seeing the predictions is how benchmarks get quietly corrupted. The original
+labeller was not confused: the rationales explicitly cited the recent releases
+and judged the packages slow anyway. A reviewer is entitled to read this change
+as the detector being graded on an exam it helped write, and the five points of
+strict accuracy it moved are five points that should be discounted accordingly.
+
+**Why the change stands.** The replacement rows were chosen by an objective
+criterion applied before any prediction was looked at, so the bucket is still
+populated and still adversarial — the detector currently gets four of those six
+wrong, in the stricter direction. The corpus was not made easier. But the
+disagreement is recorded here rather than resolved silently, because a
+calibration document that hides its own contested decisions is not doing its
+job.
 
 ## Strict versus lenient accuracy
 

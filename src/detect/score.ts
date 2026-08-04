@@ -694,12 +694,34 @@ function collectReleaseEvidence(
 
   if (cadenceDays !== null && silenceRatio !== null) {
     const rhythm = `its own median gap between releases is ${duration(cadenceDays)}`;
+
+    /**
+     * Absolute duration, added on top of the relative measure.
+     *
+     * They are different facts and both matter: six years of nothing is worse
+     * than one year of nothing, even when both are "far outside the usual gap".
+     * Without this the two weighed the same.
+     *
+     * Applied only once the silence has already broken the package's own
+     * rhythm. Adding it to the within-rhythm branch would flag `ms`, quiet for
+     * five years because it is finished, and that one false positive costs
+     * more than every true positive this clause buys.
+     */
+    const absoluteSilence =
+      silenceDays >= VERY_LONG_SILENCE_DAYS
+        ? WEIGHTS.releaseSilenceVeryLong
+        : silenceDays >= LONG_SILENCE_DAYS
+          ? WEIGHTS.releaseSilenceLong
+          : silenceDays >= MIN_SILENCE_DAYS
+            ? WEIGHTS.releaseSilenceYear
+            : 0;
+
     if (silenceDays >= MIN_SILENCE_DAYS && silenceRatio >= SILENCE_SEVERE_MULTIPLE) {
       out.push(
         evidence(
           'release-cadence',
           `No release in ${duration(silenceDays)} — ${ratio(silenceRatio)} longer than this package has ever gone quiet before (${rhythm}).`,
-          WEIGHTS.releaseSilenceSevere,
+          WEIGHTS.releaseSilenceSevere + absoluteSilence,
           url,
           signals.latestReleaseAt,
         ),
@@ -709,7 +731,7 @@ function collectReleaseEvidence(
         evidence(
           'release-cadence',
           `No release in ${duration(silenceDays)}, about ${ratio(silenceRatio)} its usual gap (${rhythm}).`,
-          WEIGHTS.releaseSilenceMild,
+          WEIGHTS.releaseSilenceMild + absoluteSilence,
           url,
           signals.latestReleaseAt,
         ),

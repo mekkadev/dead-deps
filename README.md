@@ -7,12 +7,13 @@
 Evidence-backed. Zero config. No account. Works as a CLI, a CI gate, a library, and an MCP server for AI agents.
 
 [![CI](https://github.com/mekkadev/dead-deps/actions/workflows/ci.yml/badge.svg)](https://github.com/mekkadev/dead-deps/actions/workflows/ci.yml)
-[![npm version](https://img.shields.io/npm/v/dead-deps.svg)](https://www.npmjs.com/package/dead-deps)
-[![license: MIT](https://img.shields.io/npm/l/dead-deps.svg)](./LICENSE)
-[![node: >=20.10](https://img.shields.io/node/v/dead-deps.svg)](https://nodejs.org/)
-[![false positives: 0%](https://img.shields.io/badge/false%20positives-0%25-brightgreen)](#calibration-measured-not-claimed)
+[![npm version](https://img.shields.io/npm/v/dead-deps.svg?color=cb3837&logo=npm)](https://www.npmjs.com/package/dead-deps)
+[![node](https://img.shields.io/node/v/dead-deps.svg?color=5fa04e&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![license](https://img.shields.io/npm/l/dead-deps.svg?color=blue)](./LICENSE)
+[![false positives](https://img.shields.io/badge/false%20positives-0%25-brightgreen)](#calibration-measured-not-claimed)
+[![dataset](https://img.shields.io/badge/succession%20dataset-81%20verified%20rows-8957e5)](./data/successors.yaml)
 
-[**Website**](https://mekkadev.github.io/dead-deps/) · [**Methodology**](https://mekkadev.github.io/dead-deps/methodology/) · [**The dataset**](./data/successors.yaml) · [**Architecture**](./docs/ARCHITECTURE.md)
+[**Website**](https://mekkadev.github.io/dead-deps/) · [Methodology](https://mekkadev.github.io/dead-deps/methodology/) · [Dataset](./data/successors.yaml) · [Architecture](./docs/ARCHITECTURE.md) · [Contributing](./CONTRIBUTING.md)
 
 </div>
 
