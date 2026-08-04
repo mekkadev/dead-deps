@@ -21,6 +21,7 @@ import '../no-network.js';
 import '../cache.test.js';
 import '../lockfile.test.js';
 import '../report.test.js';
+import '../robustness.test.js';
 import '../score.test.js';
 import '../semver.test.js';
 import '../successors.test.js';

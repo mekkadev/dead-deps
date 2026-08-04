@@ -429,7 +429,7 @@ Dataset rows, false-positive reports and new lockfile formats are all welcome. S
 ```console
 git clone https://github.com/mekkadev/dead-deps.git
 cd dead-deps && npm install
-npm test          # 163 tests, no network
+npm test          # 173 tests, no network
 npm run typecheck
 npm run calibrate # scores the detector against the labelled corpus
 npm run site      # builds the static site into site/dist
